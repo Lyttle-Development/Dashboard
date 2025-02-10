@@ -116,6 +116,9 @@ export default function Dashboard() {
   const [editRecordId, setEditRecordId] = useState<string | null>(null);
   const [editRecordData, setEditRecordData] = useState<Record<string, any>>({});
 
+  // State for displaying a copy popup message.
+  const [copyMessage, setCopyMessage] = useState<string>("");
+
   const config = tableConfigs[selectedTable];
 
   // Wrap fetchData in useCallback to avoid dependency warnings.
@@ -133,11 +136,28 @@ export default function Dashboard() {
     setLoading(false);
   }, [config.endpoint]);
 
-  // Whenever the table selection changes, reset newRecord and fetch data.
+  // Whenever the table selection changes, restore newRecord from localStorage and fetch data.
   useEffect(() => {
-    setNewRecord({});
+    const savedNewRecord = localStorage.getItem(`newRecord_${selectedTable}`);
+    if (savedNewRecord) {
+      try {
+        setNewRecord(JSON.parse(savedNewRecord));
+      } catch (err) {
+        console.error("Error parsing saved newRecord", err);
+      }
+    } else {
+      setNewRecord({});
+    }
     fetchData();
   }, [selectedTable, fetchData]);
+
+  // Persist newRecord changes to localStorage.
+  useEffect(() => {
+    localStorage.setItem(
+      `newRecord_${selectedTable}`,
+      JSON.stringify(newRecord),
+    );
+  }, [newRecord, selectedTable]);
 
   // Determine keys for the create form.
   // If data exists, use keys from the first row (excluding "id" and "createdAt").
@@ -149,6 +169,23 @@ export default function Dashboard() {
         )
       : fallbackKeys[selectedTable] || [];
 
+  // Copy cell value to clipboard and show a popup message.
+  const handleCopy = (value: any) => {
+    const text =
+      typeof value === "object" && value !== null
+        ? JSON.stringify(value)
+        : String(value);
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopyMessage(`Copied: ${text}`);
+        setTimeout(() => setCopyMessage(""), 2000);
+      })
+      .catch((err) => {
+        console.error("Error copying text: ", err);
+      });
+  };
+
   // Create a new record using the "newRecord" state.
   const handleCreate = async () => {
     try {
@@ -158,7 +195,7 @@ export default function Dashboard() {
         body: JSON.stringify(newRecord),
       });
       if (res.ok) {
-        setNewRecord({});
+        // Do not clear newRecord so that state persists if you want to create multiple records.
         fetchData();
       } else {
         alert("Error creating record");
@@ -224,6 +261,24 @@ export default function Dashboard() {
         overflow: "hidden",
       }}
     >
+      {/* Optional: Copy Popup */}
+      {copyMessage && (
+        <div
+          style={{
+            position: "fixed",
+            top: "1rem",
+            right: "1rem",
+            background: "green",
+            color: "white",
+            padding: "0.5rem",
+            borderRadius: "4px",
+            zIndex: 1000,
+          }}
+        >
+          {copyMessage}
+        </div>
+      )}
+
       {/* Sidebar for selecting table */}
       <aside
         style={{
@@ -410,6 +465,12 @@ export default function Dashboard() {
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
+                          cursor: editRecordId ? "default" : "pointer",
+                        }}
+                        onClick={() => {
+                          if (!editRecordId) {
+                            handleCopy(record[key]);
+                          }
                         }}
                       >
                         {editRecordId === record.id ? (
@@ -469,8 +530,7 @@ export default function Dashboard() {
                               }}
                             />
                           )
-                        ) : // If the value is an object (and not null), display it as a JSON string.
-                        typeof record[key] === "object" &&
+                        ) : typeof record[key] === "object" &&
                           record[key] !== null ? (
                           JSON.stringify(record[key])
                         ) : (
