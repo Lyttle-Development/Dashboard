@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // Mapping of tables with their labels and API endpoints.
 const tableConfigs: {
@@ -95,6 +95,7 @@ const getInputType = (key: string, value?: any): string => {
 const formatDateTimeLocal = (val: any): string => {
   if (!val) return "";
   const date = new Date(val);
+  if (isNaN(date.getTime())) return "";
   const pad = (n: number) => n.toString().padStart(2, "0");
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
     date.getDate(),
@@ -106,7 +107,7 @@ export default function Dashboard() {
   const [selectedTable, setSelectedTable] =
     useState<keyof typeof tableConfigs>("customers");
   // Data for the selected table.
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Array<Record<string, any>>>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   // State for creating a new record.
@@ -117,24 +118,26 @@ export default function Dashboard() {
 
   const config = tableConfigs[selectedTable];
 
-  // Fetch the current table's data.
-  const fetchData = async () => {
+  // Wrap fetchData in useCallback to avoid dependency warnings.
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(config.endpoint);
+      if (!res.ok) throw new Error("Failed to fetch data");
       const json = await res.json();
-      setData(json);
+      setData(json || []);
     } catch (err) {
       console.error("Error fetching data", err);
+      setData([]);
     }
     setLoading(false);
-  };
+  }, [config.endpoint]);
 
-  // Whenever the table selection changes, fetch its data and reset new record.
+  // Whenever the table selection changes, reset newRecord and fetch data.
   useEffect(() => {
     setNewRecord({});
     fetchData();
-  }, [selectedTable]);
+  }, [selectedTable, fetchData]);
 
   // Determine keys for the create form.
   // If data exists, use keys from the first row (excluding "id" and "createdAt").
@@ -169,18 +172,23 @@ export default function Dashboard() {
   // Delete a record by its ID.
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this record?")) return;
-    const res = await fetch(`${config.endpoint}/${id}`, {
-      method: "DELETE",
-    });
-    if (res.ok) {
-      fetchData();
-    } else {
+    try {
+      const res = await fetch(`${config.endpoint}/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        fetchData();
+      } else {
+        alert("Error deleting record");
+      }
+    } catch (error) {
+      console.error(error);
       alert("Error deleting record");
     }
   };
 
   // Begin editing a record.
-  const handleEdit = (record: any) => {
+  const handleEdit = (record: Record<string, any>) => {
     setEditRecordId(record.id);
     setEditRecordData(record);
   };
@@ -188,16 +196,21 @@ export default function Dashboard() {
   // Save the edited record.
   const handleSaveEdit = async () => {
     if (!editRecordId) return;
-    const res = await fetch(`${config.endpoint}/${editRecordId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(editRecordData),
-    });
-    if (res.ok) {
-      setEditRecordId(null);
-      setEditRecordData({});
-      fetchData();
-    } else {
+    try {
+      const res = await fetch(`${config.endpoint}/${editRecordId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editRecordData),
+      });
+      if (res.ok) {
+        setEditRecordId(null);
+        setEditRecordData({});
+        fetchData();
+      } else {
+        alert("Error updating record");
+      }
+    } catch (error) {
+      console.error(error);
       alert("Error updating record");
     }
   };
@@ -383,8 +396,8 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {data.map((record) => (
-                <tr key={record.id}>
+              {data.map((record, index) => (
+                <tr key={record.id || index}>
                   {Object.keys(record).map((key) => {
                     const inputType = getInputType(key, editRecordData[key]);
                     return (
@@ -456,6 +469,10 @@ export default function Dashboard() {
                               }}
                             />
                           )
+                        ) : // If the value is an object (and not null), display it as a JSON string.
+                        typeof record[key] === "object" &&
+                          record[key] !== null ? (
+                          JSON.stringify(record[key])
                         ) : (
                           record[key]
                         )}
