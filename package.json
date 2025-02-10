@@ -5,13 +5,15 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "start": "npm run build && next start -p 3000",
     "lint": "next lint",
     "prisma:format": "prisma format",
     "prisma:generate": "prisma generate",
     "prisma:dangerously-db-push": "prisma db push",
     "prisma:migrate": "prisma migrate dev --name merge-upstream",
-    "prisma:deploy": "prisma migrate deploy"
+    "prisma:deploy": "prisma migrate deploy",
+    "docker:setup": "npm run build",
+    "docker:build": "docker build -t community-v3-dashboard ."
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",
