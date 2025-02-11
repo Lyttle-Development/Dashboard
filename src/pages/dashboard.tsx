@@ -4,65 +4,54 @@ import { useCallback, useEffect, useState } from "react";
 const tableConfigs: {
   [key: string]: { label: string; endpoint: string };
 } = {
-  customers: { label: "Customers", endpoint: "/api/customers" },
-  addresses: { label: "Addresses", endpoint: "/api/addresses" },
-  orders: { label: "Orders", endpoint: "/api/orders" },
-  "order-items": { label: "Order Items", endpoint: "/api/order-items" },
-  products: { label: "Products", endpoint: "/api/products" },
-  categories: { label: "Categories", endpoint: "/api/categories" },
-  invoices: { label: "Invoices", endpoint: "/api/invoices" },
-  "print-jobs": { label: "Print Jobs", endpoint: "/api/print-jobs" },
-  "print-materials": {
+  customers: { label: "Customers", endpoint: "/api/customer" },
+  addresses: { label: "Addresses", endpoint: "/api/address" },
+  category: { label: "Categories", endpoint: "/api/category" },
+  invoice: { label: "Invoices", endpoint: "/api/invoice" },
+  "invoice-status": {
+    label: "Invoice Status",
+    endpoint: "/api/invoiceStatus",
+  },
+  "print-job": { label: "Print Jobs", endpoint: "/api/printJob" },
+  "print-material": {
     label: "Print Materials",
-    endpoint: "/api/print-materials",
+    endpoint: "/api/printMaterial",
   },
-  projects: { label: "Projects", endpoint: "/api/projects" },
-  "time-logs": { label: "Time Logs", endpoint: "/api/time-logs" },
-  "service-prices": {
-    label: "Service Prices",
-    endpoint: "/api/service-prices",
-  },
+  project: { label: "Projects", endpoint: "/api/project" },
+  "time-log": { label: "Time Logs", endpoint: "/api/timeLog" },
+  "service-price": { label: "Service Prices", endpoint: "/api/servicePrice" },
 };
 
 // Fallback keys for each table when no data exists.
+// (These are the fields you wish to create/edit manually; exclude auto-managed fields.)
 const fallbackKeys: Record<string, string[]> = {
   customers: ["name", "email", "phone"],
   addresses: ["street", "city", "state", "country", "zipCode", "customerId"],
-  orders: ["total", "status", "customerId"],
-  "order-items": ["quantity", "price", "productId", "orderId"],
-  products: ["name", "price", "description", "categoryId"],
-  categories: ["name"],
-  invoices: ["amount", "status", "customerId"],
-  "print-jobs": [
+  category: ["name"],
+  invoice: ["invoiceDate", "amount", "statusId", "customerId"],
+  "invoice-status": ["status"],
+  "print-job": [
+    "name",
     "scheduledDate",
+    "ordered",
+    "completed",
     "quantity",
-    "product",
-    "printType",
     "materialId",
-    "color",
     "printTime",
     "weight",
     "totalPrice",
     "suggestedPrice",
   ],
-  "print-materials": ["type", "subType", "stock", "color", "unitPrice"],
-  projects: ["name", "client"],
-  "time-logs": [
-    "projectId",
-    "startTime",
-    "endTime",
-    "serviceType",
-    "category",
-    "hourlyRate",
-    "totalPrice",
-  ],
-  "service-prices": [
-    "category",
+  "print-material": ["type", "subType", "stock", "color", "unitPrice"],
+  project: ["name", "clientId", "priceId"],
+  "time-log": ["projectId", "startTime", "endTime"],
+  "service-price": [
+    "categoryId",
     "service",
-    "estimatedMin",
-    "estimatedMax",
+    "standard",
     "standardMin",
     "standardMax",
+    "friends",
     "friendsMin",
     "friendsMax",
   ],
@@ -73,16 +62,23 @@ const fallbackKeys: Record<string, string[]> = {
  */
 const getInputType = (key: string, value?: any): string => {
   const lower = key.toLowerCase();
-  if (typeof value === "boolean") return "checkbox";
-  if (lower.includes("date") || lower.includes("time")) return "datetime-local";
+  if (
+    typeof value === "boolean" ||
+    lower.includes("ordered") ||
+    lower.includes("completed")
+  )
+    return "checkbox";
+  if (lower.includes("date")) return "datetime-local";
   if (lower.includes("email")) return "email";
   if (
     lower.includes("price") ||
+    lower.includes("amount") ||
     lower.includes("total") ||
     lower.includes("stock") ||
     lower.includes("quantity") ||
     lower.includes("weight") ||
-    lower.includes("rate")
+    lower.includes("rate") ||
+    lower.includes("printtime")
   ) {
     return "number";
   }
@@ -103,12 +99,18 @@ const formatDateTimeLocal = (val: any): string => {
 };
 
 export default function Dashboard() {
-  // Currently selected table.
+  // Currently selected table. (Use keys as in tableConfigs.)
   const [selectedTable, setSelectedTable] =
     useState<keyof typeof tableConfigs>("customers");
   // Data for the selected table.
-  const [data, setData] = useState<Array<Record<string, any>>>([]);
+  let [data, setData] = useState<Array<Record<string, any>>>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  // Remove created at and updated at fields from the data.
+  data = data.map((record) => {
+    const { createdAt, updatedAt, ...rest } = record;
+    return rest;
+  });
 
   // State for creating a new record.
   const [newRecord, setNewRecord] = useState<Record<string, any>>({});
@@ -119,6 +121,7 @@ export default function Dashboard() {
   // State for displaying a copy popup message.
   const [copyMessage, setCopyMessage] = useState<string>("");
 
+  // Get the configuration for the selected table.
   const config = tableConfigs[selectedTable];
 
   // Wrap fetchData in useCallback to avoid dependency warnings.
@@ -160,8 +163,7 @@ export default function Dashboard() {
   }, [newRecord, selectedTable]);
 
   // Determine keys for the create form.
-  // If data exists, use keys from the first row (excluding "id" and "createdAt").
-  // Otherwise, use fallbackKeys.
+  // We use fallbackKeys because new records may not exist yet.
   const createKeys = fallbackKeys[selectedTable] || [];
 
   // Copy cell value to clipboard and show a popup message.
@@ -190,7 +192,7 @@ export default function Dashboard() {
         body: JSON.stringify(newRecord),
       });
       if (res.ok) {
-        // Do not clear newRecord so that state persists if you want to create multiple records.
+        // Do not clear newRecord so state persists for multiple creations.
         fetchData();
       } else {
         alert("Error creating record");
@@ -256,7 +258,7 @@ export default function Dashboard() {
         overflow: "hidden",
       }}
     >
-      {/* Optional: Copy Popup */}
+      {/* Copy Popup */}
       {copyMessage && (
         <div
           style={{
@@ -313,7 +315,7 @@ export default function Dashboard() {
           minWidth: 0,
         }}
       >
-        <h1>{config.label} Dashboard</h1>
+        <h1>{tableConfigs[selectedTable].label} Dashboard</h1>
 
         {/* Create New Record Section */}
         <section style={{ marginBottom: "1rem" }}>
@@ -373,6 +375,7 @@ export default function Dashboard() {
                     ) : (
                       <input
                         type={inputType}
+                        name={key}
                         value={newRecord[key] || ""}
                         onChange={(e) =>
                           setNewRecord({
@@ -529,7 +532,7 @@ export default function Dashboard() {
                           record[key] !== null ? (
                           JSON.stringify(record[key])
                         ) : (
-                          record[key]
+                          String(record[key])
                         )}
                       </td>
                     );
