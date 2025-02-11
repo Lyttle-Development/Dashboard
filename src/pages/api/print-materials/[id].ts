@@ -17,10 +17,10 @@ export default async function handler(
       return res.status(200).json(printMaterial);
     }
     case "PUT": {
-      const { name, type, stock, color, unitPrice } = req.body;
+      const { type, subType, stock, color, unitPrice } = req.body;
       const updatedPrintMaterial = await prisma.printMaterial.update({
         where: { id: id as string },
-        data: { name, type, stock, color, unitPrice },
+        data: { type, subType, stock, color, unitPrice },
       });
       return res.status(200).json(updatedPrintMaterial);
     }
