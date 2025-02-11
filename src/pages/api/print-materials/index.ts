@@ -13,9 +13,9 @@ export default async function handler(
       return res.status(200).json(printMaterials);
     }
     case "POST": {
-      const { name, type, stock, color, unitPrice } = req.body;
+      const { type, subType, stock, color, unitPrice } = req.body;
       const newPrintMaterial = await prisma.printMaterial.create({
-        data: { name, type, stock, color, unitPrice },
+        data: { type, subType, stock, color, unitPrice },
       });
       return res.status(201).json(newPrintMaterial);
     }

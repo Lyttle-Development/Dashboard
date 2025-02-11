@@ -4,30 +4,6 @@ export enum PrintType {
   Resin = "Resin",
 }
 
-export enum ServiceCategory {
-  PROJECT_MANAGEMENT = "PROJECT_MANAGEMENT",
-  DESIGN = "DESIGN",
-  DEVELOPMENT = "DEVELOPMENT",
-  PRINTING = "PRINTING",
-  HOSTING = "HOSTING",
-}
-
-export enum ServiceType {
-  MEETINGS_CALLS = "MEETINGS_CALLS",
-  EMAIL_COMMUNICATION = "EMAIL_COMMUNICATION",
-  TRAINING_WORKSHOPS = "TRAINING_WORKSHOPS",
-  STRATEGY_PLANNING = "STRATEGY_PLANNING",
-  TECHNICAL_DOCS = "TECHNICAL_DOCS",
-  LOGO_DESIGN = "LOGO_DESIGN",
-  WEBSITE_DESIGN = "WEBSITE_DESIGN",
-  CUSTOM_DEV = "CUSTOM_DEV",
-  WEB_SHOP = "WEB_SHOP",
-  IT_APP = "IT_APP",
-  MODEL_3D = "MODEL_3D",
-  PRINT_3D = "PRINT_3D",
-  HOSTING = "HOSTING",
-}
-
 export interface Customer {
   id: string;
   name: string;
@@ -115,8 +91,8 @@ export interface PrintJob {
 
 export interface PrintMaterial {
   id: string;
-  name: string;
   type: string;
+  subType: string;
   stock: number;
   color: string;
   unitPrice: number;

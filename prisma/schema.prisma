@@ -100,8 +100,8 @@ model PrintJob {
 
 model PrintMaterial {
   id        String @id @default(uuid())
-  name      String @unique
   type      String // FDM, SLA, etc.
+  subType   String // PLA, ABS, RESIN, etc.
   stock     Float // Available material in grams
   color     String
   unitPrice Float // Price per gram

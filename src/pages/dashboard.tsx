@@ -45,7 +45,7 @@ const fallbackKeys: Record<string, string[]> = {
     "totalPrice",
     "suggestedPrice",
   ],
-  "print-materials": ["name", "type", "stock", "color", "unitPrice"],
+  "print-materials": ["type", "subType", "stock", "color", "unitPrice"],
   projects: ["name", "client"],
   "time-logs": [
     "projectId",
@@ -162,12 +162,7 @@ export default function Dashboard() {
   // Determine keys for the create form.
   // If data exists, use keys from the first row (excluding "id" and "createdAt").
   // Otherwise, use fallbackKeys.
-  const createKeys =
-    data.length > 0
-      ? Object.keys(data[0]).filter(
-          (key) => key !== "id" && key !== "createdAt",
-        )
-      : fallbackKeys[selectedTable] || [];
+  const createKeys = fallbackKeys[selectedTable] || [];
 
   // Copy cell value to clipboard and show a popup message.
   const handleCopy = (value: any) => {
