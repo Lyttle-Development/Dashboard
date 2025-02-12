@@ -1,0 +1,114 @@
+/* v1.0.2
+Lyttle Defaults ~ Recommended to use with Lyttle Reset:
+https://github.com/Stualyttle/LyttleTools/blob/main/CSS/reset.css
+*/
+
+@use "variables" as v;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* word-wrap: break-word; */
+}
+
+
+@font-face {
+  font-family: 'Varela Round';
+  src: url('/fonts/Varela Round Regular.woff2') format('woff2'),
+  url('/fonts/Varela Round Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: normal;
+  unicode-range: U+0020-2044;
+}
+
+body {
+  line-height: 1;
+  font-family: 'Varela Round', Helvetica, Arial, sans-serif;
+  //background-color: v.$color-background;
+  //color: v.$color-text;
+  letter-spacing: .04rem;
+  overflow-y: scroll;
+}
+
+h1 {
+  font-size: 3.052rem
+}
+
+h2 {
+  font-size: 2.441rem
+}
+
+h3 {
+  font-size: 1.953rem
+}
+
+h4 {
+  font-size: 1.563rem
+}
+
+h5 {
+  font-size: 1.563rem
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+a, button {
+  cursor: pointer;
+}
+
+.mobile {
+  h1 {
+    font-size: 2rem
+  }
+
+  h2 {
+    font-size: 1.563rem
+  }
+
+  h3 {
+    font-size: 1.25rem
+  }
+
+  h4 {
+    font-size: 1.125rem
+  }
+
+  h5 {
+    font-size: 1rem
+  }
+
+  p {
+    font-size: .875rem;
+  }
+}
+
+
+/* width */
+::-webkit-scrollbar {
+  width: .5rem;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: v.$scrollbar-background;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: v.$scrollbar-background-light;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: v.$scrollbar-background-dark;
+}
+
+input:focus,
+textarea:focus {
+  outline: v.$color-primary solid .2rem;
+}

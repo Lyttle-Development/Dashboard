@@ -1,0 +1,12 @@
+@use "./variables" as v;
+
+.default-layout {
+  position: relative;
+}
+
+.default-layout > section {
+  margin-left: v.$main-nav-width;
+  transition: margin-left 0.8s ease-in-out;
+  min-height: 100vh;
+  position: relative;
+}

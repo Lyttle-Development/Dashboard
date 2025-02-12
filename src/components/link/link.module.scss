@@ -1,0 +1,21 @@
+@use '../../styles/variables.scss' as v;
+
+.main-menu-item,
+.main-menu__footer-item {
+  a {
+    display: block;
+    padding: 1.3rem 2rem;
+    letter-spacing: .04rem;
+    transition: background-color 0.2s ease-in-out, border-right 0.2s ease-in-out;
+    border-right: 0 solid transparent;
+  }
+}
+
+.main-menu-item:not(.main-menu-item--active) a:hover {
+  background-color: transparentize(v.$color-background, 0.5);
+}
+
+.main-menu-item--active a {
+  background-color: transparentize(v.$color-primary, 0.9);
+  border-right: 0.4rem solid v.$color-primary;
+}

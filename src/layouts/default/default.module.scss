@@ -1,0 +1,19 @@
+.animate {
+  animation: animate 0.5s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes animate {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main {
+  padding-bottom: 3rem;
+}

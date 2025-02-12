@@ -1,0 +1,8 @@
+ul.list {
+  list-style: disc inside;
+}
+
+ol.list {
+  list-style: ol-counter inside;
+  counter-increment: ol-counter;
+}

@@ -1,0 +1,26 @@
+@use '../../styles/variables.scss' as v;
+
+.main-menu-item {
+  display: block;
+  padding: 1.3rem 2rem;
+  width: 100%;
+  letter-spacing: .04rem;
+  transition: background-color 0.2s ease-in-out, border-right 0.2s ease-in-out;
+  border-right: 0 solid transparent;
+}
+
+.main-menu-item:not(.main-menu-item--active):hover {
+  background-color: v.$background-light-500;
+}
+
+.main-menu-item--active {
+  background-color: transparentize(v.$color-primary, 0.9);
+  border-right: 0.4rem solid v.$color-primary;
+}
+
+.lock svg {
+  width: .7rem;
+  margin-left: .5rem;
+  margin-bottom: -.05rem;
+  overflow: visible;
+}

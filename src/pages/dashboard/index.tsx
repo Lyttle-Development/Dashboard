@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Layout } from "@/layouts";
 
 // Mapping of tables with their labels and API endpoints.
 const tableConfigs: {
@@ -39,8 +40,6 @@ const fallbackKeys: Record<string, string[]> = {
     "materialId",
     "printTime",
     "weight",
-    "totalPrice",
-    "suggestedPrice",
   ],
   "print-material": ["type", "subType", "stock", "color", "unitPrice"],
   project: ["name", "clientId", "priceId"],
@@ -98,7 +97,7 @@ const formatDateTimeLocal = (val: any): string => {
   )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 };
 
-export default function Dashboard() {
+export function Page() {
   // Currently selected table. (Use keys as in tableConfigs.)
   const [selectedTable, setSelectedTable] =
     useState<keyof typeof tableConfigs>("customers");
@@ -575,3 +574,7 @@ export default function Dashboard() {
     </div>
   );
 }
+
+Page.getLayout = Layout.getDefault;
+
+export default Page;

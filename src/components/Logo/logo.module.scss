@@ -1,0 +1,11 @@
+@use '../../styles/variables.scss' as v;
+
+.logo {
+  color: v.$color-primary;
+  font-size: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+  padding: 1rem 0;
+  text-align: center;
+}
