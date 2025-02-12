@@ -128,7 +128,7 @@ export function Page() {
     setLoading(true);
     try {
       const res = await fetch(config.endpoint);
-      if (!res.ok) throw new Error("Failed to fetch data");
+      if (!res.ok) console.log("Failed to fetch data");
       const json = await res.json();
       setData(json || []);
     } catch (err) {

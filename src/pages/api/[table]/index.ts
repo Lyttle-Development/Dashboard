@@ -33,7 +33,11 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const result = await prisma[tableKey].findMany();
+      const result = req.query?.where
+        ? await prisma[tableKey].findMany({
+            where: JSON.parse(req.query.where as string),
+          })
+        : await prisma[tableKey].findMany();
 
       return res.status(200).json(result);
     } catch (error) {
@@ -51,7 +55,7 @@ export default async function handler(
         payload[key] === undefined ||
         payload[key] === ""
       ) {
-        delete payload[key];
+        payload[key] = null;
       }
     });
 

@@ -56,9 +56,14 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const result = await prisma[tableKey].findUnique({
-        where: { id },
-      });
+      const result = req.query?.where
+        ? await prisma[tableKey].findMany({
+            where: { ...JSON.parse(req.query.where as string), id },
+          })
+        : await prisma[tableKey].findUnique({
+            where: { id },
+          });
+
       if (!result)
         return res.status(404).json({ error: `${tableKey} not found` });
       return res.status(200).json(result);
@@ -77,7 +82,7 @@ export default async function handler(
         payload[key] === null ||
         payload[key] === undefined
       ) {
-        delete payload[key];
+        payload[key] = null;
       }
     });
 
