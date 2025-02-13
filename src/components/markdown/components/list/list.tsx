@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './list.module.scss';
+import React, { JSX } from "react";
+import styles from "./list.module.scss";
 
 export interface ListProps {
   children: React.ReactNode;

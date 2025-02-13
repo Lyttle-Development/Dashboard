@@ -2,18 +2,16 @@ import { Layout } from "@/layouts";
 
 import styles from "./index.module.scss";
 import { useState } from "react";
-import { ProjectsSelect } from "@/pages/dashboard/time/components/projects-select";
-import { PrintJobsSelect } from "@/pages/dashboard/time/components/print-jobs-select";
-import { TopicSelect } from "@/pages/dashboard/time/components/topic-select";
+import { Link } from "@/components/link";
 
 export function Page() {
   const [topic, setTopic] = useState<string | null>(null);
 
   return (
     <div className={styles.main}>
-      {!topic && <TopicSelect setTopic={setTopic} />}
-      {topic === "project" && <ProjectsSelect />}
-      {topic === "print-job" && <PrintJobsSelect />}
+      <h2>Select a time type.</h2>
+      <Link href="/dashboard/time/print-job">Print Jobs</Link>
+      <Link href="/dashboard/time/project">Projects</Link>
     </div>
   );
 }

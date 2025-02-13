@@ -59,3 +59,5 @@ const mapPrintJobToOptions = (printJobs: any[]) => {
     } as SelectItemProps;
   });
 };
+
+export default PrintJobsSelect;
