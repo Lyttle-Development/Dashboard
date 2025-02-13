@@ -8,7 +8,6 @@ async function fetchApi(
   setLoading: (loading: boolean) => void,
   body?: object,
 ) {
-  console.log(action, url, body);
   setLoading(true);
   try {
     const res = await fetch(url, {
@@ -22,7 +21,6 @@ async function fetchApi(
     const resJson = await res.json();
     setResult(resJson || null);
   } catch (err) {
-    console.log("Error fetching data", err);
     setResult(null);
   }
   setLoading(false);
@@ -91,9 +89,6 @@ export function ProjectsSelect() {
   useEffect(() => {
     return reset;
   }, []);
-
-  console.log("selectedProject", selectedProject);
-  console.log("timeLog", timeLog);
 
   if (loading) {
     return <div>Loading...</div>;
