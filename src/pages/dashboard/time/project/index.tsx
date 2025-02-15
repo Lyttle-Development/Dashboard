@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Select, SelectItemProps } from "../../../../components/Select";
 import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
+import { Container } from "@/components/Container";
 
 async function fetchApi(
   action: string,
@@ -72,7 +73,7 @@ export function Page() {
   if (!projects.length) return <div>No projects found</div>;
 
   return (
-    <div className={styles.container}>
+    <Container>
       <h2 className={styles.heading}>Select a Project</h2>
       <Select
         label="Select Project"
@@ -81,7 +82,7 @@ export function Page() {
           router.push(`/dashboard/time/project/${projectId}`);
         }}
       />
-    </div>
+    </Container>
   );
 }
 
