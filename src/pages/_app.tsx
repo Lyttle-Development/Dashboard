@@ -5,7 +5,8 @@ import "./../styles/reset.scss";
 import "./../styles/defaults.scss";
 import "@radix-ui/themes/styles.css";
 import "./../styles/global.scss";
-import { AppProvider } from "@/contexts/App.context";
+import { SessionProvider } from "next-auth/react";
+import { AppProvider } from "@/contexts/App.provider";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -20,5 +21,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
 
-  return <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>;
+  return (
+    <SessionProvider>
+      <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
+    </SessionProvider>
+  );
 }
