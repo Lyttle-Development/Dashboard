@@ -13,22 +13,24 @@ model Customer {
   email String  @unique
   phone String?
 
-  // Relations
   addresses Address[]
   invoices  Invoice[]
 
-  updatedAt DateTime  @default(now()) @updatedAt
-  createdAt DateTime  @default(now())
-  Project   Project[]
+  projects  Project[]
+  printJobs PrintJob[]
+
+  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
 }
 
 model Address {
-  id         String   @id @default(uuid())
-  street     String
-  city       String
-  state      String
-  country    String
-  zipCode    String
+  id      String @id @default(uuid())
+  street  String
+  city    String
+  state   String
+  country String
+  zipCode String
+
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
@@ -37,8 +39,9 @@ model Address {
 }
 
 model Category {
-  id     String         @id @default(uuid())
-  name   String         @unique
+  id   String @id @default(uuid())
+  name String @unique
+
   prices ServicePrice[]
 
   updatedAt DateTime @default(now()) @updatedAt
@@ -46,23 +49,27 @@ model Category {
 }
 
 model Invoice {
-  id          String        @id @default(uuid())
-  invoiceDate DateTime      @default(now())
+  id          String   @id @default(uuid())
+  invoiceDate DateTime @default(now())
   amount      Float
-  statusId    String
-  status      InvoiceStatus @relation(fields: [statusId], references: [id])
-  customerId  String
-  customer    Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  printJobs   PrintJob[]
-  projects    Project[]
+
+  statusId String
+  status   InvoiceStatus @relation(fields: [statusId], references: [id])
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  projects  Project[]
+  printJobs PrintJob[]
 
   updatedAt DateTime @default(now()) @updatedAt
   createdAt DateTime @default(now())
 }
 
 model InvoiceStatus {
-  id       String    @id @default(uuid())
-  status   String    @unique
+  id     String @id @default(uuid())
+  status String @unique
+
   invoices Invoice[]
 
   updatedAt DateTime @default(now()) @updatedAt
@@ -70,22 +77,28 @@ model InvoiceStatus {
 }
 
 model PrintJob {
-  id            String        @id @default(uuid())
+  id            String    @id @default(uuid())
   name          String
   scheduledDate DateTime?
-  ordered       Boolean?      @default(false)
-  completed     Boolean?      @default(false)
+  ordered       Boolean?  @default(false)
+  completed     Boolean?  @default(false)
   quantity      Int?
-  material      PrintMaterial @relation(fields: [materialId], references: [id])
-  materialId    String
   printTime     Int? // Store in minutes
   weight        Float? // Store in grams
 
-  Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
-  invoiceId String?
+  materialId String
+  material   PrintMaterial @relation(fields: [materialId], references: [id])
 
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
+  invoiceId String?
+  Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+
+  updatedAt      DateTime      @default(now()) @updatedAt
+  createdAt      DateTime      @default(now())
+  Customer       Customer?     @relation(fields: [customerId], references: [id])
+  customerId     String?
+  TimeLog        TimeLog[]
+  ServicePrice   ServicePrice? @relation(fields: [servicePriceId], references: [id])
+  servicePriceId String?
 }
 
 model PrintMaterial {
@@ -103,35 +116,42 @@ model PrintMaterial {
 }
 
 model Project {
-  id       String        @id @default(uuid())
-  name     String
+  id   String @id @default(uuid())
+  name String
+
   clientId String?
-  client   Customer?     @relation(fields: [clientId], references: [id])
-  priceId  String?
-  price    ServicePrice? @relation(fields: [priceId], references: [id])
+  client   Customer? @relation(fields: [clientId], references: [id])
+
+  priceId String?
+  price   ServicePrice? @relation(fields: [priceId], references: [id])
+
+  Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+  invoiceId String?
+
   timeLogs TimeLog[]
 
   updatedAt DateTime @default(now()) @updatedAt
   createdAt DateTime @default(now())
-  Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
-  invoiceId String?
 }
 
 model TimeLog {
   id        String    @id @default(uuid())
-  projectId String?
-  project   Project?  @relation(fields: [projectId], references: [id])
   startTime DateTime?
   endTime   DateTime?
+  user      String?
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+
+  printJobId String?
+  printJob   PrintJob? @relation(fields: [printJobId], references: [id])
 
   updatedAt DateTime @default(now()) @updatedAt
   createdAt DateTime @default(now())
 }
 
 model ServicePrice {
-  id          String    @id @default(uuid())
-  categoryId  String?
-  category    Category? @relation(fields: [categoryId], references: [id])
+  id          String  @id @default(uuid())
   service     String?
   standard    Float? // Min standard hourly rate
   standardMin Float? // Min standard hourly rate
@@ -140,7 +160,12 @@ model ServicePrice {
   friendsMin  Float? // Min friends hourly rate
   friendsMax  Float? // Max friends hourly rate
 
-  updatedAt DateTime  @default(now()) @updatedAt
-  createdAt DateTime  @default(now())
-  Project   Project[]
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  projects  Project[]
+  printJobs PrintJob[]
+
+  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
 }

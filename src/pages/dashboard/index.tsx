@@ -43,7 +43,7 @@ const fallbackKeys: Record<string, string[]> = {
   ],
   "print-material": ["type", "subType", "stock", "color", "unitPrice"],
   project: ["name", "clientId", "priceId"],
-  "time-log": ["projectId", "startTime", "endTime"],
+  "time-log": ["projectId", "startTime", "endTime", "user"],
   "service-price": [
     "categoryId",
     "service",
@@ -70,7 +70,6 @@ const getInputType = (key: string, value?: any): string => {
   if (lower.includes("date")) return "datetime-local";
   if (lower.includes("email")) return "email";
   if (
-    lower.includes("price") ||
     lower.includes("amount") ||
     lower.includes("total") ||
     lower.includes("stock") ||

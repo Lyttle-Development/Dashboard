@@ -4,6 +4,7 @@ import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
+import { useApp } from "@/contexts/App.context";
 
 async function fetchApi(
   action: string,
@@ -32,6 +33,7 @@ async function fetchApi(
 
 export function Page() {
   const router = useRouter();
+  const app = useApp();
   const { id } = router.query; // project id from the URL
 
   const [project, setProject] = useState<any>(null);
@@ -58,13 +60,13 @@ export function Page() {
   const fetchEmptyTimeLog = useCallback(async (projectId: string) => {
     await fetchApi(
       "GET",
-      `/api/time-log?where={"projectId": "${projectId}", "endTime":null}`,
+      `/api/time-log?where={"projectId": "${projectId}", "user": "${app.userId}", "endTime":null}`,
       (res) => (res ? setTimeLog(res[0]) : setTimeLog(null)),
       setLoading,
     );
   }, []);
 
-  // Helper to refetch both project and time log data.
+  // Helper to prefetch both project and time log data.
   const refreshData = useCallback(
     async (projectId: string) => {
       await fetchProject(projectId);
@@ -77,6 +79,7 @@ export function Page() {
   const startTimeLog = useCallback(
     async (projectId: string) => {
       await fetchApi("POST", `/api/time-log`, setTimeLog, setLoading, {
+        user: app.userId,
         projectId: projectId,
         startTime: new Date().toISOString(),
       });
