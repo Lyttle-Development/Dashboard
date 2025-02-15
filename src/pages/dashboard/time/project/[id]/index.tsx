@@ -160,7 +160,7 @@ export function Page() {
       void bell.play();
     };
 
-    playBell();
+    timeLog && playBell();
   }, [timer]);
 
   if (loading) return <Loader />;
