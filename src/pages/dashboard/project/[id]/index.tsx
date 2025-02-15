@@ -66,6 +66,10 @@ function convertDurationToHours(duration: number) {
   return `${hours}:${minutes.toString().padStart(2, "0")}`;
 }
 
+function getPrice(total: number, price: number) {
+  return `€${Math.round(total * price * 100) / 100}`;
+}
+
 export function Page() {
   const router = useRouter();
 
@@ -93,10 +97,8 @@ export function Page() {
       const priceCategoryRes = await fetch(
         `/api/category/${data.price.categoryId}`,
       );
-      const priceCategory = (await priceCategoryRes?.json()) || {};
-      console.log("priceCategory", priceCategory);
+      data.price.category = (await priceCategoryRes?.json()) || {};
 
-      data.price.category = priceCategory;
       setProject(data);
     } catch (err) {
       setProject(null);
@@ -116,6 +118,7 @@ export function Page() {
 
   const timeLogsGrouped = getTotalTimePerDayAndPerUser(project.timeLogs);
   const totalDuration = getTotalDuration(project.timeLogs);
+  const totalDurationHours = totalDuration / 3600000;
   const activeTimeLogs = filterTimeLogs(project.timeLogs, true);
 
   return (
@@ -124,7 +127,6 @@ export function Page() {
       <h6>Customer: {project.client.name}</h6>
       <h6>Category: {project.price.category.name}</h6>
       <h6>Service: {project.price.service}</h6>
-
       <h2>Time Logs</h2>
       <h6>Total Time: {convertDurationToHours(totalDuration)}</h6>
       <h6>Active Time Logs: {activeTimeLogs.length}</h6>
@@ -145,6 +147,21 @@ export function Page() {
           </li>
         ))}
       </ul>
+      <h2>Calculated Price</h2>
+      <h6>Standard: {getPrice(totalDurationHours, project.price.standard)}</h6>
+      <h6>
+        Standard Min: {getPrice(totalDurationHours, project.price.standardMin)}
+      </h6>
+      <h6>
+        Standard Max: {getPrice(totalDurationHours, project.price.standardMax)}
+      </h6>
+      <h6>Friend: {getPrice(totalDurationHours, project.price.friends)}</h6>
+      <h6>
+        Friend Min: {getPrice(totalDurationHours, project.price.friendsMin)}
+      </h6>
+      <h6>
+        Friend Max: {getPrice(totalDurationHours, project.price.friendsMax)}
+      </h6>
     </Container>
   );
 }
