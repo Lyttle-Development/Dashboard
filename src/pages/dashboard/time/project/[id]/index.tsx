@@ -139,6 +139,17 @@ export function Page() {
 
   useEffect(() => {
     const playBell = () => {
+      // If at :15, :30, :45, or :00, play the bell sound.
+      if (
+        !(
+          timer.endsWith(":00") ||
+          timer.endsWith(":15") ||
+          timer.endsWith(":30") ||
+          timer.endsWith(":45")
+        )
+      )
+        return;
+
       // Check if its spamming... (10 seconds)
       const now = Date.now();
       if (lastTimePlayed && now - lastTimePlayed < 10 * 1000) return;
