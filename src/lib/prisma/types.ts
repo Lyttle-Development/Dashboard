@@ -136,6 +136,7 @@ export interface TimeLog {
   id: string;
   projectId: string;
   project: Project;
+  user: string;
   startTime: Date;
   endTime?: Date;
   serviceType: ServiceType;

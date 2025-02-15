@@ -43,8 +43,11 @@ export default async function handler(
       const result = req.query?.where
         ? await prisma[tableKey].findMany({
             where: JSON.parse(req.query.where as string),
+            include: JSON.parse((req.query.relations as string) || "{}"),
           })
-        : await prisma[tableKey].findMany();
+        : await prisma[tableKey].findMany({
+            include: JSON.parse((req.query.relations as string) || "{}"),
+          });
 
       return res.status(200).json(result);
     } catch (error) {

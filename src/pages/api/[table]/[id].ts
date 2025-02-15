@@ -66,9 +66,11 @@ export default async function handler(
       const result = req.query?.where
         ? await prisma[tableKey].findMany({
             where: { ...JSON.parse(req.query.where as string), id },
+            include: JSON.parse((req.query.relations as string) || "{}"),
           })
         : await prisma[tableKey].findUnique({
             where: { id },
+            include: JSON.parse((req.query.relations as string) || "{}"),
           });
 
       if (!result)

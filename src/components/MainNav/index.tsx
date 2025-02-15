@@ -11,6 +11,7 @@ export function MainNav({}: MainNavProps) {
       <nav>
         <ul>
           <MainNavItem href={"/dashboard/time"}>Time</MainNavItem>
+          <MainNavItem href={"/dashboard/project"}>Project</MainNavItem>
         </ul>
       </nav>
       <ul className={styles.sub_menu}>

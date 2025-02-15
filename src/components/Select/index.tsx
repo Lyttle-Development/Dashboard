@@ -23,7 +23,8 @@ export interface SelectGroupProps {
 
 export interface SelectItemProps {
   value: string;
-  children: string | React.ReactNode;
+  children?: string | React.ReactNode;
+  label?: string | React.ReactNode;
   className?: string;
 }
 
@@ -44,7 +45,7 @@ export function Select({ label, options, ...props }: SelectProps) {
           <RadixSelect.Viewport className={styles.Viewport}>
             {options.map((option, index) => {
               const addSeparator = index > 0 && index < options.length;
-              if ("label" in option) {
+              if ("label" in option && "options" in option) {
                 return (
                   <>
                     {addSeparator && (
@@ -64,7 +65,7 @@ export function Select({ label, options, ...props }: SelectProps) {
                       <RadixSelect.Separator className={styles.Separator} />
                     )}
                     <SelectItem key={index} value={option.value}>
-                      {option.children}
+                      {option.children || option.label}
                     </SelectItem>
                   </>
                 );
@@ -83,7 +84,7 @@ function SelectGroup({ label, options }: SelectGroupProps) {
       <RadixSelect.Label className="SelectLabel">{label}</RadixSelect.Label>
       {options.map((option, index) => (
         <SelectItem key={index} value={option.value}>
-          {option.children}
+          {option.children || option.label}
         </SelectItem>
       ))}
     </RadixSelect.Group>
@@ -92,7 +93,7 @@ function SelectGroup({ label, options }: SelectGroupProps) {
 
 const SelectItem = React.forwardRef(
   (
-    { children, className, ...props }: SelectItemProps,
+    { children, label, className, ...props }: SelectItemProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
   ) => {
     return (
@@ -101,7 +102,7 @@ const SelectItem = React.forwardRef(
         {...props}
         ref={forwardedRef}
       >
-        <RadixSelect.ItemText>{children}</RadixSelect.ItemText>
+        <RadixSelect.ItemText>{children || label}</RadixSelect.ItemText>
         <RadixSelect.ItemIndicator className={styles.ItemIndicator}>
           <CheckIcon />
         </RadixSelect.ItemIndicator>
