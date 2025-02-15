@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
+import { Loader } from "@/components/Loader";
+import { Container } from "@/components/Container";
 
 async function fetchApi(
   action: string,
@@ -134,14 +136,14 @@ export function Page() {
     }
   }, [timeLog]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loader />;
   if (!project) return <div>Project not found</div>;
 
   return (
-    <div className={styles.container}>
+    <Container>
       <h2 className={styles.projectTitle}>Project: {project.name}</h2>
       {timeLog ? (
-        <div className={styles.activeLog}>
+        <>
           <h3>Active Time Log</h3>
           <p className={styles.timer}>Elapsed Time: {timer}</p>
           <button
@@ -150,9 +152,9 @@ export function Page() {
           >
             End Time Log
           </button>
-        </div>
+        </>
       ) : (
-        <div className={styles.noLog}>
+        <>
           <h3>No Active Time Log</h3>
           <button
             className={`${styles.button} ${styles.start}`}
@@ -160,9 +162,9 @@ export function Page() {
           >
             Start Time Log
           </button>
-        </div>
+        </>
       )}
-    </div>
+    </Container>
   );
 }
 

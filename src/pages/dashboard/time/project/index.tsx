@@ -4,6 +4,7 @@ import { Select, SelectItemProps } from "../../../../components/Select";
 import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 import { Container } from "@/components/Container";
+import { Loader } from "@/components/Loader";
 
 async function fetchApi(
   action: string,
@@ -37,16 +38,9 @@ function mapProjectsToOptions(projects: any[]): SelectItemProps[] {
   });
 
   return projects.map((project) => {
-    const createDate = new Date(project.createdAt);
-    const updateDate = new Date(project.updatedAt);
-    // Format like "2021-10-01:2021-10-02"
-    const formattedCreateDate = createDate.toISOString().split("T")[0];
-    const formattedUpdateDate = updateDate.toISOString().split("T")[0];
-    const formattedDate = `${formattedCreateDate}:${formattedUpdateDate}`;
-
     return {
       value: project.id,
-      children: `[${formattedDate}]: ${project.name}`,
+      children: project.name,
     } as SelectItemProps;
   });
 }
@@ -69,7 +63,7 @@ export function Page() {
     void fetchProjects();
   }, [fetchProjects]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loader />;
   if (!projects.length) return <div>No projects found</div>;
 
   return (

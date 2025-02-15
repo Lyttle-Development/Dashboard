@@ -80,8 +80,8 @@
   height: 32px;
   padding: 0 40px 0 12px;
   position: relative;
-  user-select: none;
   transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
 
   &:hover {
     background-color: var(--violet-8);

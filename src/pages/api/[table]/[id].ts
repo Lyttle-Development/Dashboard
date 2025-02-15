@@ -1,6 +1,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next';
 import prisma from '../../../lib/prisma';
 import {requireAuth} from '@/lib/auth';
+import {debugBuffer} from '@/lib/debug';
 
 /**
  * Helper: convert hyphenated strings to camelCase.
@@ -32,6 +33,8 @@ export default async function handler(
 ) {
   const session = await requireAuth(req, res);
   if (!session) return; // Stop execution if user is not authenticated
+
+  await debugBuffer();
 
   const { table, id } = req.query;
 
