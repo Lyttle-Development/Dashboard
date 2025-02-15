@@ -38,6 +38,7 @@ export function Page() {
   const [loading, setLoading] = useState(false);
   const [timeLog, setTimeLog] = useState<any>(null);
   const [timer, setTimer] = useState("00:00");
+  const [lastTimePlayed, setLastTimePlayed] = useState<number>(0);
 
   // Fetch the project details by id.
   const fetchProject = useCallback(async (projectId: string) => {
@@ -135,6 +136,21 @@ export function Page() {
       return () => clearInterval(interval);
     }
   }, [timeLog]);
+
+  useEffect(() => {
+    const playBell = () => {
+      // Check if its spamming... (10 seconds)
+      const now = Date.now();
+      if (lastTimePlayed && now - lastTimePlayed < 10 * 1000) return;
+      setLastTimePlayed(now);
+
+      // Play the bell sound.
+      const bell = new Audio("/bell.mp3");
+      void bell.play();
+    };
+
+    playBell();
+  }, [timer]);
 
   if (loading) return <Loader />;
   if (!project) return <div>Project not found</div>;
