@@ -1,5 +1,5 @@
-import { Link } from "@/components/link";
-import styles from "./logo.module.scss";
+import { Link } from "../Link";
+import styles from "./index.module.scss";
 
 export function Logo() {
   return (

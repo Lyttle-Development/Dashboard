@@ -1,6 +1,6 @@
 import { Layout } from "..";
 import styles from "./default.module.scss";
-import { MainNav } from "@/components/main-nav";
+import { MainNav } from "@/components/MainNav";
 
 export interface DefaultProps {
   children: React.ReactNode;

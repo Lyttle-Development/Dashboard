@@ -1,5 +1,5 @@
-import styles from "./main-nav.module.scss";
-import { MainNavItem } from "@/components/main-nav-item";
+import styles from "./index.module.scss";
+import { MainNavItem } from "./components/MainNavItem";
 import { Logo } from "@/components/Logo";
 
 export interface MainNavProps {}

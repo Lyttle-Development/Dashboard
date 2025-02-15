@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { Select, SelectItemProps } from "@/components/select";
+import { Select, SelectItemProps } from "../../../../components/Select";
 import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 

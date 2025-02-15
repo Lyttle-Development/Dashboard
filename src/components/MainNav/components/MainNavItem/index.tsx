@@ -1,5 +1,5 @@
-import styles from "./main-nav-item.module.scss";
-import { Link } from "@/components/link";
+import styles from "./index.module.scss";
+import { Link } from "../../../Link";
 
 export interface MainNavItemProps {
   href?: string;

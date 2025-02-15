@@ -1,5 +1,5 @@
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 
 export interface LinkProps {
   href?: string;
@@ -20,7 +20,7 @@ export function Link({
 }: LinkProps) {
   route = route ?? href;
   const router = useRouter();
-  const active = router.pathname == route ? classNameActive : '';
+  const active = router.pathname == route ? classNameActive : "";
 
   if (!href && onClick) {
     return (

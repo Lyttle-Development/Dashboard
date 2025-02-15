@@ -2,7 +2,7 @@ import { Layout } from "@/layouts";
 
 import styles from "./index.module.scss";
 import { useState } from "react";
-import { Link } from "@/components/link";
+import { Link } from "@/components/Link";
 
 export function Page() {
   const [topic, setTopic] = useState<string | null>(null);
