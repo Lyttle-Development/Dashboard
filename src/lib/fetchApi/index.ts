@@ -20,7 +20,7 @@ export async function fetchApi<T>({
   id = "",
   relations,
   where,
-}: FetchOptions): Promise<T> {
+}: FetchOptions): Promise<T | null> {
   try {
     // Create and set headers
     const headers = new Headers();

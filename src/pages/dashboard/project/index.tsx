@@ -35,7 +35,7 @@ export function Page() {
       table: "project",
       where: { invoiceId: null },
     });
-    setProjects(projectsData);
+    setProjects(projectsData ?? []);
     setLoading(false);
   }, []);
 

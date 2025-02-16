@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $primary-color: #0070f3;
 $danger-color: #e00;
 $background: #f9f9f9;
@@ -48,7 +50,7 @@ $border-radius: 8px;
     color: white;
 
     &:hover {
-      background: darken($primary-color, 10%);
+      background: color.adjust($primary-color, $lightness: -10%);
     }
   }
 
@@ -57,7 +59,7 @@ $border-radius: 8px;
     color: white;
 
     &:hover {
-      background: darken($danger-color, 10%);
+      background: color.adjust($danger-color, $lightness: -10%);
     }
   }
 }

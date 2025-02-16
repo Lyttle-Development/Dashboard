@@ -1,35 +1,12 @@
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { Select, SelectItemProps } from "../../../../components/Select";
+import { Select, SelectItemProps } from "@/components/Select";
 import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 import { Container } from "@/components/Container";
 import { Loader } from "@/components/Loader";
-
-async function fetchApi(
-  action: string,
-  url: string,
-  setResult: (result: any) => void,
-  setLoading: (loading: boolean) => void,
-  body?: object,
-) {
-  setLoading(true);
-  try {
-    const res = await fetch(url, {
-      method: action,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: body ? JSON.stringify(body) : null,
-    });
-    if (!res.ok) throw new Error("Failed to fetch data");
-    const resJson = await res.json();
-    setResult(resJson || null);
-  } catch (err) {
-    setResult(null);
-  }
-  setLoading(false);
-}
+import { fetchApi } from "@/lib/fetchApi";
+import { Project } from "@/lib/prisma";
 
 function mapProjectsToOptions(projects: any[]): SelectItemProps[] {
   // Sort projects by creation date
@@ -47,16 +24,17 @@ function mapProjectsToOptions(projects: any[]): SelectItemProps[] {
 
 export function Page() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [projects, setProjects] = useState<Project[]>([]);
 
   const fetchProjects = useCallback(async () => {
-    await fetchApi(
-      "GET",
-      '/api/project?where={"invoiceId": null}',
-      setProjects,
-      setLoading,
-    );
+    setLoading(true);
+    const projectsData = await fetchApi<Project[]>({
+      table: "project",
+      where: { invoiceId: null },
+    });
+    setProjects(projectsData ?? []);
+    setLoading(false);
   }, []);
 
   useEffect(() => {

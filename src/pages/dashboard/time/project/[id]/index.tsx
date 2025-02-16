@@ -5,65 +5,40 @@ import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
 import { useApp } from "@/contexts/App.context";
-
-async function fetchApi(
-  action: string,
-  url: string,
-  setResult: (result: any) => void,
-  setLoading: (loading: boolean) => void,
-  body?: object,
-) {
-  setLoading(true);
-  try {
-    const res = await fetch(url, {
-      method: action,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: body ? JSON.stringify(body) : null,
-    });
-    if (!res.ok) throw new Error("Failed to fetch data");
-    const resJson = await res.json();
-    setResult(resJson || null);
-  } catch (err) {
-    setResult(null);
-  }
-  setLoading(false);
-}
+import { fetchApi } from "@/lib/fetchApi";
+import { Project, TimeLog } from "@/lib/prisma";
 
 export function Page() {
   const router = useRouter();
   const app = useApp();
   const { id } = router.query; // project id from the URL
 
-  const [project, setProject] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [timeLog, setTimeLog] = useState<any>(null);
-  const [timer, setTimer] = useState("00:00");
+  const [project, setProject] = useState<Project>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [timeLog, setTimeLog] = useState<TimeLog>(null);
+  const [timer, setTimer] = useState<string>("00:00");
   const [lastTimePlayed, setLastTimePlayed] = useState<number>(0);
 
   // Fetch the project details by id.
   const fetchProject = useCallback(async (projectId: string) => {
     setLoading(true);
-    try {
-      const res = await fetch(`/api/project/${projectId}`);
-      if (!res.ok) throw new Error("Failed to fetch project");
-      const data = await res.json();
-      setProject(data);
-    } catch (err) {
-      setProject(null);
-    }
+    const projectData = await fetchApi<Project>({
+      table: "project",
+      id: projectId,
+    });
+    setProject(projectData);
     setLoading(false);
   }, []);
 
   // Fetch any active time log (one with a null endTime)
   const fetchEmptyTimeLog = useCallback(async (projectId: string) => {
-    await fetchApi(
-      "GET",
-      `/api/time-log?where={"projectId": "${projectId}", "user": "${app.userId}", "endTime":null}`,
-      (res) => (res ? setTimeLog(res[0]) : setTimeLog(null)),
-      setLoading,
-    );
+    setLoading(true);
+    const timeLogData = await fetchApi<TimeLog>({
+      table: "time-log",
+      where: { projectId, user: app.userId, endTime: null },
+    });
+    setTimeLog(timeLogData);
+    setLoading(false);
   }, []);
 
   // Helper to prefetch both project and time log data.
@@ -78,11 +53,18 @@ export function Page() {
   // Start a new time log for the project.
   const startTimeLog = useCallback(
     async (projectId: string) => {
-      await fetchApi("POST", `/api/time-log`, setTimeLog, setLoading, {
-        user: app.userId,
-        projectId: projectId,
-        startTime: new Date().toISOString(),
+      setLoading(true);
+      const timeLogData = await fetchApi<TimeLog>({
+        method: "POST",
+        table: "time-log",
+        body: {
+          user: app.userId,
+          projectId: projectId,
+          startTime: new Date().toISOString(),
+        },
       });
+      setTimeLog(timeLogData);
+      setLoading(false);
       // After starting, refresh the project details and active time log.
       await refreshData(projectId);
     },
@@ -92,15 +74,14 @@ export function Page() {
   // End the active time log.
   const endTimeLog = useCallback(
     async (timeLogId: string) => {
-      await fetchApi(
-        "PUT",
-        `/api/time-log/${timeLogId}`,
-        setTimeLog,
-        setLoading,
-        {
+      await fetchApi<TimeLog>({
+        method: "PUT",
+        table: "time-log",
+        id: timeLogId,
+        body: {
           endTime: new Date().toISOString(),
         },
-      );
+      });
       if (id && typeof id === "string") {
         // After ending, refresh the project details and active time log.
         await refreshData(id);
