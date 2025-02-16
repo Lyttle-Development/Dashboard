@@ -20,7 +20,7 @@ export function Page() {
     const printJobData = await fetchApi<PrintJob>({
       table: "print-job",
       id: printJobId,
-      relations: { Customer: true, ServicePrice: true },
+      relations: { customer: true, price: true },
     });
 
     console.log(printJobData);
@@ -45,7 +45,7 @@ export function Page() {
       <article>
         <KeyValue label="Customer" value={printJob.customer?.name} />
         {/*<KeyValue label="Category" value={printJob.servicePrice.category.name} />*/}
-        <KeyValue label="Service" value={printJob.servicePrice?.service} />
+        <KeyValue label="Service" value={printJob.price?.service} />
       </article>
       {/*<h2>Calculated Price</h2>*/}
       {/*<article>*/}

@@ -89,7 +89,7 @@ export function Page() {
         method: "GET",
         relations: {
           timeLogs: true,
-          client: true,
+          customer: true,
           price: true,
         },
       });
@@ -130,7 +130,7 @@ export function Page() {
     <Container>
       <h2 className={styles.projectTitle}>Project: {project.name}</h2>
       <article>
-        <KeyValue label="Customer" value={project.client.name} />
+        <KeyValue label="Customer" value={project.customer.name} />
         <KeyValue label="Category" value={project.price.category.name} />
         <KeyValue label="Service" value={project.price.service} />
       </article>

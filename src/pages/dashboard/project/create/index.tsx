@@ -80,7 +80,7 @@ function Page() {
       method: "POST",
       body: {
         name,
-        clientId: customer.id,
+        customerId: customer.id,
         priceId: price.id,
       },
     });

@@ -86,19 +86,22 @@ model PrintJob {
   printTime     Int? // Store in minutes
   weight        Float? // Store in grams
 
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+
+  priceId String?
+  price   ServicePrice? @relation(fields: [priceId], references: [id])
+
   materialId String
   material   PrintMaterial @relation(fields: [materialId], references: [id])
 
   invoiceId String?
   Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
 
-  updatedAt      DateTime      @default(now()) @updatedAt
-  createdAt      DateTime      @default(now())
-  Customer       Customer?     @relation(fields: [customerId], references: [id])
-  customerId     String?
-  TimeLog        TimeLog[]
-  ServicePrice   ServicePrice? @relation(fields: [servicePriceId], references: [id])
-  servicePriceId String?
+  timeLog TimeLog[]
+
+  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
 }
 
 model PrintMaterial {
@@ -119,8 +122,8 @@ model Project {
   id   String @id @default(uuid())
   name String
 
-  clientId String?
-  client   Customer? @relation(fields: [clientId], references: [id])
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   priceId String?
   price   ServicePrice? @relation(fields: [priceId], references: [id])

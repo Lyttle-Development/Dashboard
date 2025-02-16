@@ -72,8 +72,8 @@ export interface PrintJob {
   customerId?: string;
   customer?: Customer;
   timeLogs: TimeLog[];
-  servicePriceId?: string;
-  servicePrice?: ServicePrice;
+  priceId?: string;
+  price?: ServicePrice;
 }
 
 export interface PrintMaterial {
@@ -91,8 +91,8 @@ export interface PrintMaterial {
 export interface Project {
   id: string;
   name: string;
-  clientId?: string;
-  client?: Customer;
+  customerId?: string;
+  customer?: Customer;
   priceId?: string;
   price?: ServicePrice;
   invoiceId?: string;
