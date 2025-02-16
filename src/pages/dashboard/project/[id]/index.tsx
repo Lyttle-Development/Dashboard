@@ -39,6 +39,7 @@ function getTotalTimePerDayAndPerUser(timeLogs: TimeLog[]) {
       new Date(timeLog.startTime).getTime();
     userTime.set(user, userTime.get(user) + duration);
   }
+
   return timePerDayAndPerUser;
 }
 
@@ -102,6 +103,12 @@ export function Page() {
         table: "category",
         id: projectData.price.categoryId,
         method: "GET",
+      });
+
+      projectData.timeLogs = projectData.timeLogs.sort((a, b) => {
+        return (
+          new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
+        );
       });
 
       setProject(projectData);
