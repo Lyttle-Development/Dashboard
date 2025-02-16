@@ -1,0 +1,13 @@
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.side_to_side {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
