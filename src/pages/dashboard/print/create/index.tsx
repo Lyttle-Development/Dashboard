@@ -1,7 +1,7 @@
 import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Select } from "@/components/Select";
-import { Category, Customer, Project, ServicePrice } from "@/lib/prisma";
+import { Customer, PrintJob, PrintMaterial, ServicePrice } from "@/lib/prisma";
 import { useEffect, useState } from "react";
 import { fetchApi } from "@/lib/fetchApi";
 import { KeyValue } from "@/components/KeyValue";
@@ -18,8 +18,8 @@ function Page() {
   const [customerSearch, setCustomerSearch] = useState<string>("");
   const [customer, setCustomer] = useState<Customer>(null);
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [category, setCategory] = useState<Category>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [material, setMaterial] = useState<PrintMaterial>(null);
+  const [materials, setMaterials] = useState<PrintMaterial[]>([]);
   const [price, setPrice] = useState<ServicePrice>(null);
   const [prices, setPrices] = useState<ServicePrice[]>([]);
 
@@ -37,30 +37,26 @@ function Page() {
     if (customersData.length === 1) setCustomer(customersData[0]);
   };
 
-  const fetchCategories = async () => {
-    const categoriesData = await fetchApi<Category[]>({
-      table: "category",
+  const fetchMaterials = async () => {
+    const materialsData = await fetchApi<PrintMaterial[]>({
+      table: "printMaterial",
     });
-    setCategories(categoriesData);
+    setMaterials(materialsData);
   };
 
   const fetchPrices = async () => {
     const pricesData = await fetchApi<ServicePrice[]>({
       table: "servicePrice",
       where: {
-        categoryId: category.id,
+        categoryId: "71e25dc1-f273-4b1e-a91a-7758d0394d3f",
       },
     });
     setPrices(pricesData);
   };
 
   useEffect(() => {
-    if (!category) return;
+    void fetchMaterials();
     void fetchPrices();
-  }, [category]);
-
-  useEffect(() => {
-    void fetchCategories();
   }, []);
 
   const restart = () => {
@@ -68,35 +64,33 @@ function Page() {
     setCustomer(null);
     setCustomers([]);
 
-    setCategory(null);
-
     setPrices([]);
     setPrice(null);
   };
 
-  const createProject = async () => {
-    const data = await fetchApi<Project>({
-      table: "project",
+  const createPrintJob = async () => {
+    const data = await fetchApi<PrintJob>({
+      table: "print-job",
       method: "POST",
       body: {
         name,
-        clientId: customer.id,
+        customerId: customer.id,
         priceId: price.id,
+        materialId: material.id,
       },
     });
-    console.log(data);
     restart();
-    void router.push(`/dashboard/project/${data.id}`);
+    void router.push(`/dashboard/print/${data.id}`);
   };
 
   return (
     <Container>
       <h1 className={styles.title}>
-        <span>Create Project</span>
+        <span>Create Print Job</span>
         <Button onClick={restart}>Restart</Button>
       </h1>
       <Field
-        label="Project Name"
+        label="Print Job Name"
         type={FormOptionType.TEXT}
         required
         onChange={setName}
@@ -126,22 +120,24 @@ function Page() {
             <Button onClick={fetchCustomers}>Search</Button>
           </article>
         ))}
-      {categories &&
-        (category ? (
-          <KeyValue label="Category" value={category.name} />
+      {materials &&
+        materials.length > 0 &&
+        (material ? (
+          <KeyValue label="Material" value={material.type} />
         ) : (
           <Select
-            label="Select Category"
-            options={categories.map((category) => ({
-              label: category.name,
-              value: category.id,
+            label="Select Material"
+            options={materials.map((material) => ({
+              label: `${material.type}: ${material.color}`,
+              value: material.id,
             }))}
             onValueChange={(value) =>
-              setCategory(categories.find((c) => c.id === value))
+              setMaterial(materials.find((m) => m.id === value))
             }
           />
         ))}
-      {prices.length > 0 &&
+      {prices &&
+        prices.length > 0 &&
         (price ? (
           <KeyValue label="Service" value={price.service} />
         ) : (
@@ -156,8 +152,8 @@ function Page() {
             }
           />
         ))}
-      {price && category && customer && name && (
-        <Button onClick={createProject}>Create Project</Button>
+      {material && price && customer && name && (
+        <Button onClick={createPrintJob}>Create Print Job</Button>
       )}
     </Container>
   );

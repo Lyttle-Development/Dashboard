@@ -84,7 +84,6 @@ function Page() {
         priceId: price.id,
       },
     });
-    console.log(data);
     restart();
     void router.push(`/dashboard/project/${data.id}`);
   };

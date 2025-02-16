@@ -49,7 +49,7 @@ export function Page() {
   return (
     <Container>
       <h1>Printing</h1>
-      <Button href="/dashboard/project/create">
+      <Button href="/dashboard/print/create">
         <Icon icon={faCalendarPlus}>Create Print Job</Icon>
       </Button>
       <Select
