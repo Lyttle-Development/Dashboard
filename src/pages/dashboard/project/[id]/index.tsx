@@ -76,8 +76,8 @@ function getPrice(total: number, price: number) {
 export function Page() {
   const router = useRouter();
 
-  const [project, setProject] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const [project, setProject] = useState<Project>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Fetch the project details by id.
   const fetchProject = useCallback(async (projectId: string) => {
