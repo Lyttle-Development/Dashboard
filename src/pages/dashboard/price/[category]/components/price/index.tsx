@@ -63,3 +63,5 @@ export function Price({ price, setPrice: _setPrice }: PriceProps) {
     </article>
   );
 }
+
+export default Price;

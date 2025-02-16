@@ -31,3 +31,5 @@ export function Prices({ prices, setPrices }: PricesProps) {
     </section>
   );
 }
+
+export default Prices;
