@@ -5,8 +5,9 @@ import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
 import { idToName } from "@/lib/discord";
-import { TimeLog } from "@/lib/prisma";
+import { Category, Project, TimeLog } from "@/lib/prisma";
 import { KeyValue } from "@/components/KeyValue";
+import { fetchApi } from "@/lib/fetchApi";
 
 const filterTimeLogs = (timeLogs: TimeLog[], returnActive = false) => {
   // remove time log that does not have end date
@@ -82,26 +83,28 @@ export function Page() {
   const fetchProject = useCallback(async (projectId: string) => {
     setLoading(true);
     try {
-      const relations = encodeURIComponent(
-        JSON.stringify({
+      const projectData = await fetchApi<Project>({
+        table: "project",
+        id: projectId,
+        method: "GET",
+        relations: {
           timeLogs: true,
           client: true,
           price: true,
-        }),
-      );
-      const res = await fetch(
-        `/api/project/${projectId}?relations=${relations}`,
-      );
+        },
+      });
 
-      if (!res.ok) throw new Error("Failed to fetch project");
-      const data = await res.json();
+      if (!projectData) {
+        throw new Error("Project not found");
+      }
 
-      const priceCategoryRes = await fetch(
-        `/api/category/${data.price.categoryId}`,
-      );
-      data.price.category = (await priceCategoryRes?.json()) || {};
+      projectData.price.category = await fetchApi<Category>({
+        table: "category",
+        id: projectData.price.categoryId,
+        method: "GET",
+      });
 
-      setProject(data);
+      setProject(projectData);
     } catch (err) {
       setProject(null);
     }
