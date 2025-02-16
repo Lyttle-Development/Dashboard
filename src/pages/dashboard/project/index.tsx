@@ -1,5 +1,4 @@
 import { Layout } from "@/layouts";
-import { Link } from "@/components/Link";
 import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
 import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
@@ -7,6 +6,7 @@ import { Select, SelectItemProps } from "@/components/Select";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Loader } from "@/components/Loader";
+import { Button } from "@/components/Button";
 
 async function fetchApi(
   action: string,
@@ -71,9 +71,9 @@ export function Page() {
   return (
     <Container>
       <h1>Projects</h1>
-      <Link href="/dashboard/project/create">
+      <Button href="/dashboard/project/create">
         <Icon icon={faCalendarPlus}>Create Project</Icon>
-      </Link>
+      </Button>
       <Select
         label="Select Project"
         options={mapProjectsToOptions(projects)}

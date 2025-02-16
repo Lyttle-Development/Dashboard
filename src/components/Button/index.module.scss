@@ -1,0 +1,41 @@
+.Trigger {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 200px;
+  width: fit-content;
+  border-radius: 6px;
+  padding: 8px 15px;
+  font-size: 14px;
+  font-weight: 600;
+  height: 40px;
+  gap: 8px;
+  background-color: white;
+  color: var(--violet-11);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+  outline: none;
+
+  &:hover {
+    background-color: var(--mauve-3);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--violet-8);
+  }
+
+  &:active {
+    background-color: var(--violet-6);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}

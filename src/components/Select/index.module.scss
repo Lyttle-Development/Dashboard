@@ -36,11 +36,6 @@
 .Icon {
   color: var(--violet-11);
   transition: transform 0.2s ease-in-out;
-
-  /* Add a hover effect to the icon */
-  .Trigger:hover & {
-    transform: rotate(90deg); /* Example: Rotate icon on hover */
-  }
 }
 
 .Content {
