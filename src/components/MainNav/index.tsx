@@ -15,7 +15,7 @@ export function MainNav({}: MainNavProps) {
           <MainNavItem href={"/dashboard/print"}>Printing</MainNavItem>
           <MainNavItem href={"/dashboard/customer"}>Customers</MainNavItem>
           {/*<MainNavItem href={"/dashboard/invoice"}>Invoices</MainNavItem>*/}
-          {/*<MainNavItem href={"/dashboard/price"}>Prices</MainNavItem>*/}
+          <MainNavItem href={"/dashboard/price"}>Prices</MainNavItem>
         </ul>
       </nav>
       <ul className={styles.sub_menu}>

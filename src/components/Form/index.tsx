@@ -47,6 +47,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="text"
           required={option.required}
+          value={option.value}
         />
       );
     case FormOptionType.EMAIL:
@@ -55,6 +56,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="email"
           required={option.required}
+          value={option.value}
         />
       );
     case FormOptionType.PASSWORD:
@@ -63,11 +65,16 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="password"
           required={option.required}
+          value={option.value}
         />
       );
     case FormOptionType.TEXTAREA:
       return (
-        <textarea className={styles.Textarea} required={option.required} />
+        <textarea
+          className={styles.Textarea}
+          required={option.required}
+          value={option.value}
+        />
       );
     case FormOptionType.SELECT:
       return <span>N/A</span>;
