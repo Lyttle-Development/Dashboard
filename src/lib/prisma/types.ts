@@ -1,42 +1,14 @@
-export enum PrintType {
-  FDM = "FDM",
-  SLA = "SLA",
-  Resin = "Resin",
-}
-
-export enum ServiceCategory {
-  PROJECT_MANAGEMENT = "PROJECT_MANAGEMENT",
-  DESIGN = "DESIGN",
-  DEVELOPMENT = "DEVELOPMENT",
-  PRINTING = "PRINTING",
-  HOSTING = "HOSTING",
-}
-
-export enum ServiceType {
-  MEETINGS_CALLS = "MEETINGS_CALLS",
-  EMAIL_COMMUNICATION = "EMAIL_COMMUNICATION",
-  TRAINING_WORKSHOPS = "TRAINING_WORKSHOPS",
-  STRATEGY_PLANNING = "STRATEGY_PLANNING",
-  TECHNICAL_DOCS = "TECHNICAL_DOCS",
-  LOGO_DESIGN = "LOGO_DESIGN",
-  WEBSITE_DESIGN = "WEBSITE_DESIGN",
-  CUSTOM_DEV = "CUSTOM_DEV",
-  WEB_SHOP = "WEB_SHOP",
-  IT_APP = "IT_APP",
-  MODEL_3D = "MODEL_3D",
-  PRINT_3D = "PRINT_3D",
-  HOSTING = "HOSTING",
-}
-
 export interface Customer {
   id: string;
   name: string;
   email: string;
   phone?: string;
-  createdAt: Date;
   addresses: Address[];
-  orders: Order[];
   invoices: Invoice[];
+  projects: Project[];
+  printJobs: PrintJob[];
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 export interface Address {
@@ -48,69 +20,60 @@ export interface Address {
   zipCode: string;
   customerId: string;
   customer: Customer;
-}
-
-export interface Order {
-  id: string;
-  orderDate: Date;
-  total: number;
-  status: string;
-  customerId: string;
-  customer: Customer;
-  orderItems: OrderItem[];
-}
-
-export interface OrderItem {
-  id: string;
-  quantity: number;
-  price: number;
-  productId: string;
-  product: Product;
-  orderId: string;
-  order: Order;
-}
-
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  description?: string;
-  categoryId: string;
-  category: Category;
-  orderItems: OrderItem[];
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 export interface Category {
   id: string;
   name: string;
-  products: Product[];
+  prices: ServicePrice[];
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 export interface Invoice {
   id: string;
   invoiceDate: Date;
   amount: number;
-  status: string;
+  statusId: string;
+  status: InvoiceStatus;
   customerId: string;
   customer: Customer;
+  projects: Project[];
+  printJobs: PrintJob[];
+  updatedAt: Date;
+  createdAt: Date;
+}
+
+export interface InvoiceStatus {
+  id: string;
+  status: string;
+  invoices: Invoice[];
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 export interface PrintJob {
   id: string;
-  createdAt: Date;
-  scheduledDate: Date;
-  completed: boolean;
-  ordered: boolean;
-  quantity: number;
-  product: string;
-  printType: PrintType;
-  material: PrintMaterial;
+  name: string;
+  scheduledDate?: Date;
+  ordered?: boolean;
+  completed?: boolean;
+  quantity?: number;
+  printTime?: number;
+  weight?: number;
   materialId: string;
-  color: string;
-  printTime: number;
-  weight: number;
-  totalPrice: number;
-  suggestedPrice: number;
+  material: PrintMaterial;
+  invoiceId?: string;
+  invoice?: Invoice;
+  updatedAt: Date;
+  createdAt: Date;
+  customerId?: string;
+  customer?: Customer;
+  timeLogs: TimeLog[];
+  servicePriceId?: string;
+  servicePrice?: ServicePrice;
 }
 
 export interface PrintMaterial {
@@ -121,38 +84,50 @@ export interface PrintMaterial {
   color: string;
   unitPrice: number;
   printJobs: PrintJob[];
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 export interface Project {
   id: string;
   name: string;
-  client: string;
+  clientId?: string;
+  client?: Customer;
+  priceId?: string;
+  price?: ServicePrice;
+  invoiceId?: string;
+  invoice?: Invoice;
+  timeLogs: TimeLog[];
   updatedAt: Date;
   createdAt: Date;
-  timeLogs: TimeLog[];
 }
 
 export interface TimeLog {
   id: string;
-  projectId: string;
-  project: Project;
-  user: string;
-  startTime: Date;
+  startTime?: Date;
   endTime?: Date;
-  serviceType: ServiceType;
-  category: ServiceCategory;
-  hourlyRate: number;
-  totalPrice?: number;
+  user?: string;
+  projectId?: string;
+  project?: Project;
+  printJobId?: string;
+  printJob?: PrintJob;
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 export interface ServicePrice {
   id: string;
-  category: ServiceCategory;
-  service: ServiceType;
-  estimatedMin?: number;
-  estimatedMax?: number;
-  standardMin: number;
-  standardMax: number;
-  friendsMin: number;
-  friendsMax: number;
+  service?: string;
+  standard?: number;
+  standardMin?: number;
+  standardMax?: number;
+  friends?: number;
+  friendsMin?: number;
+  friendsMax?: number;
+  categoryId?: string;
+  category?: Category;
+  projects: Project[];
+  printJobs: PrintJob[];
+  updatedAt: Date;
+  createdAt: Date;
 }
