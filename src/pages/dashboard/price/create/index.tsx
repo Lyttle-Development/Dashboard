@@ -83,6 +83,8 @@ function Page() {
     void router.push(`/dashboard/print/${data.id}`);
   };
 
+  return <span>N/A</span>;
+
   return (
     <Container>
       <h1 className={styles.title}>
