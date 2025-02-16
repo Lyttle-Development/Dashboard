@@ -33,11 +33,11 @@ export function Page() {
   // Fetch any active time log (one with a null endTime)
   const fetchEmptyTimeLog = useCallback(async (projectId: string) => {
     setLoading(true);
-    const timeLogData = await fetchApi<TimeLog>({
+    const timeLogData = await fetchApi<TimeLog[]>({
       table: "time-log",
       where: { projectId, user: app.userId, endTime: null },
     });
-    setTimeLog(timeLogData);
+    setTimeLog(timeLogData && timeLogData.length ? timeLogData[0] : null);
     setLoading(false);
   }, []);
 
@@ -99,6 +99,7 @@ export function Page() {
 
   // Update the elapsed time every second while a time log is active.
   useEffect(() => {
+    console.log("timeLog", timeLog);
     if (timeLog?.startTime) {
       const updateTimer = () => {
         const elapsed = Math.floor(
