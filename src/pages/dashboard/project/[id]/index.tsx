@@ -6,6 +6,7 @@ import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
 import { idToName } from "@/lib/discord";
 import { TimeLog } from "@/lib/prisma";
+import { KeyValue } from "@/components/KeyValue";
 
 const filterTimeLogs = (timeLogs: TimeLog[], returnActive = false) => {
   // remove time log that does not have end date
@@ -67,7 +68,8 @@ function convertDurationToHours(duration: number) {
 }
 
 function getPrice(total: number, price: number) {
-  return `€${Math.round(total * price * 100) / 100}`;
+  price = price || 0;
+  return `€${Math.round(total * price * 100) / 100} (€${price}/h)`;
 }
 
 export function Page() {
@@ -124,22 +126,34 @@ export function Page() {
   return (
     <Container>
       <h2 className={styles.projectTitle}>Project: {project.name}</h2>
-      <h6>Customer: {project.client.name}</h6>
-      <h6>Category: {project.price.category.name}</h6>
-      <h6>Service: {project.price.service}</h6>
+      <article>
+        <KeyValue label="Customer" value={project.client.name} />
+        <KeyValue label="Category" value={project.price.category.name} />
+        <KeyValue label="Service" value={project.price.service} />
+      </article>
+      <br />
       <h2>Time Logs</h2>
-      <h6>Total Time: {convertDurationToHours(totalDuration)}</h6>
-      <h6>Active Time Logs: {activeTimeLogs.length}</h6>
+      <article>
+        <KeyValue
+          label="Total Time"
+          value={convertDurationToHours(totalDuration)}
+        />
+        <KeyValue label="Active Time Logs" value={activeTimeLogs.length} />
+      </article>
+      <br />
       <h5>Completed:</h5>
       <ul>
         {timeLogsGrouped.entries().map(([date, userTime]) => (
-          <li key={date}>
+          <li key={date} className={styles.time_log_day}>
             <h6>{date}</h6>
             <ul>
               {userTime.entries().map(([user, time]) => {
                 return (
                   <li key={user}>
-                    {user}: {convertDurationToHours(time)}
+                    <KeyValue
+                      label={user}
+                      value={convertDurationToHours(time)}
+                    />
                   </li>
                 );
               })}
@@ -148,20 +162,33 @@ export function Page() {
         ))}
       </ul>
       <h2>Calculated Price</h2>
-      <h6>Standard: {getPrice(totalDurationHours, project.price.standard)}</h6>
-      <h6>
-        Standard Min: {getPrice(totalDurationHours, project.price.standardMin)}
-      </h6>
-      <h6>
-        Standard Max: {getPrice(totalDurationHours, project.price.standardMax)}
-      </h6>
-      <h6>Friend: {getPrice(totalDurationHours, project.price.friends)}</h6>
-      <h6>
-        Friend Min: {getPrice(totalDurationHours, project.price.friendsMin)}
-      </h6>
-      <h6>
-        Friend Max: {getPrice(totalDurationHours, project.price.friendsMax)}
-      </h6>
+      <article>
+        <KeyValue
+          label="Standard"
+          value={getPrice(totalDurationHours, project.price.standard)}
+        />
+        <KeyValue
+          label="Standard Min"
+          value={getPrice(totalDurationHours, project.price.standardMin)}
+        />
+        <KeyValue
+          label="Standard Max"
+          value={getPrice(totalDurationHours, project.price.standardMax)}
+        />
+        <br />
+        <KeyValue
+          label="Friend"
+          value={getPrice(totalDurationHours, project.price.friends)}
+        />
+        <KeyValue
+          label="Friend Min"
+          value={getPrice(totalDurationHours, project.price.friendsMin)}
+        />
+        <KeyValue
+          label="Friend Max"
+          value={getPrice(totalDurationHours, project.price.friendsMax)}
+        />
+      </article>
     </Container>
   );
 }

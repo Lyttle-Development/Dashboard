@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 16px;
+  color: #333;
+}
+
+.label {
+  font-weight: bold;
+  color: #555;
+}
+
+.value {
+  color: #000;
+}
