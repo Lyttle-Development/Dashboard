@@ -28,3 +28,11 @@ export function isAllowedUser(session: any) {
   const allowedUserIds = process.env.ALLOWED_USER_IDS?.split(";") ?? [];
   return allowedUserIds.includes(session.user.id);
 }
+
+export function isAdmin(session: any) {
+  // Check if the user is an admin by email & env variable
+  const adminEmails = process.env.ADMIN_EMAILS?.split(";") ?? [
+    "132487290835435521", // Stualyttle Kirry
+  ];
+  return adminEmails.includes(session.user.email);
+}
