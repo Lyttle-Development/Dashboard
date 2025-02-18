@@ -27,14 +27,14 @@ function Page() {
     const customersData = await fetchApi<Customer[]>({
       table: "customer",
       where: {
-        name: {
+        firstname: {
           contains: customerSearch,
           mode: "insensitive",
         },
       },
     });
     setCustomers(customersData);
-    if (customersData.length === 1) setCustomer(customersData[0]);
+    if (customersData?.length === 1) setCustomer(customersData[0]);
   };
 
   const fetchCategories = async () => {
@@ -100,14 +100,19 @@ function Page() {
         required
         onChange={setName}
       />
-      {customer && <KeyValue label="Customer" value={customer.name} />}
+      {customer && (
+        <KeyValue
+          label="Customer"
+          value={customer.firstname + " " + customer.lastname}
+        />
+      )}
       {!customer &&
         customers &&
         (customers.length > 0 ? (
           <Select
             label="Select Customer"
             options={customers.map((customer) => ({
-              label: customer.name,
+              label: customer.firstname + " " + customer.lastname,
               value: customer.id,
             }))}
             onValueChange={(value) =>
@@ -121,8 +126,8 @@ function Page() {
               type={FormOptionType.TEXT}
               required
               onChange={setCustomerSearch}
+              onSubmit={fetchCustomers}
             />
-            <Button onClick={fetchCustomers}>Search</Button>
           </article>
         ))}
       {categories &&
