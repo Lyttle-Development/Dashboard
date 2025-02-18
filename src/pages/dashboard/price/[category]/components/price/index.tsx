@@ -25,39 +25,9 @@ export function Price({ price, setPrice: _setPrice }: PriceProps) {
         type={FormOptionType.TEXT}
       />
       <Field
-        onChange={(v) => setPrice("standard", parseInt(v))}
-        value={price.standard.toString()}
-        label="Price (Standard)"
-        type={FormOptionType.TEXT}
-      />
-      <Field
-        onChange={(v) => setPrice("standardMin", parseInt(v))}
-        value={price.standardMin.toString()}
-        label="Price (Standard Min)"
-        type={FormOptionType.TEXT}
-      />
-      <Field
-        onChange={(v) => setPrice("standardMax", parseInt(v))}
-        value={price.standardMax.toString()}
-        label="Price (Standard Max)"
-        type={FormOptionType.TEXT}
-      />
-      <Field
-        onChange={(v) => setPrice("friends", parseInt(v))}
-        value={price.friends.toString()}
-        label="Price (Friends)"
-        type={FormOptionType.TEXT}
-      />
-      <Field
-        onChange={(v) => setPrice("friendsMin", parseInt(v))}
-        value={price.friendsMin.toString()}
-        label="Price (Friends Min)"
-        type={FormOptionType.TEXT}
-      />
-      <Field
-        onChange={(v) => setPrice("friendsMax", parseInt(v))}
-        value={price.friendsMax.toString()}
-        label="Price (Friends Max)"
+        onChange={(v) => setPrice("price", parseInt(v))}
+        value={price.price.toString()}
+        label="Price"
         type={FormOptionType.TEXT}
       />
     </article>

@@ -98,7 +98,7 @@ const SelectItem = React.forwardRef(
   ) => {
     return (
       <RadixSelect.Item
-        className={classnames("SelectItem", className)}
+        className={classnames(styles.Item, className)}
         {...props}
         ref={forwardedRef}
       >

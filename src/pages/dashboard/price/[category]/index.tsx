@@ -38,18 +38,10 @@ export function Page() {
 
   const changedPrices = prices.filter((price) => {
     const originalPrice = originalPrices.find((p) => p.id === price.id);
-    return (
-      originalPrice?.standard !== price.standard ||
-      originalPrice?.standardMin !== price.standardMin ||
-      originalPrice?.standardMax !== price.standardMax ||
-      originalPrice?.friends !== price.friends ||
-      originalPrice?.friendsMin !== price.friendsMin ||
-      originalPrice?.friendsMax !== price.friendsMax
-    );
+    return originalPrice?.price !== price.price;
   });
 
   const changed = changedPrices.length > 0;
-  console.log(changed, changedPrices);
 
   const submitChanges = () => {
     changedPrices.forEach(async (price) => {
@@ -59,12 +51,7 @@ export function Page() {
         id: price.id,
         body: {
           service: price.service,
-          standard: price.standard,
-          standardMin: price.standardMin,
-          standardMax: price.standardMax,
-          friends: price.friends,
-          friendsMin: price.friendsMin,
-          friendsMax: price.friendsMax,
+          price: price.price,
         },
       });
     });

@@ -118,12 +118,7 @@ export interface TimeLog {
 export interface ServicePrice {
   id: string;
   service?: string;
-  standard?: number;
-  standardMin?: number;
-  standardMax?: number;
-  friends?: number;
-  friendsMin?: number;
-  friendsMax?: number;
+  price?: number;
   categoryId?: string;
   category?: Category;
   projects: Project[];

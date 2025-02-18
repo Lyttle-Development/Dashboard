@@ -140,6 +140,10 @@ export function Page() {
         <KeyValue label="Customer" value={project.customer.name} />
         <KeyValue label="Category" value={project.price.category.name} />
         <KeyValue label="Service" value={project.price.service} />
+        <KeyValue
+          label="Calculated Price"
+          value={getPrice(totalDurationHours, project.price.price)}
+        />
       </article>
       <br />
       <h2>Time Logs</h2>
@@ -171,34 +175,6 @@ export function Page() {
           </li>
         ))}
       </ul>
-      <h2>Calculated Price</h2>
-      <article>
-        <KeyValue
-          label="Standard"
-          value={getPrice(totalDurationHours, project.price.standard)}
-        />
-        <KeyValue
-          label="Standard Min"
-          value={getPrice(totalDurationHours, project.price.standardMin)}
-        />
-        <KeyValue
-          label="Standard Max"
-          value={getPrice(totalDurationHours, project.price.standardMax)}
-        />
-        <br />
-        <KeyValue
-          label="Friend"
-          value={getPrice(totalDurationHours, project.price.friends)}
-        />
-        <KeyValue
-          label="Friend Min"
-          value={getPrice(totalDurationHours, project.price.friendsMin)}
-        />
-        <KeyValue
-          label="Friend Max"
-          value={getPrice(totalDurationHours, project.price.friendsMax)}
-        />
-      </article>
     </Container>
   );
 }
