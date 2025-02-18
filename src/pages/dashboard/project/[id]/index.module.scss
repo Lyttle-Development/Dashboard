@@ -1,3 +1,11 @@
+.project_title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
 .time_log_day {
   display: flex;
   flex-direction: column;

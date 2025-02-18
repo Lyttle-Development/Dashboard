@@ -13,13 +13,13 @@ import { PrintJob } from "@/lib/prisma";
 function mapPrintsToOptions(prints: any[]): SelectItemProps[] {
   // Sort projects by name
   prints.sort((a, b) => {
-    return a.name.localeCompare(b.name);
+    return a?.firstname?.localeCompare(b?.firstname);
   });
 
   return prints.map((project) => {
     return {
       value: project.id,
-      children: project.name,
+      label: project.firstname + " " + project.lastname,
     } as SelectItemProps;
   });
 }

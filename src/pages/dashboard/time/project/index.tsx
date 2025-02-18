@@ -32,6 +32,7 @@ export function Page() {
     const projectsData = await fetchApi<Project[]>({
       table: "project",
       where: { invoiceId: null },
+      orderBy: { updatedAT: "desc" },
     });
     setProjects(projectsData ?? []);
     setLoading(false);

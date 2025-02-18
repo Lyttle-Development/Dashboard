@@ -9,17 +9,35 @@ import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
 import { Customer } from "@/lib/prisma";
 
+// Optional keys of Customer
+interface OptionalCustomer {
+  firstname?: string;
+  lastname?: string;
+  email?: string;
+  phone?: string;
+}
+
+const emptyCustomer: OptionalCustomer = {
+  firstname: null,
+  lastname: null,
+  email: null,
+  phone: null,
+};
+
 function Page() {
   const router = useRouter();
 
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
+  const [customer, setCustomer] = useState<OptionalCustomer>(emptyCustomer);
 
   const restart = () => {
-    setName("");
-    setEmail("");
-    setPhone("");
+    setCustomer(emptyCustomer);
+  };
+
+  const handleChange = (field: string, value: string) => {
+    setCustomer((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const createPrintJob = async () => {
@@ -27,9 +45,10 @@ function Page() {
       table: "customer",
       method: "POST",
       body: {
-        name,
-        email,
-        phone,
+        firstname: customer.firstname,
+        lastname: customer.lastname,
+        email: customer.email,
+        phone: customer.phone,
       },
     });
     restart();
@@ -43,26 +62,36 @@ function Page() {
         <Button onClick={restart}>Restart</Button>
       </h1>
       <Field
-        label="Name"
+        label="First Name"
         type={FormOptionType.TEXT}
         required
-        onChange={setName}
+        onChange={(value) => handleChange("firstname", value)}
+      />
+      <Field
+        label="First Name"
+        type={FormOptionType.TEXT}
+        required
+        onChange={(value) => handleChange("lastname", value)}
       />
       <Field
         label="Email"
         type={FormOptionType.EMAIL}
         required
-        onChange={setEmail}
+        onChange={(value) => handleChange("email", value)}
       />
       <Field
         label="Phone"
         type={FormOptionType.TEXT}
         required
-        onChange={setPhone}
+        onChange={(value) => handleChange("phone", value)}
       />
-      {name && email && phone && (
-        <Button onClick={createPrintJob}>Create Customer</Button>
-      )}
+      {customer &&
+        customer.firstname &&
+        customer.lastname &&
+        customer.email &&
+        customer.phone && (
+          <Button onClick={createPrintJob}>Create Customer</Button>
+        )}
     </Container>
   );
 }

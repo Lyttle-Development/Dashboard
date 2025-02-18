@@ -8,6 +8,7 @@ import { idToName } from "@/lib/discord";
 import { Category, Project, TimeLog } from "@/lib/prisma";
 import { KeyValue } from "@/components/KeyValue";
 import { fetchApi } from "@/lib/fetchApi";
+import { Button } from "@/components/Button";
 
 const filterTimeLogs = (timeLogs: TimeLog[], returnActive = false) => {
   // remove time log that does not have end date
@@ -125,6 +126,17 @@ export function Page() {
     }
   }, []);
 
+  const deleteProject = async () => {
+    if (confirm("Are you sure you want to delete this project?")) {
+      await fetchApi<Project>({
+        table: "project",
+        id: project.id,
+        method: "DELETE",
+      });
+      void router.push("/dashboard/project");
+    }
+  };
+
   if (loading) return <Loader />;
   if (!project) return <div>Project not found</div>;
 
@@ -135,9 +147,15 @@ export function Page() {
 
   return (
     <Container>
-      <h2 className={styles.projectTitle}>Project: {project.name}</h2>
+      <h2 className={styles.project_title}>
+        <span>Project: {project.name}</span>
+        <Button onClick={deleteProject}>Delete Project</Button>
+      </h2>
       <article>
-        <KeyValue label="Customer" value={project.customer.name} />
+        <KeyValue
+          label="Customer"
+          value={`${project.customer.firstname} ${project.customer.lastname}`}
+        />
         <KeyValue label="Category" value={project.price.category.name} />
         <KeyValue label="Service" value={project.price.service} />
         <KeyValue

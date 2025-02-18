@@ -8,13 +8,30 @@ export interface FormProps {
   placeholder?: string;
   required?: boolean;
   type?: FormOptionType;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
+  onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
-export function Field({ onChange, ...option }: FormProps) {
+export function Field({
+  onChange = (v) => v,
+  onSubmit = (e) => e,
+  ...option
+}: FormProps) {
+  const handleOnchange = (e: React.FormEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    onChange(target?.value ?? e.currentTarget.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSubmit(e);
+  };
+
+  option.type = option.type ?? FormOptionType.TEXT;
+
   return (
-    <RadixForm.Root onChange={(e: any) => onChange(e.target?.value)}>
-      <FormField option={option} />
+    <RadixForm.Root onSubmit={handleSubmit}>
+      <FormField option={option} onChange={handleOnchange} />
     </RadixForm.Root>
   );
 }

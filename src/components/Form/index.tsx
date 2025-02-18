@@ -37,6 +37,7 @@ export function Form({ options }: FormProps) {
 
 interface FormFieldProps {
   option: FormOption;
+  onChange?: (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
 function GetFormField({ option }: FormFieldProps) {
@@ -87,9 +88,13 @@ function GetFormField({ option }: FormFieldProps) {
   }
 }
 
-export function FormField({ option }: FormFieldProps) {
+export function FormField({ option, onChange = (e) => e }: FormFieldProps) {
   return (
-    <RadixForm.Field className={styles.Field} name={option.label}>
+    <RadixForm.Field
+      className={styles.Field}
+      name={option.label}
+      onChange={onChange}
+    >
       <div
         style={{
           display: "flex",
