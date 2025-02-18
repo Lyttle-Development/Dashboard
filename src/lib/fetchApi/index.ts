@@ -5,6 +5,7 @@ export interface FetchOptions {
   id?: string;
   relations?: Record<string, boolean>;
   where?: Record<string, any>;
+  orderBy?: Record<string, string>;
 }
 
 function buildUrl(table: string, id: string, query: URLSearchParams) {
