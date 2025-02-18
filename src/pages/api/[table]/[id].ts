@@ -1,6 +1,6 @@
 import type {NextApiRequest, NextApiResponse} from 'next';
 import prisma from '../../../lib/prisma';
-import {requireAuth} from '@/lib/auth';
+import {isAdmin, requireAuth} from '@/lib/auth';
 import {debugBuffer} from '@/lib/debug';
 
 /**
@@ -63,19 +63,16 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const result = req.query?.where
-        ? await prisma[tableKey].findMany({
-            where: { ...JSON.parse(req.query.where as string), id },
-            include: JSON.parse((req.query.relations as string) || "{}"),
-          })
-        : await prisma[tableKey].findUnique({
-            where: { id },
-            include: JSON.parse((req.query.relations as string) || "{}"),
-          });
+      const result = await prisma[tableKey].findMany({
+        where: { ...JSON.parse((req.query.where as string) || "{}"), id },
+        include: JSON.parse((req.query.relations as string) || "{}"),
+        orderBy: JSON.parse((req.query.orderBy as string) || "[]"),
+      });
 
       if (!result)
         return res.status(404).json({ error: `${tableKey} not found` });
-      return res.status(200).json(result);
+      if (result.length > 0) return res.status(200).json(result[0]);
+      return res.status(404).json({ error: `${tableKey} not found` });
     } catch (error) {
       console.log("Error fetching record:", error);
       return res.status(500).json({ error: "Error fetching record" });
@@ -109,6 +106,9 @@ export default async function handler(
       return res.status(500).json({ error: error.message });
     }
   } else if (req.method === "DELETE") {
+    if (!isAdmin(session)) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
     try {
       const result = await prisma[tableKey].delete({
         where: { id },

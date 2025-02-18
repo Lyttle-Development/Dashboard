@@ -40,14 +40,11 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      const result = req.query?.where
-        ? await prisma[tableKey].findMany({
-            where: JSON.parse(req.query.where as string),
-            include: JSON.parse((req.query.relations as string) || "{}"),
-          })
-        : await prisma[tableKey].findMany({
-            include: JSON.parse((req.query.relations as string) || "{}"),
-          });
+      const result = await prisma[tableKey].findMany({
+        where: JSON.parse((req.query.where as string) || "{}"),
+        include: JSON.parse((req.query.relations as string) || "{}"),
+        orderBy: JSON.parse((req.query.orderBy as string) || "[]"),
+      });
 
       return res.status(200).json(result);
     } catch (error) {
