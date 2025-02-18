@@ -34,5 +34,5 @@ export function isAdmin(session: any) {
   const adminEmails = process.env.ADMIN_EMAILS?.split(";") ?? [
     "132487290835435521", // Stualyttle Kirry
   ];
-  return adminEmails.includes(session.user.email);
+  return adminEmails.includes(session.user.id);
 }
