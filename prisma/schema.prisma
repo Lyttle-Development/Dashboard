@@ -44,6 +44,7 @@ model Category {
   name String @unique
 
   prices ServicePrice[]
+  tasks  Task[]
 
   updatedAt DateTime @default(now()) @updatedAt
   createdAt DateTime @default(now())
@@ -99,7 +100,7 @@ model PrintJob {
   invoiceId String?
   Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
 
-  timeLog TimeLog[]
+  timeLogs TimeLog[]
 
   updatedAt DateTime @default(now()) @updatedAt
   createdAt DateTime @default(now())
@@ -164,6 +165,20 @@ model ServicePrice {
 
   projects  Project[]
   printJobs PrintJob[]
+
+  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String?
+  description String?
+  userId      Int?
+  done        Boolean? @default(false)
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
 
   updatedAt DateTime @default(now()) @updatedAt
   createdAt DateTime @default(now())
