@@ -1,10 +1,11 @@
 import { Layout } from "@/layouts";
+import { Container } from "@/components/Container";
 
 function Page() {
   return (
-    <>
-      <h1>Hello World</h1>
-    </>
+    <Container>
+      <h1>Not implemented...</h1>
+    </Container>
   );
 }
 

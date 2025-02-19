@@ -1,7 +1,4 @@
-import {
-  Select,
-  SelectItemProps,
-} from "../../../../../../../components/Select";
+import { Select, SelectItemProps } from "@/components/Select";
 import { useCallback, useEffect, useState } from "react";
 
 export function PrintJobsSelect() {
