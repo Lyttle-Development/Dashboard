@@ -98,7 +98,7 @@ model PrintJob {
   material   PrintMaterial @relation(fields: [materialId], references: [id])
 
   invoiceId String?
-  Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+  invoice   Invoice? @relation(fields: [invoiceId], references: [id])
 
   timeLogs TimeLog[]
 

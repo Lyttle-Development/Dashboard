@@ -21,12 +21,13 @@ const tableConfigs: {
   project: { label: "Projects", endpoint: "/api/project" },
   "time-log": { label: "Time Logs", endpoint: "/api/timeLog" },
   "service-price": { label: "Service Prices", endpoint: "/api/servicePrice" },
+  task: { label: "Tasks", endpoint: "/api/task" }, // New table for Task model
 };
 
 // Fallback keys for each table when no data exists.
 // (These are the fields you wish to create/edit manually; exclude auto-managed fields.)
 const fallbackKeys: Record<string, string[]> = {
-  customers: ["name", "email", "phone"],
+  customers: ["firstname", "lastname", "email", "phone"], // updated for separate first/last names
   addresses: ["street", "city", "state", "country", "zipCode", "customerId"],
   category: ["name"],
   invoice: ["invoiceDate", "amount", "statusId", "customerId"],
@@ -42,18 +43,10 @@ const fallbackKeys: Record<string, string[]> = {
     "weight",
   ],
   "print-material": ["type", "subType", "stock", "color", "unitPrice"],
-  project: ["name", "clientId", "priceId"],
-  "time-log": ["projectId", "startTime", "endTime", "user"],
-  "service-price": [
-    "categoryId",
-    "service",
-    "standard",
-    "standardMin",
-    "standardMax",
-    "friends",
-    "friendsMin",
-    "friendsMax",
-  ],
+  project: ["name", "customerId", "priceId", "invoiceId"], // updated clientId -> customerId
+  "time-log": ["projectId", "startTime", "endTime", "user", "printJobId"], // added printJobId if needed
+  "service-price": ["categoryId", "service", "price"], // updated to match the schema
+  task: ["title", "description", "userId", "done", "categoryId"], // for the Task model
 };
 
 /**

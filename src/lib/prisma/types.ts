@@ -1,7 +1,7 @@
 export interface Customer {
   id: string;
-  firstname?: string;
   lastname?: string;
+  firstname?: string;
   email: string;
   phone?: string;
   addresses: Address[];
@@ -29,6 +29,7 @@ export interface Category {
   id: string;
   name: string;
   prices: ServicePrice[];
+  tasks: Task[]; // Newly added based on your schema
   updatedAt: Date;
   createdAt: Date;
 }
@@ -64,17 +65,17 @@ export interface PrintJob {
   quantity?: number;
   printTime?: number;
   weight?: number;
+  customerId?: string;
+  customer?: Customer;
+  priceId?: string;
+  price?: ServicePrice;
   materialId: string;
   material: PrintMaterial;
   invoiceId?: string;
-  invoice?: Invoice;
+  Invoice?: Invoice; // Note: capitalized to match the Prisma schema field name
+  timeLogs: TimeLog[];
   updatedAt: Date;
   createdAt: Date;
-  customerId?: string;
-  customer?: Customer;
-  timeLogs: TimeLog[];
-  priceId?: string;
-  price?: ServicePrice;
 }
 
 export interface PrintMaterial {
@@ -124,6 +125,18 @@ export interface ServicePrice {
   category?: Category;
   projects: Project[];
   printJobs: PrintJob[];
+  updatedAt: Date;
+  createdAt: Date;
+}
+
+export interface Task {
+  id: string;
+  title?: string;
+  description?: string;
+  userId?: number;
+  done?: boolean;
+  categoryId?: string;
+  category?: Category;
   updatedAt: Date;
   createdAt: Date;
 }
