@@ -133,7 +133,7 @@ export interface Task {
   id: string;
   title?: string;
   description?: string;
-  userId?: number;
+  userId?: string;
   done?: boolean;
   categoryId?: string;
   category?: Category;

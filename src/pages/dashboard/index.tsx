@@ -57,7 +57,8 @@ const getInputType = (key: string, value?: any): string => {
   if (
     typeof value === "boolean" ||
     lower.includes("ordered") ||
-    lower.includes("completed")
+    lower.includes("completed") ||
+    lower.includes("done")
   )
     return "checkbox";
   if (lower.includes("date")) return "datetime-local";
