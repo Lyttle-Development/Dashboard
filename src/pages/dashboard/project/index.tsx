@@ -50,9 +50,6 @@ export function Page() {
   return (
     <Container>
       <h1>Projects</h1>
-      <Button href="/dashboard/project/create">
-        <Icon icon={faCalendarPlus}>Create Project</Icon>
-      </Button>
       <Select
         label="Select Project"
         options={mapProjectsToOptions(projects)}
@@ -60,6 +57,9 @@ export function Page() {
           router.push(`/dashboard/project/${projectId}`)
         }
       />
+      <Button href="/dashboard/project/create">
+        <Icon icon={faCalendarPlus}>Create Project</Icon>
+      </Button>
     </Container>
   );
 }

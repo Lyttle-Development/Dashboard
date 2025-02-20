@@ -9,6 +9,7 @@ import { Category, Project, TimeLog } from "@/lib/prisma";
 import { KeyValue } from "@/components/KeyValue";
 import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/Button";
+import { ProjectTimeLog } from "@/components/ProjectTimeLog";
 
 const filterTimeLogs = (timeLogs: TimeLog[], returnActive = false) => {
   // remove time log that does not have end date
@@ -165,6 +166,7 @@ export function Page() {
       </article>
       <br />
       <h2>Time Logs</h2>
+      <ProjectTimeLog projectId={project.id} reloadTimeLogs={fetchProject} />
       <article>
         <KeyValue
           label="Total Time"
