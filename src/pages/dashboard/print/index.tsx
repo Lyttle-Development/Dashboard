@@ -49,9 +49,6 @@ export function Page() {
   return (
     <Container>
       <h1>Printing</h1>
-      <Button href="/dashboard/print/create">
-        <Icon icon={faCalendarPlus}>Create Print Job</Icon>
-      </Button>
       <Select
         label="Select Print Job"
         options={mapPrintsToOptions(prints)}
@@ -59,6 +56,9 @@ export function Page() {
           router.push(`/dashboard/print/${projectId}`)
         }
       />
+      <Button href="/dashboard/print/create">
+        <Icon icon={faCalendarPlus}>Create Print Job</Icon>
+      </Button>
     </Container>
   );
 }

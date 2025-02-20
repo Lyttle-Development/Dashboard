@@ -48,9 +48,6 @@ export function Page() {
   return (
     <Container>
       <h1>Prices</h1>
-      <Button href="/dashboard/price/create">
-        <Icon icon={faCalendarPlus}>Create Price</Icon>
-      </Button>
       <Select
         label="Select Price Category"
         options={mapPrintsToOptions(categories)}
@@ -58,6 +55,9 @@ export function Page() {
           router.push(`/dashboard/price/${projectId}`)
         }
       />
+      <Button href="/dashboard/price/create">
+        <Icon icon={faCalendarPlus}>Create Price</Icon>
+      </Button>
     </Container>
   );
 }
