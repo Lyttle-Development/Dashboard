@@ -7,8 +7,11 @@ import { Loader } from "@/components/Loader";
 import { Button } from "@/components/Button";
 
 import styles from "./index.module.scss";
+import { useApp } from "@/contexts/App.context";
+import classNames from "classnames";
 
 function Page() {
+  const app = useApp();
   const [loadings, _setLoading] = useState<{ [key: string]: boolean }>({
     projects: false,
     timeLogs: false,
@@ -102,8 +105,18 @@ function Page() {
                   <li
                     key={timeLog.id}
                     className={styles.active_logs__group__project}
+                    title={
+                      timeLog.user !== app.userId
+                        ? "This time log is not yours"
+                        : ""
+                    }
                   >
-                    <Button href={`/dashboard/project/${project.id}`}>
+                    <Button
+                      href={`/dashboard/project/${project.id}`}
+                      className={classNames({
+                        [styles.other]: timeLog.user !== app.userId,
+                      })}
+                    >
                       {project?.name ?? "Unknown"}
                     </Button>
                   </li>
