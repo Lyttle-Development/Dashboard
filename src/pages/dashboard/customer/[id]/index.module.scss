@@ -17,3 +17,50 @@
   width: 100%;
   max-width: 30rem;
 }
+
+.projects {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+
+  .project {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: .8rem 1rem;
+    border-radius: 8px;
+    background: #0000001a;
+  }
+}
+
+.addresses {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+
+  .address {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+    padding: .8rem 1rem;
+    border-radius: 8px;
+    background: #0000001a;
+  }
+}
+
+.printJobs {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+
+  .printJob {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: .8rem 1rem;
+    border-radius: 8px;
+    background: #0000001a;
+  }
+}

@@ -4,7 +4,7 @@ import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
-import { Customer } from "@/lib/prisma";
+import { Customer, Project } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
@@ -25,6 +25,8 @@ export function Page() {
       id: customerId,
       relations: {
         addresses: true,
+        projects: true,
+        printJobs: true,
       },
     });
 
@@ -120,6 +122,49 @@ export function Page() {
         />
       </article>
       {hasChanges && <Button onClick={updateProject}>Update Customer</Button>}
+
+      <h3>Addresses</h3>
+      <ul className={styles.addresses}>
+        {customer.addresses.map((address) => (
+          <li key={address.id} className={styles.address}>
+            <p>{address.street}</p>
+            <p>{address.city}</p>
+            <p>{address.state}</p>
+            <p>{address.zipCode}</p>
+          </li>
+        ))}
+        {customer.addresses.length === 0 && <p>No addresses found</p>}
+      </ul>
+
+      <h3>Projects</h3>
+      <ul className={styles.projects}>
+        {customer.projects
+          .reverse() // Show the most recent projects first
+          .filter((p) => !p.invoiceId) // Only show projects that are not invoiced
+          .map((project: Project) => (
+            <li key={project.id}>
+              <a
+                href={`/dashboard/project/${project.id}`}
+                className={styles.project}
+              >
+                {project.name}
+              </a>
+            </li>
+          ))}
+        {customer.projects.length === 0 && <p>No projects found</p>}
+      </ul>
+
+      <h3>Print Jobs</h3>
+      <ul className={styles.printJobs}>
+        {customer.printJobs
+          .filter((p) => !p.invoiceId) // Only show print jobs that are not invoiced
+          .map((printJob) => (
+            <li key={printJob.id} className={styles.printJob}>
+              <a href={`/dashboard/`}>{printJob.name}</a>
+            </li>
+          ))}
+        {customer.printJobs.length === 0 && <p>No print jobs found</p>}
+      </ul>
     </Container>
   );
 }
