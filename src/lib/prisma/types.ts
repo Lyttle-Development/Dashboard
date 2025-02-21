@@ -14,11 +14,12 @@ export interface Customer {
 
 export interface Address {
   id: string;
-  street: string;
-  city: string;
-  state: string;
-  country: string;
-  zipCode: string;
+  street?: string;
+  number?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  zipCode?: string;
   customerId: string;
   customer: Customer;
   updatedAt: Date;
@@ -29,7 +30,7 @@ export interface Category {
   id: string;
   name: string;
   prices: ServicePrice[];
-  tasks: Task[]; // Newly added based on your schema
+  tasks: Task[];
   updatedAt: Date;
   createdAt: Date;
 }
@@ -44,6 +45,8 @@ export interface Invoice {
   customer: Customer;
   projects: Project[];
   printJobs: PrintJob[];
+  priceId?: string;
+  price?: ServicePrice;
   updatedAt: Date;
   createdAt: Date;
 }
@@ -72,7 +75,7 @@ export interface PrintJob {
   materialId: string;
   material: PrintMaterial;
   invoiceId?: string;
-  Invoice?: Invoice; // Note: capitalized to match the Prisma schema field name
+  invoice?: Invoice;
   timeLogs: TimeLog[];
   updatedAt: Date;
   createdAt: Date;
@@ -93,6 +96,9 @@ export interface PrintMaterial {
 export interface Project {
   id: string;
   name: string;
+  parentProjectId?: string;
+  parentProject?: Project;
+  childProjects?: Project[];
   customerId?: string;
   customer?: Customer;
   priceId?: string;
@@ -125,6 +131,7 @@ export interface ServicePrice {
   category?: Category;
   projects: Project[];
   printJobs: PrintJob[];
+  invoices: Invoice[];
   updatedAt: Date;
   createdAt: Date;
 }

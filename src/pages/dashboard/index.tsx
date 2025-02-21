@@ -27,7 +27,7 @@ const tableConfigs: {
 // Fallback keys for each table when no data exists.
 // (These are the fields you wish to create/edit manually; exclude auto-managed fields.)
 const fallbackKeys: Record<string, string[]> = {
-  customers: ["firstname", "lastname", "email", "phone"], // updated for separate first/last names
+  customers: ["firstname", "lastname", "email", "phone"], // Updated for separate first/last names
   addresses: ["street", "city", "state", "country", "zipCode", "customerId"],
   category: ["name"],
   invoice: ["invoiceDate", "amount", "statusId", "customerId"],
@@ -43,10 +43,10 @@ const fallbackKeys: Record<string, string[]> = {
     "weight",
   ],
   "print-material": ["type", "subType", "stock", "color", "unitPrice"],
-  project: ["name", "customerId", "priceId", "invoiceId"], // updated clientId -> customerId
-  "time-log": ["projectId", "startTime", "endTime", "user", "printJobId"], // added printJobId if needed
-  "service-price": ["categoryId", "service", "price"], // updated to match the schema
-  task: ["title", "description", "userId", "done", "categoryId"], // for the Task model
+  project: ["name", "customerId", "priceId", "invoiceId"], // Updated clientId -> customerId
+  "time-log": ["projectId", "startTime", "endTime", "user", "printJobId"], // Added printJobId if needed
+  "service-price": ["categoryId", "service", "price"], // Updated to match the schema
+  task: ["title", "description", "userId", "done", "categoryId"], // New fallback for Task model
 };
 
 /**
