@@ -4,25 +4,21 @@ import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
-import { idToName } from "@/lib/discord";
 import { Category, Project, TimeLog } from "@/lib/prisma";
 import { KeyValue } from "@/components/KeyValue";
 import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/Button";
 import { ProjectTimeLog } from "@/components/ProjectTimeLog";
-
-const filterTimeLogs = (timeLogs: TimeLog[], returnActive = false) => {
-  // remove time log that does not have end date
-  if (returnActive) {
-    return timeLogs.filter(
-      (timeLog) => new Date(timeLog.endTime).getTime() === 0,
-    );
-  }
-  return timeLogs.filter((timeLog) => new Date(timeLog.endTime).getTime() > 0);
-};
+import { idToName } from "@/lib/discord";
+import {
+  getFinishedTimeLogs,
+  getPrice,
+  getTotalFormattedHours,
+  getTotalFormattedTimeLogsHours,
+} from "@/lib/price/get-price";
 
 function getTotalTimePerDayAndPerUser(timeLogs: TimeLog[]) {
-  timeLogs = filterTimeLogs(timeLogs);
+  timeLogs = getFinishedTimeLogs(timeLogs);
 
   // Return a list of user ids and their total time worked summed up per day.
   const timePerDayAndPerUser = new Map<string, Map<string, number>>();
@@ -43,37 +39,6 @@ function getTotalTimePerDayAndPerUser(timeLogs: TimeLog[]) {
   }
 
   return timePerDayAndPerUser;
-}
-
-function getTotalDuration(timeLogs: TimeLog[]) {
-  timeLogs = filterTimeLogs(timeLogs);
-
-  // Return the total duration of all time logs in milliseconds.
-  return timeLogs.reduce((acc, timeLog) => {
-    return (
-      acc +
-      (new Date(timeLog.endTime).getTime() -
-        new Date(timeLog.startTime).getTime())
-    );
-  }, 0);
-}
-
-function convertDurationToHours(duration: number) {
-  // return xx:xx (hours:minutes) from duration in milliseconds
-  const days = Math.floor(duration / 86400000);
-  const hours = Math.floor(duration / 3600000);
-  const minutes = Math.floor((duration % 3600000) / 60000);
-
-  if (days > 0) {
-    return `${days}d ${hours}h ${minutes}m`;
-  }
-
-  return `${hours}:${minutes.toString().padStart(2, "0")}`;
-}
-
-function getPrice(total: number, price: number) {
-  price = price || 0;
-  return `€${Math.round(total * price * 100) / 100} (€${price}/h)`;
 }
 
 export function Page() {
@@ -143,14 +108,15 @@ export function Page() {
   if (!project) return <div>Project not found</div>;
 
   const timeLogsGrouped = getTotalTimePerDayAndPerUser(project.timeLogs);
-  const totalDuration = getTotalDuration(project.timeLogs);
-  const totalDurationHours = totalDuration / 3600000;
-  const activeTimeLogs = filterTimeLogs(project.timeLogs, true);
+  const activeTimeLogs = getFinishedTimeLogs(project.timeLogs, true);
 
   return (
     <Container>
       <h2 className={styles.project_title}>
         <span>Project: {project.name}</span>
+        <Button href={`/dashboard/invoice/create/project/${project.id}`}>
+          Create invoice
+        </Button>
         <Button onClick={deleteProject}>Delete Project</Button>
       </h2>
       {project?.price?.category?.name !== "PROJECT" ? (
@@ -164,7 +130,7 @@ export function Page() {
             <KeyValue label="Service" value={project.price.service} />
             <KeyValue
               label="Calculated Price"
-              value={getPrice(totalDurationHours, project.price.price)}
+              value={getPrice(project.timeLogs, project.price.price)}
             />
           </article>
           <br />
@@ -176,7 +142,7 @@ export function Page() {
           <article>
             <KeyValue
               label="Total Time"
-              value={convertDurationToHours(totalDuration)}
+              value={getTotalFormattedTimeLogsHours(project.timeLogs)}
             />
             <KeyValue label="Active Time Logs" value={activeTimeLogs.length} />
           </article>
@@ -192,7 +158,7 @@ export function Page() {
                       <li key={user}>
                         <KeyValue
                           label={user}
-                          value={convertDurationToHours(time)}
+                          value={getTotalFormattedHours(time)}
                         />
                       </li>
                     );

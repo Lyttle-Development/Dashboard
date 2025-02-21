@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styles from "./index.module.scss";
 
-export function Loader() {
+interface LoaderProps {
+  info?: string;
+}
+
+export function Loader({ info }: LoaderProps) {
   const [showLoader, setShowLoader] = useState(false);
 
   useEffect(() => {
@@ -14,6 +18,7 @@ export function Loader() {
   return (
     <div className={styles.loaderContainer}>
       <div className={styles.loader}></div>
+      {info && <p className={styles.info}>{info}</p>}
     </div>
   );
 }

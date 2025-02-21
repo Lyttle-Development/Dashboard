@@ -10,11 +10,10 @@ export function MainNav({}: MainNavProps) {
       <Logo />
       <nav>
         <ul>
-          {/*<MainNavItem href={"/dashboard/time"}>Time</MainNavItem>*/}
           <MainNavItem href={"/dashboard/project"}>Project</MainNavItem>
           <MainNavItem href={"/dashboard/print"}>Printing</MainNavItem>
           <MainNavItem href={"/dashboard/customer"}>Customers</MainNavItem>
-          {/*<MainNavItem href={"/dashboard/invoice"}>Invoices</MainNavItem>*/}
+          <MainNavItem href={"/dashboard/invoice"}>Invoices</MainNavItem>
           <MainNavItem href={"/dashboard/price"}>Prices</MainNavItem>
         </ul>
       </nav>
