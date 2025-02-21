@@ -10,6 +10,7 @@ import { Button } from "@/components/Button";
 
 export function Page() {
   const router = useRouter();
+  const categoryId = router.query.category as string;
 
   const [prices, setPrices] = useState<ServicePrice[]>([]);
   const [originalPrices, setOriginalPrices] = useState<ServicePrice[]>([]);
@@ -30,7 +31,6 @@ export function Page() {
   }, []);
 
   useEffect(() => {
-    const categoryId = router.query.category as string;
     if (categoryId) {
       void fetchPrices(categoryId);
     }
@@ -64,7 +64,11 @@ export function Page() {
   return (
     <Container>
       <h1>Prices: {prices[0]?.category?.name}</h1>
-      <Prices prices={prices} setPrices={setPrices} />
+      <Prices
+        prices={prices}
+        setPrices={setPrices}
+        reloadPrices={() => fetchPrices(categoryId)}
+      />
       {changed && (
         <Button onClick={submitChanges}>
           Submit Changes ({changedPrices.length} prices changed)
