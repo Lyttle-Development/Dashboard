@@ -94,6 +94,7 @@ export function Page() {
           timeLogs: true,
           customer: true,
           price: true,
+          childProjects: true,
         },
       });
 
@@ -152,49 +153,72 @@ export function Page() {
         <span>Project: {project.name}</span>
         <Button onClick={deleteProject}>Delete Project</Button>
       </h2>
-      <article>
-        <KeyValue
-          label="Customer"
-          value={`${project.customer.firstname} ${project.customer.lastname}`}
-        />
-        <KeyValue label="Category" value={project.price.category.name} />
-        <KeyValue label="Service" value={project.price.service} />
-        <KeyValue
-          label="Calculated Price"
-          value={getPrice(totalDurationHours, project.price.price)}
-        />
-      </article>
-      <br />
-      <h2>Time Logs</h2>
-      <ProjectTimeLog projectId={project.id} reloadTimeLogs={fetchProject} />
-      <article>
-        <KeyValue
-          label="Total Time"
-          value={convertDurationToHours(totalDuration)}
-        />
-        <KeyValue label="Active Time Logs" value={activeTimeLogs.length} />
-      </article>
-      <br />
-      <h5>Completed:</h5>
-      <ul>
-        {timeLogsGrouped.entries().map(([date, userTime]) => (
-          <li key={date} className={styles.time_log_day}>
-            <h6>{date}</h6>
-            <ul>
-              {userTime.entries().map(([user, time]) => {
-                return (
-                  <li key={user}>
-                    <KeyValue
-                      label={user}
-                      value={convertDurationToHours(time)}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
-          </li>
-        ))}
-      </ul>
+      {project?.price?.category?.name !== "PROJECT" ? (
+        <>
+          <article>
+            <KeyValue
+              label="Customer"
+              value={`${project.customer.firstname} ${project.customer.lastname}`}
+            />
+            <KeyValue label="Category" value={project.price.category.name} />
+            <KeyValue label="Service" value={project.price.service} />
+            <KeyValue
+              label="Calculated Price"
+              value={getPrice(totalDurationHours, project.price.price)}
+            />
+          </article>
+          <br />
+          <h2>Time Logs</h2>
+          <ProjectTimeLog
+            projectId={project.id}
+            reloadTimeLogs={fetchProject}
+          />
+          <article>
+            <KeyValue
+              label="Total Time"
+              value={convertDurationToHours(totalDuration)}
+            />
+            <KeyValue label="Active Time Logs" value={activeTimeLogs.length} />
+          </article>
+          <br />
+          <h5>Completed:</h5>
+          <ul>
+            {timeLogsGrouped.entries().map(([date, userTime]) => (
+              <li key={date} className={styles.time_log_day}>
+                <h6>{date}</h6>
+                <ul>
+                  {userTime.entries().map(([user, time]) => {
+                    return (
+                      <li key={user}>
+                        <KeyValue
+                          label={user}
+                          value={convertDurationToHours(time)}
+                        />
+                      </li>
+                    );
+                  })}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <>
+          <h2>Child Projects</h2>
+          <ul className={styles.child_projects}>
+            {project.childProjects.map((childProject) => (
+              <li key={childProject.id}>
+                <Button
+                  href={`/dashboard/project/${childProject.id}`}
+                  onClick={() => fetchProject(childProject.id)}
+                >
+                  {childProject.name}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </Container>
   );
 }

@@ -10,6 +10,7 @@ import styles from "./index.module.scss";
 import { FormOptionType } from "@/components/Form";
 import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
+import { mapProjectsToOptions } from "@/pages/dashboard/project";
 
 function Page() {
   const router = useRouter();
@@ -22,6 +23,8 @@ function Page() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [price, setPrice] = useState<ServicePrice>(null);
   const [prices, setPrices] = useState<ServicePrice[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectParent, setProjectParent] = useState<Project>(null);
 
   const fetchCustomers = async () => {
     const customersData = await fetchApi<Customer[]>({
@@ -54,6 +57,15 @@ function Page() {
     setPrices(pricesData);
   };
 
+  const fetchProjects = async () => {
+    const projectsData = await fetchApi<Project[]>({
+      table: "project",
+      where: { invoiceId: null },
+      orderBy: { updatedAt: "desc" },
+    });
+    setProjects(projectsData ?? []);
+  };
+
   useEffect(() => {
     if (!category) return;
     void fetchPrices();
@@ -61,6 +73,7 @@ function Page() {
 
   useEffect(() => {
     void fetchCategories();
+    void fetchProjects();
   }, []);
 
   const restart = () => {
@@ -80,8 +93,9 @@ function Page() {
       method: "POST",
       body: {
         name,
-        customerId: customer.id,
+        customerId: projectParent ? projectParent.customerId : customer.id,
         priceId: price.id,
+        parentProjectId: projectParent?.id ?? null,
       },
     });
     restart();
@@ -100,7 +114,7 @@ function Page() {
         required
         onChange={setName}
       />
-      {customer && (
+      {customer && !projectParent && (
         <KeyValue
           label="Customer"
           value={customer.firstname + " " + customer.lastname}
@@ -108,6 +122,7 @@ function Page() {
       )}
       {!customer &&
         customers &&
+        !projectParent &&
         (customers.length > 0 ? (
           <Select
             label="Select Customer"
@@ -130,6 +145,23 @@ function Page() {
             />
           </article>
         ))}
+
+      {projects && projects.length > 0 && (
+        <Select
+          label="Select Parent Project"
+          options={[
+            {
+              label: "None",
+              value: null,
+            },
+            ...mapProjectsToOptions(projects),
+          ]}
+          onValueChange={(value) =>
+            setProjectParent(projects.find((p) => p.id === value))
+          }
+          value={projectParent?.id ?? null}
+        />
+      )}
       {categories &&
         (category ? (
           <KeyValue label="Category" value={category.name} />
@@ -160,7 +192,7 @@ function Page() {
             }
           />
         ))}
-      {price && category && customer && name && (
+      {price && category && (customer || projectParent) && name && (
         <Button onClick={createProject}>Create Project</Button>
       )}
     </Container>

@@ -31,7 +31,9 @@ export interface SelectItemProps {
 export function Select({ label, options, ...props }: SelectProps) {
   return (
     <RadixSelect.Root {...props}>
-      {props.value && <label className={styles.label}>{label}</label>}
+      {(props.value || props.value == null) && (
+        <label className={styles.label}>{label}</label>
+      )}
       <RadixSelect.Trigger className={styles.Trigger}>
         <RadixSelect.Value placeholder={label} />
         <RadixSelect.Icon className={styles.Icon}>

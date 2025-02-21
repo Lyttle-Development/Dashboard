@@ -26,7 +26,7 @@ export function Price({ price, setPrice: _setPrice }: PriceProps) {
       />
       <Field
         onChange={(v) => setPrice("price", parseInt(v))}
-        value={price.price.toString()}
+        value={price.price?.toString() ?? "0"}
         label="Price"
         type={FormOptionType.TEXT}
       />

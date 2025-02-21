@@ -10,16 +10,31 @@ import { Button } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
 import { Project } from "@/lib/prisma";
 
-function mapProjectsToOptions(projects: any[]): SelectItemProps[] {
+export function mapProjectsToOptions(projects: any[]): SelectItemProps[] {
   // Sort projects by creation date
   projects.sort((a, b) => {
     return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
   });
 
-  return projects.map((project) => {
+  const getParentProjectName = (id: string, str: string = ""): string => {
+    const parentProject = projects.find(
+      (project: Project) => project.id === id,
+    );
+
+    str = parentProject.name + " > " + str;
+    if (parentProject.parentProjectId) {
+      return getParentProjectName(parentProject.parentProjectId, str);
+    }
+
+    return str;
+  };
+
+  return projects.map((project: Project) => {
     return {
       value: project.id,
-      children: project.name,
+      children: project.parentProjectId
+        ? getParentProjectName(project.parentProjectId) + project.name
+        : project.name,
     } as SelectItemProps;
   });
 }
