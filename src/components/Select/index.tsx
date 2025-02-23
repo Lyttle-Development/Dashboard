@@ -16,6 +16,7 @@ export interface SelectProps extends RadixSelectProps {
   label: string;
   icon?: IconProp;
   options: SelectItemProps[] | SelectGroupProps[];
+  alwaysShowLabel?: boolean;
 }
 
 export interface SelectGroupProps {
@@ -34,11 +35,12 @@ export function Select({
   label = "Select",
   icon,
   options,
+  alwaysShowLabel = false,
   ...props
 }: SelectProps) {
   return (
     <RadixSelect.Root {...props}>
-      {(props.value || props.value == null) && (
+      {(props.value || alwaysShowLabel) && (
         <label className={styles.label}>{label}</label>
       )}
       <RadixSelect.Trigger className={styles.Trigger}>
