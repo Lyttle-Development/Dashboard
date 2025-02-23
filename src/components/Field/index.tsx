@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Form as RadixForm } from "radix-ui";
-import { FormField, FormOptionType } from "../Form";
+import { FormOptionType } from "../Form";
+import { FormField } from "../Form/components/Field";
 
 export interface FormProps {
   label: string;
