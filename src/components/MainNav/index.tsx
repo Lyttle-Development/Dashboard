@@ -10,15 +10,18 @@ export function MainNav({}: MainNavProps) {
       <Logo />
       <nav>
         <ul>
-          <MainNavItem href={"/dashboard/project"}>Project</MainNavItem>
-          <MainNavItem href={"/dashboard/print"}>Printing</MainNavItem>
-          <MainNavItem href={"/dashboard/customer"}>Customers</MainNavItem>
-          <MainNavItem href={"/dashboard/invoice"}>Invoices</MainNavItem>
-          <MainNavItem href={"/dashboard/price"}>Prices</MainNavItem>
+          <MainNavItem href={"/"} note="Active time logs">
+            Home
+          </MainNavItem>
+          <MainNavItem href={"/project"}>Project</MainNavItem>
+          <MainNavItem href={"/print"}>Printing</MainNavItem>
+          <MainNavItem href={"/customer"}>Customers</MainNavItem>
+          <MainNavItem href={"/invoice"}>Invoices</MainNavItem>
+          <MainNavItem href={"/price"}>Prices</MainNavItem>
         </ul>
       </nav>
       <ul className={styles.sub_menu}>
-        <MainNavItem href={"/dashboard"}>Fallback Dashboard</MainNavItem>
+        <MainNavItem href={"/fallback"}>Fallback Dashboard</MainNavItem>
       </ul>
     </aside>
   );

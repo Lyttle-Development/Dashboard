@@ -7,6 +7,7 @@ export interface MainNavItemProps {
   children: React.ReactNode;
   route?: string;
   locked?: boolean;
+  note?: string;
 }
 
 export function MainNavItem({
@@ -15,6 +16,7 @@ export function MainNavItem({
   children,
   route,
   locked = false,
+  note,
 }: MainNavItemProps) {
   route = route ?? href;
   return (
@@ -26,6 +28,7 @@ export function MainNavItem({
       classNameActive={styles["main-menu-item--active"]}
     >
       {children}
+      <span className={styles.note}>{note}</span>
     </Link>
   );
 }

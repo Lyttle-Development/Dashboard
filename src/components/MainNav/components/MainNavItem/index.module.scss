@@ -2,7 +2,9 @@
 @use "sass:color";
 
 .main-menu-item {
-  display: block;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
   padding: 1.3rem 2rem;
   width: 100%;
   letter-spacing: .04rem;
@@ -24,4 +26,8 @@
   margin-left: .5rem;
   margin-bottom: -.05rem;
   overflow: visible;
+}
+
+.note {
+  font-size: .6rem;
 }
