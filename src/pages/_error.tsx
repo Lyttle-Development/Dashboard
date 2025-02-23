@@ -1,5 +1,6 @@
 import { NextPageContext } from "next";
 import { Layout } from "@/layouts";
+import { Container } from "@/components/Container";
 
 export interface ErrorPageProps {
   code: number;
@@ -9,12 +10,16 @@ export interface ErrorPageProps {
 function ErrorPage({ code, message }: ErrorPageProps) {
   return (
     <Layout.Default>
-      <h1>Error!</h1>
-      <p>
-        {code
-          ? `An error ${code} occurred on server`
-          : "An error occurred on client"}
-      </p>
+      <Container>
+        <h1>Oh no!</h1>
+        <h2>Something went wrong...</h2>
+        <p>
+          {code
+            ? `An error ${code} occurred on server`
+            : "An error occurred on client"}
+        </p>
+        <p>{message}</p>
+      </Container>
     </Layout.Default>
   );
 }
