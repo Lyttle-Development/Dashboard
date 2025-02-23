@@ -21,6 +21,7 @@ export async function fetchApi<T>({
   id = "",
   relations,
   where,
+  orderBy,
 }: FetchOptions): Promise<T | null> {
   try {
     // Create and set headers
@@ -45,6 +46,10 @@ export async function fetchApi<T>({
 
     if (where) {
       query.set("where", JSON.stringify(where));
+    }
+
+    if (orderBy) {
+      query.set("orderBy", JSON.stringify(orderBy));
     }
 
     const url = buildUrl(table, id, query);

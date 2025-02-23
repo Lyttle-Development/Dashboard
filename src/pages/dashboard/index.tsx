@@ -120,7 +120,9 @@ export function Page() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(config.endpoint);
+      const url = new URL(config.endpoint, window.location.origin);
+      url.searchParams.set("orderBy", JSON.stringify({ updatedAt: "desc" }));
+      const res = await fetch(url.href);
       if (!res.ok) console.log("Failed to fetch data");
       const json = await res.json();
       setData(json || []);
