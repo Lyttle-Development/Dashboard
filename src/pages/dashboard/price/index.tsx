@@ -1,7 +1,10 @@
 import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
-import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendarPlus,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 import { Select, SelectItemProps } from "@/components/Select";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
@@ -49,6 +52,7 @@ export function Page() {
     <Container>
       <h1>Prices</h1>
       <Select
+        icon={faMagnifyingGlass}
         label="Select Price Category"
         options={mapPrintsToOptions(categories)}
         onValueChange={(projectId) =>

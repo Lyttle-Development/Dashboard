@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Loader } from "@/components/Loader";
 import { fetchApi } from "@/lib/fetchApi";
 import { Invoice } from "@/lib/prisma";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 export function Page() {
   const router = useRouter();
@@ -36,6 +37,7 @@ export function Page() {
       <h1>Invoices</h1>
       <Select
         label="Open Invoice"
+        icon={faMagnifyingGlass}
         options={invoices.map((invoice) => ({
           label: invoice.projects.map((project) => project.name).join(", "),
           value: invoice.id,

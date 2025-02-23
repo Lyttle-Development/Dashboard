@@ -1,7 +1,10 @@
 import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
-import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendarPlus,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 import { Select, SelectItemProps } from "@/components/Select";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
@@ -79,6 +82,7 @@ export function Page() {
       <h1>Projects</h1>
       <Select
         label="Select Project"
+        icon={faMagnifyingGlass}
         options={mapProjectsToOptions(projects)}
         onValueChange={(projectId) =>
           router.push(`/dashboard/project/${projectId}`)
