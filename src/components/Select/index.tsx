@@ -50,7 +50,7 @@ export function Select({ label, options, ...props }: SelectProps) {
               const addSeparator = index > 0 && index < options.length;
               if ("label" in option && "options" in option) {
                 return (
-                  <>
+                  <div key={index}>
                     {addSeparator && (
                       <RadixSelect.Separator className={styles.Separator} />
                     )}
@@ -59,18 +59,18 @@ export function Select({ label, options, ...props }: SelectProps) {
                       label={option.label}
                       options={option.options}
                     />
-                  </>
+                  </div>
                 );
               } else {
                 return (
-                  <>
+                  <div key={index}>
                     {addSeparator && (
                       <RadixSelect.Separator className={styles.Separator} />
                     )}
                     <SelectItem key={index} value={option.value}>
                       {option.children || option.label}
                     </SelectItem>
-                  </>
+                  </div>
                 );
               }
             })}

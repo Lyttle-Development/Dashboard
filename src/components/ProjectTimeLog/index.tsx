@@ -2,10 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useApp } from "@/contexts/App.context";
 import { fetchApi } from "@/lib/fetchApi";
 import { Project, TimeLog } from "@/lib/prisma";
-import { Loader } from "@/components/Loader";
 import styles from "./index.module.scss";
 import { Form, FormOptionType } from "@/components/Form";
 import { Dialog } from "@/components/Dialog";
+import { Button, ButtonStyle } from "@/components/Button";
+import { Icon } from "@/components/Icon";
+import { faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
 
 export interface ProjectTimeLogProps {
   projectId: string;
@@ -145,57 +147,54 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
     void reloadTimeLogs(projectId);
   };
 
-  if (loading) return <Loader />;
+  if (loading) return <p>Loading...</p>;
   if (!project) return <div>Project not found</div>;
 
   return (
     <div>
-      {timeLog ? (
-        <article className={styles.side_to_side}>
-          <button
-            className={`${styles.button} ${styles.end}`}
-            onClick={endTimeLog}
-          >
-            End Time Log
-          </button>
-          <p className={styles.timer}>Elapsed Time: {timer}</p>
-        </article>
-      ) : (
-        <article className={styles.side_to_side}>
-          <button
-            className={`${styles.button} ${styles.start}`}
-            onClick={startTimeLog}
-          >
-            Start Time Log
-          </button>
-        </article>
-      )}
-      <Dialog
-        title="Add Time"
-        description="Add time to the project"
-        buttonText="Quickly add time"
-        onOpenChange={setDialogOpen}
-        open={dialogOpen}
-      >
-        <Form
-          onSubmit={submitQuickTime}
-          options={[
-            {
-              key: "date",
-              label: "Date",
-              type: FormOptionType.DATE,
-              required: true,
-            },
-            {
-              key: "time",
-              label: "Time",
-              type: FormOptionType.TEXT,
-              placeholder: "HH:MM",
-              required: true,
-            },
-          ]}
-        />
-      </Dialog>
+      <article className={styles.side_to_side}>
+        {timeLog ? (
+          <>
+            <Button onClick={endTimeLog} style={ButtonStyle.Danger}>
+              <Icon icon={faStop} />
+              End Time Log ({timer})
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button onClick={startTimeLog} style={ButtonStyle.Primary}>
+              <Icon icon={faPlay} />
+              Start Time Log
+            </Button>
+          </>
+        )}
+        <Dialog
+          title="Quickly add time"
+          description="Add time to the project"
+          buttonText="Quickly add time"
+          onOpenChange={setDialogOpen}
+          open={dialogOpen}
+        >
+          <Form
+            onSubmit={submitQuickTime}
+            options={[
+              {
+                key: "date",
+                label: "Date",
+                type: FormOptionType.DATE,
+                required: true,
+              },
+              {
+                key: "time",
+                label: "Time",
+                type: FormOptionType.TEXT,
+                placeholder: "HH:MM",
+                required: true,
+              },
+            ]}
+          />
+        </Dialog>
+      </article>
     </div>
   );
 }

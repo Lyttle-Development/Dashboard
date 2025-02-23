@@ -11,11 +11,6 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Project } from "@/lib/prisma";
 
 export function mapProjectsToOptions(projects: any[]): SelectItemProps[] {
-  // Sort projects by creation date
-  projects.sort((a, b) => {
-    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-  });
-
   const getParentProjectName = (id: string, str: string = ""): string => {
     const parentProject = projects.find(
       (project: Project) => project.id === id,
@@ -49,9 +44,26 @@ export function Page() {
     const projectsData = await fetchApi<Project[]>({
       table: "project",
       where: { invoiceId: null },
-      orderBy: { updatedAT: "desc" },
+      relations: {
+        timeLogs: true,
+      },
     });
-    setProjects(projectsData ?? []);
+
+    console.log(projectsData);
+    // Oder projectdata by the newest TimeLog first
+    const data = projectsData?.sort((a, b) => {
+      // find newest timeLog
+      const newestTimeLogA = a.timeLogs.reduce((acc, cur) => {
+        const curTime = new Date(cur.startTime)?.getTime() ?? 0;
+        return acc < curTime ? curTime : acc;
+      }, 0);
+      const newestTimeLogB = b.timeLogs.reduce((acc, cur) => {
+        const curTime = new Date(cur.startTime)?.getTime() ?? 0;
+        return acc < curTime ? curTime : acc;
+      }, 0);
+      return newestTimeLogB - newestTimeLogA;
+    });
+    setProjects(data ?? []);
     setLoading(false);
   }, []);
 

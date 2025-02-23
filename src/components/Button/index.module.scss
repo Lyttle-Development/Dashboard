@@ -1,3 +1,6 @@
+@use '../../styles/variables.scss' as v;
+@use 'sass:color';
+
 .Trigger {
   all: unset;
   display: inline-flex;
@@ -38,4 +41,22 @@
   opacity: 0.5;
   pointer-events: none;
   cursor: not-allowed;
+}
+
+.primary {
+  background: v.$color-primary;
+  color: white;
+
+  &:hover {
+    background: color.adjust(v.$color-primary, $lightness: -10%);
+  }
+}
+
+.danger {
+  background: v.$color-danger;
+  color: white;
+
+  &:hover {
+    background: color.adjust(v.$color-danger, $lightness: -10%);
+  }
 }

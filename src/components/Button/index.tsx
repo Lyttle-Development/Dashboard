@@ -9,6 +9,13 @@ export interface ButtonProps {
   href?: string;
   className?: string;
   disabled?: boolean;
+  style?: ButtonStyle;
+}
+
+export enum ButtonStyle {
+  Default = "default",
+  Primary = "primary",
+  Danger = "danger",
 }
 
 export function Button({
@@ -17,9 +24,12 @@ export function Button({
   href,
   className,
   disabled,
+  style = ButtonStyle.Default,
 }: ButtonProps) {
   const buttonClass = classnames(styles.Trigger, className, {
     [styles.disabled]: disabled,
+    [styles.primary]: style === ButtonStyle.Primary,
+    [styles.danger]: style === ButtonStyle.Danger,
   });
 
   if (href) {
