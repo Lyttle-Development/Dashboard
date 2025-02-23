@@ -7,7 +7,7 @@ import { Form, FormOptionType } from "@/components/Form";
 import { Dialog } from "@/components/Dialog";
 import { Button, ButtonStyle } from "@/components/Button";
 import { Icon } from "@/components/Icon";
-import { faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
+import { faGaugeHigh, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
 
 export interface ProjectTimeLogProps {
   projectId: string;
@@ -171,7 +171,12 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
         <Dialog
           title="Quickly add time"
           description="Add time to the project"
-          buttonText="Quickly add time"
+          buttonText={
+            <>
+              <Icon icon={faGaugeHigh} />
+              <span>Quickly add time</span>
+            </>
+          }
           onOpenChange={setDialogOpen}
           open={dialogOpen}
         >

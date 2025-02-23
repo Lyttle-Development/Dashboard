@@ -5,7 +5,7 @@ import styles from "./index.module.scss";
 import { Button } from "@/components/Button";
 
 export interface DialogProps {
-  buttonText?: string;
+  buttonText?: string | React.ReactNode;
   title?: string;
   description?: string;
   children: React.ReactNode;
