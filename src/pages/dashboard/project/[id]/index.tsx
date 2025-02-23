@@ -7,7 +7,7 @@ import { Container } from "@/components/Container";
 import { Category, Project, TimeLog } from "@/lib/prisma";
 import { KeyValue } from "@/components/KeyValue";
 import { fetchApi } from "@/lib/fetchApi";
-import { Button } from "@/components/Button";
+import { Button, ButtonStyle } from "@/components/Button";
 import { ProjectTimeLog } from "@/components/ProjectTimeLog";
 import { idToName } from "@/lib/discord";
 import {
@@ -16,6 +16,11 @@ import {
   getTotalFormattedHours,
   getTotalFormattedTimeLogsHours,
 } from "@/lib/price/get-price";
+import { Icon } from "@/components/Icon";
+import {
+  faFileInvoiceDollar,
+  faTrashCan,
+} from "@fortawesome/free-solid-svg-icons";
 
 function getTotalTimePerDayAndPerUser(timeLogs: TimeLog[]) {
   timeLogs = getFinishedTimeLogs(timeLogs);
@@ -114,10 +119,16 @@ export function Page() {
     <Container>
       <h2 className={styles.project_title}>
         <span>Project: {project.name}</span>
-        <Button href={`/dashboard/invoice/create/project/${project.id}`}>
-          Create invoice
-        </Button>
-        <Button onClick={deleteProject}>Delete Project</Button>
+        <article className={styles.project_actions}>
+          <Button href={`/dashboard/invoice/create/project/${project.id}`}>
+            <Icon icon={faFileInvoiceDollar} />
+            Create invoice
+          </Button>
+          <Button onClick={deleteProject} style={ButtonStyle.Danger}>
+            <Icon icon={faTrashCan} />
+            Delete Project
+          </Button>
+        </article>
       </h2>
       {project?.price?.category?.name !== "PROJECT" ? (
         <>

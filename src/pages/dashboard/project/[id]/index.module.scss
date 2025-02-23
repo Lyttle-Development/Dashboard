@@ -4,6 +4,16 @@
   align-items: center;
   margin-bottom: 1rem;
   width: 100%;
+  position: sticky;
+  top: 0;
+  background: white;
+  margin-top: -1rem;
+  padding-top: 1rem;
+}
+
+.project_actions {
+  display: flex;
+  gap: 1rem;
 }
 
 .time_log_day {
