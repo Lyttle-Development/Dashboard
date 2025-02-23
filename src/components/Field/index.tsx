@@ -31,7 +31,10 @@ export function Field({
 
   return (
     <RadixForm.Root onSubmit={handleSubmit}>
-      <FormField option={option} onChange={handleOnchange} />
+      <FormField
+        option={{ key: "field", ...option }}
+        onChange={handleOnchange}
+      />
     </RadixForm.Root>
   );
 }
