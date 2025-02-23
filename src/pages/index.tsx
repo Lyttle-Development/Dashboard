@@ -112,7 +112,7 @@ function Page() {
                     }
                   >
                     <Button
-                      href={`/dashboard/project/${project.id}`}
+                      href={`/project/${project.id}`}
                       className={classNames({
                         [styles.other]: timeLog.user !== app.userId,
                       })}
