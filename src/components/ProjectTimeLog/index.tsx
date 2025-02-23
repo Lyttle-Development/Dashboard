@@ -4,6 +4,8 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Project, TimeLog } from "@/lib/prisma";
 import { Loader } from "@/components/Loader";
 import styles from "./index.module.scss";
+import { Form, FormOptionType } from "@/components/Form";
+import { Dialog } from "@/components/Dialog";
 
 export interface ProjectTimeLogProps {
   projectId: string;
@@ -18,6 +20,7 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
   const [timer, setTimer] = useState<string>("00:00");
   const [lastTimePlayed, setLastTimePlayed] = useState<number>(0);
   const [elapsed, setElapsed] = useState<number>(0);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const fetchProject = useCallback(async () => {
     setLoading(true);
@@ -109,6 +112,39 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
     }
   }, [timer]);
 
+  const submitQuickTime = async (data: { date: string; time: string }) => {
+    setDialogOpen(false);
+    console.log(data);
+    const [hours, minutes] = data.time?.split(":") ?? [];
+    if (!hours || !minutes) return;
+    const [year, month, day] = data.date.split("-");
+
+    const startDate = new Date(Number(year), Number(month) - 1, Number(day));
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(Number(year), Number(month) - 1, Number(day));
+    endDate.setHours(Number(hours), Number(minutes), 0, 0);
+
+    const res = await fetchApi<TimeLog>({
+      method: "POST",
+      table: "time-log",
+      body: {
+        user: app.userId,
+        projectId,
+        startTime: startDate.toISOString(),
+        endTime: endDate.toISOString(),
+      },
+    });
+    console.log(res);
+
+    if (!res) {
+      window.alert("Failed to add time");
+      return;
+    }
+
+    void reloadTimeLogs(projectId);
+  };
+
   if (loading) return <Loader />;
   if (!project) return <div>Project not found</div>;
 
@@ -134,6 +170,32 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
           </button>
         </article>
       )}
+      <Dialog
+        title="Add Time"
+        description="Add time to the project"
+        buttonText="Quickly add time"
+        onOpenChange={setDialogOpen}
+        open={dialogOpen}
+      >
+        <Form
+          onSubmit={submitQuickTime}
+          options={[
+            {
+              key: "date",
+              label: "Date",
+              type: FormOptionType.DATE,
+              required: true,
+            },
+            {
+              key: "time",
+              label: "Time",
+              type: FormOptionType.TEXT,
+              placeholder: "HH:MM",
+              required: true,
+            },
+          ]}
+        />
+      </Dialog>
     </div>
   );
 }
