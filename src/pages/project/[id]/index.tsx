@@ -5,25 +5,22 @@ import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
 import { Category, Project, TimeLog } from "@/lib/prisma";
-import { KeyValue } from "@/components/KeyValue";
 import { fetchApi } from "@/lib/fetchApi";
 import { Button, ButtonStyle } from "@/components/Button";
-import { ProjectTimeLog } from "@/components/ProjectTimeLog";
 import { idToName } from "@/lib/discord";
-import {
-  getFinishedTimeLogs,
-  getPrice,
-  getTotalFormattedHours,
-  getTotalFormattedTimeLogsHours,
-} from "@/lib/price/get-price";
+import { getFinishedTimeLogs } from "@/lib/price/get-price";
 import { Icon } from "@/components/Icon";
 import {
   faFileInvoiceDollar,
   faPersonBreastfeeding,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
+import { ChildProject } from "@/pages/project/[id]/components/ChildProject";
+import { ProjectProject } from "@/pages/project/[id]/components/ProjectProject";
 
-function getTotalTimePerDayAndPerUser(timeLogs: TimeLog[]) {
+function getTotalTimePerDayAndPerUser(
+  timeLogs: TimeLog[],
+): Map<string, Map<string, number>> {
   timeLogs = getFinishedTimeLogs(timeLogs);
 
   // Return a list of user ids and their total time worked summed up per day.
@@ -136,70 +133,14 @@ export function Page() {
         </article>
       </h2>
       {project?.price?.category?.name !== "PROJECT" ? (
-        <>
-          <article>
-            <KeyValue
-              label="Customer"
-              value={`${project.customer.firstname} ${project.customer.lastname}`}
-            />
-            <KeyValue label="Category" value={project.price.category.name} />
-            <KeyValue label="Service" value={project.price.service} />
-            <KeyValue
-              label="Calculated Price"
-              value={getPrice(project.timeLogs, project.price.price)}
-            />
-          </article>
-          <br />
-          <h2>Time Logs</h2>
-          <ProjectTimeLog
-            projectId={project.id}
-            reloadTimeLogs={fetchProject}
-          />
-          <article>
-            <KeyValue
-              label="Total Time"
-              value={getTotalFormattedTimeLogsHours(project.timeLogs)}
-            />
-            <KeyValue label="Active Time Logs" value={activeTimeLogs.length} />
-          </article>
-          <br />
-          <h5>Completed:</h5>
-          <ul>
-            {timeLogsGrouped.entries().map(([date, userTime]) => (
-              <li key={date} className={styles.time_log_day}>
-                <h6>{date}</h6>
-                <ul>
-                  {userTime.entries().map(([user, time]) => {
-                    return (
-                      <li key={user}>
-                        <KeyValue
-                          label={user}
-                          value={getTotalFormattedHours(time)}
-                        />
-                      </li>
-                    );
-                  })}
-                </ul>
-              </li>
-            ))}
-          </ul>
-        </>
+        <ChildProject
+          project={project}
+          fetchProject={fetchProject}
+          activeTimeLogs={activeTimeLogs}
+          timeLogsGrouped={timeLogsGrouped}
+        />
       ) : (
-        <>
-          <h2>Child Projects</h2>
-          <ul className={styles.child_projects}>
-            {project.childProjects.map((childProject) => (
-              <li key={childProject.id}>
-                <Button
-                  href={`/project/${childProject.id}`}
-                  onClick={() => fetchProject(childProject.id)}
-                >
-                  {childProject.name}
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </>
+        <ProjectProject project={project} fetchProject={fetchProject} />
       )}
     </Container>
   );
