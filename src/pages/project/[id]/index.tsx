@@ -63,6 +63,7 @@ export function Page() {
           customer: true,
           price: true,
           childProjects: true,
+          tasks: true,
         },
       });
 

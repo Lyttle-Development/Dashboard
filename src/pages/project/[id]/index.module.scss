@@ -28,3 +28,32 @@
   flex-direction: column;
   gap: .5rem;
 }
+
+.project_details {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+
+  > section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+
+  .task {
+    display: flex;
+    gap: .8rem;
+    align-items: center;
+
+    .task_details {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

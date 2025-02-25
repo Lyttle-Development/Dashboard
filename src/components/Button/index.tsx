@@ -10,6 +10,7 @@ export interface ButtonProps {
   className?: string;
   disabled?: boolean;
   style?: ButtonStyle;
+  title?: string;
 }
 
 export enum ButtonStyle {
@@ -25,6 +26,7 @@ export function Button({
   className,
   disabled,
   style = ButtonStyle.Default,
+  title,
 }: ButtonProps) {
   const buttonClass = classnames(styles.Trigger, className, {
     [styles.disabled]: disabled,
@@ -38,6 +40,7 @@ export function Button({
         href={href}
         className={buttonClass}
         onClick={disabled ? undefined : onClick}
+        title={title}
       >
         {children}
       </Link>
@@ -49,6 +52,7 @@ export function Button({
       className={buttonClass}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
+      title={title}
     >
       {children}
     </button>

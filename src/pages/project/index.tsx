@@ -13,7 +13,10 @@ import { Button } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
 import { Project } from "@/lib/prisma";
 
-export function mapProjectsToOptions(projects: any[]): SelectItemProps[] {
+export function mapProjectsToOptions(
+  projects: any[],
+  skipFilter = false,
+): SelectItemProps[] {
   const getParentProjectName = (id: string, str: string = ""): string => {
     const parentProject = projects.find(
       (project: Project) => project.id === id,
@@ -28,7 +31,7 @@ export function mapProjectsToOptions(projects: any[]): SelectItemProps[] {
   };
 
   return projects
-    .filter((p) => p.parentProjectId)
+    .filter((p) => (!skipFilter ? p.parentProjectId : true))
     .map((project: Project) => {
       return {
         value: project.id,

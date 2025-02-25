@@ -1,11 +1,8 @@
 import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
-import {
-  faCalendarPlus,
-  faMagnifyingGlass,
-} from "@fortawesome/free-solid-svg-icons";
-import { Select, SelectItemProps } from "@/components/Select";
+import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
+import { SelectItemProps } from "@/components/Select";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Loader } from "@/components/Loader";
@@ -54,12 +51,12 @@ export function Page() {
   return (
     <Container>
       <h1>Tasks</h1>
-      <Select
-        icon={faMagnifyingGlass}
-        label="Open Task"
-        options={mapTasksToOptions(tasks)}
-        onValueChange={(projectId) => router.push(`/task/${projectId}`)}
-      />
+      {/*<Select*/}
+      {/*  icon={faMagnifyingGlass}*/}
+      {/*  label="Open Task"*/}
+      {/*  options={mapTasksToOptions(tasks)}*/}
+      {/*  onValueChange={(projectId) => router.push(`/task/${projectId}`)}*/}
+      {/*/>*/}
       <Button href="/task/create">
         <Icon icon={faCalendarPlus}>Create Task</Icon>
       </Button>

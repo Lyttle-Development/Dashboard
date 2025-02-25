@@ -98,7 +98,9 @@ export function FormField({ option, onChange = (e) => e }: FormFieldProps) {
           justifyContent: "space-between",
         }}
       >
-        <RadixForm.Label className={styles.Label}>{option.key}</RadixForm.Label>
+        <RadixForm.Label className={styles.Label}>
+          {option.label ?? option.key}
+        </RadixForm.Label>
         <RadixForm.Message className={styles.Message} match="valueMissing">
           Please enter something
         </RadixForm.Message>

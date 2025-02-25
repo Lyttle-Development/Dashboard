@@ -8,6 +8,7 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/Button";
 import { Loader } from "@/components/Loader";
 import { FormOptionType } from "@/components/Form";
+import { mapProjectsToOptions } from "@/pages/project";
 
 interface updatePrice {
   categoryId: string | null;
@@ -123,10 +124,7 @@ function Page() {
         <Select
           label="Project"
           alwaysShowLabel
-          options={projects.map((category) => ({
-            label: category.name,
-            value: category.id,
-          }))}
+          options={mapProjectsToOptions(projects)}
           onValueChange={(s) => updateTask("projectId", s)}
         />
       )}

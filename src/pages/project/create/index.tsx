@@ -55,6 +55,7 @@ function Page() {
       },
     });
     setPrices(pricesData);
+    if (pricesData?.length === 1) setPrice(pricesData[0]);
   };
 
   const fetchProjects = async () => {
@@ -154,7 +155,7 @@ function Page() {
               label: "None",
               value: null,
             },
-            ...mapProjectsToOptions(projects),
+            ...mapProjectsToOptions(projects, true),
           ]}
           alwaysShowLabel
           onValueChange={(value) =>

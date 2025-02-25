@@ -142,7 +142,7 @@ model Project {
   invoiceId String?
 
   timeLogs TimeLog[]
-  Task     Task[]
+  tasks    Task[]
 
   updatedAt DateTime @default(now()) @updatedAt
   createdAt DateTime @default(now())
