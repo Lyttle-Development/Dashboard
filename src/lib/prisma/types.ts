@@ -106,6 +106,7 @@ export interface Project {
   invoiceId?: string;
   invoice?: Invoice;
   timeLogs: TimeLog[];
+  tasks: Task[];
   updatedAt: Date;
   createdAt: Date;
 }
@@ -144,6 +145,8 @@ export interface Task {
   done?: boolean;
   categoryId?: string;
   category?: Category;
+  projectId: string;
+  project: Project;
   updatedAt: Date;
   createdAt: Date;
 }

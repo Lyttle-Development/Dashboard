@@ -15,6 +15,7 @@ export function MainNav({}: MainNavProps) {
           <MainNavItem href={"/customer"}>Customers</MainNavItem>
           <MainNavItem href={"/invoice"}>Invoices</MainNavItem>
           <MainNavItem href={"/price"}>Prices</MainNavItem>
+          <MainNavItem href={"/task"}>Tasks</MainNavItem>
         </ul>
       </nav>
       <ul className={styles.sub_menu}>
