@@ -64,11 +64,13 @@ export function getTotalFormattedHours(duration: number) {
   const hours = Math.floor(duration / 3600000);
   const minutes = Math.floor((duration % 3600000) / 60000);
 
+  const totalHours = days * 24 + hours;
+
   if (days > 0) {
-    return `${days}d ${hours}h ${minutes}m`;
+    return `${days}d ${hours}h ${minutes}m (${totalHours}h)`;
   }
 
-  return `${hours}:${minutes.toString().padStart(2, "0")}`;
+  return `${hours}h ${minutes}m`;
 }
 
 export function getTotalFormattedTimeLogsHours(timeLogs: TimeLog[]) {

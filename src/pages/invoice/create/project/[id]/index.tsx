@@ -83,21 +83,23 @@ function Page() {
         this invoice closed.
       </p>
       <ul className={styles.projects}>
-        {projects.map((project) => (
-          <li key={project.id} className={styles.project}>
-            <Button href={`/project/${project.id}`}>{project.name}</Button>
-            <article>
-              <KeyValue
-                label="Hours worked"
-                value={getTotalFormattedTimeLogsHours(project.timeLogs)}
-              />
-              <KeyValue
-                label="Price"
-                value={getPrice(project.timeLogs, project.price.price)}
-              />
-            </article>
-          </li>
-        ))}
+        {projects
+          .filter((p) => p.priceId !== "133f319d-101f-4b0a-91ae-c3ebb0483714") // Filter out the project price, as it should not have time booked.
+          .map((project) => (
+            <li key={project.id} className={styles.project}>
+              <Button href={`/project/${project.id}`}>{project.name}</Button>
+              <article>
+                <KeyValue
+                  label="Hours worked"
+                  value={getTotalFormattedTimeLogsHours(project.timeLogs)}
+                />
+                <KeyValue
+                  label="Price"
+                  value={getPrice(project.timeLogs, project.price.price)}
+                />
+              </article>
+            </li>
+          ))}
       </ul>
       <article>
         <h3>

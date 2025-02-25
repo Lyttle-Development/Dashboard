@@ -10,9 +10,6 @@ export function MainNav({}: MainNavProps) {
       <Logo />
       <nav>
         <ul>
-          <MainNavItem href={"/"} note="Active time logs">
-            Home
-          </MainNavItem>
           <MainNavItem href={"/project"}>Project</MainNavItem>
           <MainNavItem href={"/print"}>Printing</MainNavItem>
           <MainNavItem href={"/customer"}>Customers</MainNavItem>

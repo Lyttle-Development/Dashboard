@@ -27,14 +27,16 @@ export function mapProjectsToOptions(projects: any[]): SelectItemProps[] {
     return str;
   };
 
-  return projects.map((project: Project) => {
-    return {
-      value: project.id,
-      children: project.parentProjectId
-        ? getParentProjectName(project.parentProjectId) + project.name
-        : project.name,
-    } as SelectItemProps;
-  });
+  return projects
+    .filter((p) => p.parentProjectId)
+    .map((project: Project) => {
+      return {
+        value: project.id,
+        children: project.parentProjectId
+          ? getParentProjectName(project.parentProjectId) + project.name
+          : project.name,
+      } as SelectItemProps;
+    });
 }
 
 export function Page() {
@@ -46,7 +48,9 @@ export function Page() {
     setLoading(true);
     const projectsData = await fetchApi<Project[]>({
       table: "project",
-      where: { invoiceId: null },
+      where: {
+        invoiceId: null,
+      },
       relations: {
         timeLogs: true,
       },
