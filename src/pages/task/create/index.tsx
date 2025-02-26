@@ -10,6 +10,7 @@ import { Loader } from "@/components/Loader";
 import { FormOptionType } from "@/components/Form";
 import { mapProjectsToOptions } from "@/pages/project";
 import { Switch } from "@/components/Switch";
+import { useApp } from "@/contexts/App.context";
 
 interface updatePrice {
   categoryId: string | null;
@@ -18,6 +19,7 @@ interface updatePrice {
 }
 
 function Page() {
+  const app = useApp();
   const [loadings, setLoading] = useState({
     categories: true,
     projects: true,
@@ -83,7 +85,7 @@ function Page() {
     const res = await fetchApi<Task>({
       table: "task",
       method: "POST",
-      body: task,
+      body: { ...task, userId: app.userId },
     });
     updateLoading("global", false);
 
