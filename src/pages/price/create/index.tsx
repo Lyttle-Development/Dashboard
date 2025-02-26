@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/Button";
 import { useRouter } from "next/router";
+import { Loader } from "@/components/Loader";
 
 interface updatePrice {
   categoryId: string | null;
@@ -17,6 +18,7 @@ interface updatePrice {
 function Page() {
   const router = useRouter();
 
+  const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [price, setPrice] = useState<updatePrice>({
     categoryId: null,
@@ -29,18 +31,22 @@ function Page() {
   };
 
   const fetchCategories = async () => {
+    setLoading(true);
     const categoriesData = await fetchApi<Category[]>({
       table: "category",
     });
     setCategories(categoriesData);
+    setLoading(false);
   };
 
   const createPrice = async () => {
+    setLoading(true);
     const data = await fetchApi<ServicePrice>({
       table: "servicePrice",
       method: "POST",
       body: price,
     });
+    setLoading(false);
     void router.push(`/price/${data.id}`);
   };
 
@@ -49,6 +55,10 @@ function Page() {
   }, []);
 
   const validPrice = price.categoryId && price.service && price.price;
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <Container>

@@ -11,10 +11,21 @@ import { FormOptionType } from "@/components/Form";
 import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
 import { mapProjectsToOptions } from "@/pages/project";
+import { Loader } from "@/components/Loader";
 
 function Page() {
   const router = useRouter();
 
+  const [loadings, setLoading] = useState<{ [key: string]: boolean }>({
+    customer: false,
+    category: false,
+    price: false,
+    project: false,
+    global: false,
+  });
+  const updateLoading = (key: string, value: boolean) =>
+    setLoading((prev) => ({ ...prev, [key]: value }));
+  const loading = Object.values(loadings).some((l) => l);
   const [name, setName] = useState<string>("");
   const [customerSearch, setCustomerSearch] = useState<string>("");
   const [customer, setCustomer] = useState<Customer>(null);
@@ -27,6 +38,7 @@ function Page() {
   const [projectParent, setProjectParent] = useState<Project>(null);
 
   const fetchCustomers = async () => {
+    updateLoading("customer", true);
     const customersData = await fetchApi<Customer[]>({
       table: "customer",
       where: {
@@ -38,16 +50,20 @@ function Page() {
     });
     setCustomers(customersData);
     if (customersData?.length === 1) setCustomer(customersData[0]);
+    updateLoading("customer", false);
   };
 
   const fetchCategories = async () => {
+    updateLoading("category", true);
     const categoriesData = await fetchApi<Category[]>({
       table: "category",
     });
     setCategories(categoriesData);
+    updateLoading("category", false);
   };
 
   const fetchPrices = async () => {
+    updateLoading("price", true);
     const pricesData = await fetchApi<ServicePrice[]>({
       table: "servicePrice",
       where: {
@@ -56,15 +72,18 @@ function Page() {
     });
     setPrices(pricesData);
     if (pricesData?.length === 1) setPrice(pricesData[0]);
+    updateLoading("price", false);
   };
 
   const fetchProjects = async () => {
+    updateLoading("project", true);
     const projectsData = await fetchApi<Project[]>({
       table: "project",
       where: { invoiceId: null },
       orderBy: { updatedAt: "desc" },
     });
     setProjects(projectsData ?? []);
+    updateLoading("project", false);
   };
 
   useEffect(() => {
@@ -78,6 +97,7 @@ function Page() {
   }, []);
 
   const restart = () => {
+    updateLoading("global", true);
     setCustomerSearch("");
     setCustomer(null);
     setCustomers([]);
@@ -86,9 +106,11 @@ function Page() {
 
     setPrices([]);
     setPrice(null);
+    updateLoading("global", false);
   };
 
   const createProject = async () => {
+    updateLoading("global", true);
     const data = await fetchApi<Project>({
       table: "project",
       method: "POST",
@@ -100,8 +122,11 @@ function Page() {
       },
     });
     restart();
+    updateLoading("global", false);
     void router.push(`/project/${data.id}`);
   };
+
+  if (loading) return <Loader />;
 
   return (
     <Container>

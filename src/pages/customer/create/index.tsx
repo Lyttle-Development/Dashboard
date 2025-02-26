@@ -8,6 +8,7 @@ import { FormOptionType } from "@/components/Form";
 import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
 import { Customer } from "@/lib/prisma";
+import { Loader } from "@/components/Loader";
 
 // Optional keys of Customer
 interface OptionalCustomer {
@@ -27,6 +28,7 @@ const emptyCustomer: OptionalCustomer = {
 function Page() {
   const router = useRouter();
 
+  const [loading, setLoading] = useState(false);
   const [customer, setCustomer] = useState<OptionalCustomer>(emptyCustomer);
 
   const restart = () => {
@@ -41,6 +43,7 @@ function Page() {
   };
 
   const createPrintJob = async () => {
+    setLoading(true);
     const data = await fetchApi<Customer>({
       table: "customer",
       method: "POST",
@@ -52,8 +55,13 @@ function Page() {
       },
     });
     restart();
+    setLoading(false);
     void router.push(`/customer/${data.id}`);
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <Container>

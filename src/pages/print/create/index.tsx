@@ -10,10 +10,20 @@ import styles from "./index.module.scss";
 import { FormOptionType } from "@/components/Form";
 import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
+import { Loader } from "@/components/Loader";
 
 function Page() {
   const router = useRouter();
 
+  const [loadings, setLoading] = useState<{ [key: string]: boolean }>({
+    customer: false,
+    material: false,
+    price: false,
+    global: false,
+  });
+  const updateLoading = (key: string, value: boolean) =>
+    setLoading((prev) => ({ ...prev, [key]: value }));
+  const loading = Object.values(loadings).some((v) => v);
   const [name, setName] = useState<string>("");
   const [customerSearch, setCustomerSearch] = useState<string>("");
   const [customer, setCustomer] = useState<Customer>(null);
@@ -24,6 +34,7 @@ function Page() {
   const [prices, setPrices] = useState<ServicePrice[]>([]);
 
   const fetchCustomers = async () => {
+    updateLoading("customer", true);
     const customersData = await fetchApi<Customer[]>({
       table: "customer",
       where: {
@@ -35,16 +46,20 @@ function Page() {
     });
     setCustomers(customersData);
     if (customersData?.length === 1) setCustomer(customersData[0]);
+    updateLoading("customer", false);
   };
 
   const fetchMaterials = async () => {
+    updateLoading("material", true);
     const materialsData = await fetchApi<PrintMaterial[]>({
       table: "printMaterial",
     });
     setMaterials(materialsData);
+    updateLoading("material", false);
   };
 
   const fetchPrices = async () => {
+    updateLoading("price", true);
     const pricesData = await fetchApi<ServicePrice[]>({
       table: "servicePrice",
       where: {
@@ -52,6 +67,7 @@ function Page() {
       },
     });
     setPrices(pricesData);
+    updateLoading("price", false);
   };
 
   useEffect(() => {
@@ -60,14 +76,17 @@ function Page() {
   }, []);
 
   const restart = () => {
+    updateLoading("global", true);
     setCustomerSearch("");
     setCustomer(null);
     setCustomers([]);
 
     setPrice(null);
+    updateLoading("global", false);
   };
 
   const createPrintJob = async () => {
+    updateLoading("global", true);
     const data = await fetchApi<PrintJob>({
       table: "print-job",
       method: "POST",
@@ -79,8 +98,11 @@ function Page() {
       },
     });
     restart();
+    updateLoading("global", false);
     void router.push(`/print/${data.id}`);
   };
+
+  if (loading) return <Loader />;
 
   return (
     <Container>

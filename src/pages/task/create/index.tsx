@@ -21,6 +21,7 @@ function Page() {
   const [loadings, setLoading] = useState({
     categories: true,
     projects: true,
+    global: false,
   });
   const loading = Object.values(loadings).some((value) => value);
   const updateLoading = (key: string, value: boolean) => {
@@ -78,11 +79,13 @@ function Page() {
   const validTask = task.title && (task.categoryId || task.projectId);
 
   const createTask = async () => {
+    updateLoading("global", true);
     const res = await fetchApi<Task>({
       table: "task",
       method: "POST",
       body: task,
     });
+    updateLoading("global", false);
 
     if (!res) {
       alert("Failed to create task");
