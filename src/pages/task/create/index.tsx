@@ -2,13 +2,14 @@ import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Field } from "@/components/Field";
 import { Select } from "@/components/Select";
-import { Category, Project } from "@/lib/prisma";
+import { Category, Project, Task } from "@/lib/prisma";
 import { useCallback, useEffect, useState } from "react";
 import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/Button";
 import { Loader } from "@/components/Loader";
 import { FormOptionType } from "@/components/Form";
 import { mapProjectsToOptions } from "@/pages/project";
+import { Switch } from "@/components/Switch";
 
 interface updatePrice {
   categoryId: string | null;
@@ -30,11 +31,13 @@ function Page() {
   };
   const [categories, setCategories] = useState<Category[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [multiple, setMultiple] = useState(false);
+  const [createdTasks, setCreatedTasks] = useState<Task[]>([]);
   const [task, setTask] = useState<{
     title: string;
     description: string;
-    categoryId: number | null;
-    projectId: number | null;
+    categoryId: string | null;
+    projectId: string | null;
   }>({
     title: "",
     description: "",
@@ -75,7 +78,7 @@ function Page() {
   const validTask = task.title && (task.categoryId || task.projectId);
 
   const createTask = async () => {
-    const res = await fetchApi({
+    const res = await fetchApi<Task>({
       table: "task",
       method: "POST",
       body: task,
@@ -83,6 +86,17 @@ function Page() {
 
     if (!res) {
       alert("Failed to create task");
+      return;
+    }
+
+    if (multiple) {
+      setCreatedTasks((prev) => [...prev, res]);
+      setTask({
+        title: "",
+        description: "",
+        categoryId: task.categoryId,
+        projectId: task.projectId,
+      });
       return;
     }
 
@@ -103,11 +117,17 @@ function Page() {
   return (
     <Container>
       <h1>Create Task</h1>
-      <Field label="title" required onChange={(p) => updateTask("title", p)} />
+      <Field
+        label="title"
+        required
+        onChange={(p) => updateTask("title", p)}
+        value={task.title}
+      />
       <Field
         label="description"
         onChange={(p) => updateTask("description", p)}
         type={FormOptionType.TEXTAREA}
+        value={task.description}
       />
       {!task.projectId && (
         <Select
@@ -118,6 +138,7 @@ function Page() {
           }))}
           alwaysShowLabel
           onValueChange={(c) => updateTask("categoryId", c)}
+          value={task.categoryId}
         />
       )}
       {!task.categoryId && (
@@ -126,9 +147,25 @@ function Page() {
           alwaysShowLabel
           options={mapProjectsToOptions(projects)}
           onValueChange={(s) => updateTask("projectId", s)}
+          value={task.projectId}
         />
       )}
       {validTask && <Button onClick={createTask}>Create Task</Button>}
+      <Switch
+        label="Create Multiple"
+        checked={multiple}
+        onCheckedChange={setMultiple}
+      />
+      {multiple && (
+        <>
+          <h2>Tasks Created:</h2>
+          <ul>
+            {createdTasks.map((createdTask) => (
+              <li key={createdTask.id}>{createdTask.title}</li>
+            ))}
+          </ul>
+        </>
+      )}
     </Container>
   );
 }

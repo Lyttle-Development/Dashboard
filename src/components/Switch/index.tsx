@@ -5,9 +5,16 @@ import styles from "./index.module.scss";
 
 interface SwitchProps extends RadixSwitchProps {
   label: string;
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
 }
 
-export function Switch({ label, ...props }: SwitchProps) {
+export function Switch({
+  label,
+  checked = false,
+  onCheckedChange = () => {},
+  ...props
+}: SwitchProps) {
   return (
     <form>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -18,7 +25,13 @@ export function Switch({ label, ...props }: SwitchProps) {
         >
           {label}
         </label>
-        <RadixSwitch.Root className={styles.Root} id="airplane-mode" {...props}>
+        <RadixSwitch.Root
+          className={styles.Root}
+          id="airplane-mode"
+          {...props}
+          checked={checked}
+          onCheckedChange={onCheckedChange}
+        >
           <RadixSwitch.Thumb className={styles.Thumb} />
         </RadixSwitch.Root>
       </div>

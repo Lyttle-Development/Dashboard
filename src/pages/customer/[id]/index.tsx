@@ -8,7 +8,7 @@ import { Customer, Project } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
-import { Button } from "@/components/Button";
+import { Button, ButtonStyle } from "@/components/Button";
 
 export function Page() {
   const router = useRouter();
@@ -93,7 +93,9 @@ export function Page() {
         <span>
           Customer: {customer.firstname} {customer.lastname}
         </span>
-        <Button onClick={deleteProject}>Delete Customer</Button>
+        <Button onClick={deleteProject} style={ButtonStyle.Danger}>
+          Delete Customer
+        </Button>
       </h2>
       <article className={styles.information}>
         <Field

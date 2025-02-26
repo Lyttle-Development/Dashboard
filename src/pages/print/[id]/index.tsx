@@ -8,7 +8,7 @@ import { Customer, PrintJob, ServicePrice } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Select } from "@/components/Select";
 import { Field } from "@/components/Field";
-import { Button } from "@/components/Button";
+import { Button, ButtonStyle } from "@/components/Button";
 import { PrintTimeLog } from "@/components/PrintTimeLog";
 
 export function Page() {
@@ -106,7 +106,9 @@ export function Page() {
     <Container>
       <h2 className={styles.title}>
         <span>Print Job: {printJob.name}</span>
-        <Button onClick={deletePrintJob}>Delete Print Job</Button>
+        <Button onClick={deletePrintJob} style={ButtonStyle.Danger}>
+          Delete Print Job
+        </Button>
       </h2>
       <article className={styles.information}>
         <Select
