@@ -68,6 +68,9 @@ function Page() {
     updateLoading("projects", true);
     const projectsData = await fetchApi<Project[]>({
       table: "Project",
+      relations: {
+        timeLogs: true,
+      },
     });
     setProjects(projectsData ?? []);
     updateLoading("projects", false);
