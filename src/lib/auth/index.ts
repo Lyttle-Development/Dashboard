@@ -7,20 +7,27 @@ import {authOptions} from '@/pages/api/auth/[...nextauth]';
  * If the session does not exist, return a 401 response.
  */
 export async function requireAuth(req: NextApiRequest, res: NextApiResponse) {
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) {
-    res.status(401).json({ error: "Unauthorized" });
+  try {
+    const session = await getServerSession(req, res, authOptions);
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!session && !token) {
+      res.status(401).json({ error: "Unauthorized" });
+      return null;
+    }
+
+    // Check user is allowed
+    const isAllowed =
+      isAllowedUser(session) || token === process.env.AUTH_TOKEN;
+    if (!isAllowed) {
+      res.status(403).json({ error: "Forbidden" });
+      return null;
+    }
+
+    return session;
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
     return null;
   }
-
-  // Check user is allowed
-  const isAllowed = isAllowedUser(session);
-  if (!isAllowed) {
-    res.status(403).json({ error: "Forbidden" });
-    return null;
-  }
-
-  return session;
 }
 
 export function isAllowedUser(session: any) {

@@ -1,0 +1,19 @@
+@use '../../styles/variables.scss' as v;
+
+.activeLog,
+.noLog {
+  background: white;
+  padding: 15px;
+  border-radius: v.$border-radius;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.timer {
+  display: block;
+  font-size: .8rem;
+}
+
+.side_to_side {
+  display: flex;
+  gap: 1rem;
+}

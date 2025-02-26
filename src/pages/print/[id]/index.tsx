@@ -9,6 +9,7 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Select } from "@/components/Select";
 import { Field } from "@/components/Field";
 import { Button } from "@/components/Button";
+import { PrintTimeLog } from "@/components/PrintTimeLog";
 
 export function Page() {
   const router = useRouter();
@@ -134,6 +135,8 @@ export function Page() {
         />
       </article>
       {hasChanges && <Button onClick={updatePrintJob}>Update Customer</Button>}
+
+      <PrintTimeLog printJobId={printJob.id} />
     </Container>
   );
 }
