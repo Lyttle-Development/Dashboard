@@ -21,6 +21,7 @@ function Page() {
   const [loading, setLoading] = useState(false);
   const [loadingTask, setLoadingTask] = useState("Initializing");
   const [projects, setProjects] = useState<Project[]>([]);
+  const [invoice, setInvoice] = useState({});
 
   const updateProjects = (newProjects: Project[]) => {
     // Update the projects state with the new projects, but filter out any duplicates.
@@ -66,6 +67,8 @@ function Page() {
 
     setLoading(false);
   };
+
+  const createInvoice = async () => {};
 
   useEffect(() => {
     void fetchProjects([projectId as string]);
