@@ -50,7 +50,7 @@ export function Page() {
         <Select
           label="Select Project"
           icon={faMagnifyingGlass}
-          options={mapProjectsToOptions(projects)}
+          options={mapProjectsToOptions(projects, true)}
           onValueChange={(projectId) => router.push(`/project/${projectId}`)}
         />
         <Button href="/project/create">

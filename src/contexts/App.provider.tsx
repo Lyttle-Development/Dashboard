@@ -1,6 +1,7 @@
 import React from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { AppContext } from "./App.context";
+import { isAdmin, isManager } from "@/lib/auth";
 
 export interface AppContextProps {
   children: React.ReactNode;
@@ -28,7 +29,12 @@ export function AppProvider({ children }: AppContextProps) {
 
   return (
     <AppContext.Provider
-      value={{ userId: session!.user.id, userEmail: session!.user.email }}
+      value={{
+        userId: session!.user.id,
+        userEmail: session!.user.email,
+        isAdmin: isAdmin(session),
+        isManager: isManager(session),
+      }}
     >
       {children}
     </AppContext.Provider>

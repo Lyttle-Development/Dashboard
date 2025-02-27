@@ -3,6 +3,8 @@ import { createContext, useContext } from "react";
 export interface AppContextInterface {
   userId: string;
   userEmail?: string | null;
+  isAdmin: boolean;
+  isManager: boolean;
 }
 
 export type AppContextType = AppContextInterface | null;

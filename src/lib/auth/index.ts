@@ -43,3 +43,12 @@ export function isAdmin(session: any) {
   ];
   return adminEmails.includes(session.user.id);
 }
+
+export function isManager(session: any) {
+  // Check if the user is a manager by email & env variable
+  const managerEmails = process.env.MANAGER_EMAILS?.split(";") ?? [
+    "132487290835435521", // Stualyttle Kirry
+    "469271199143428099", // Lmikha
+  ];
+  return managerEmails.includes(session.user.id);
+}

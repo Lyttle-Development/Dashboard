@@ -8,15 +8,15 @@ export function mapProjectsToOptions(
   projects: any[],
   onlyShowTimeLogProjects = false,
 ): SelectItemProps[] {
-  projects = sortProjectsBasedOnTimeLogs(projects);
-  projects = onlyShowTimeLogProjects ? getTimeLogProjects(projects) : projects;
+  let newProjects = sortProjectsBasedOnTimeLogs(projects);
+  newProjects = onlyShowTimeLogProjects
+    ? getTimeLogProjects(newProjects)
+    : newProjects;
 
-  return projects.map((project: Project) => {
+  return newProjects.map((project: Project) => {
     return {
       value: project.id,
-      children: project.parentProjectId
-        ? getProjectFullName(project, projects)
-        : project.name,
+      children: getProjectFullName(project, projects),
     } as SelectItemProps;
   });
 }
