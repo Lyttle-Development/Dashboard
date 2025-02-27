@@ -1,4 +1,4 @@
-interface YukiConfig {
+export interface YukiConfig {
   apiKey: string;
   companyId: string;
   // Endpoint for Sales webservice (used for invoices & product creation)
@@ -7,13 +7,13 @@ interface YukiConfig {
   contactEndpoint: string;
 }
 
-interface CustomerData {
+export interface CustomerData {
   customerName: string;
   address?: string;
   // Add additional fields as required by Yuki’s API.
 }
 
-interface ProductData {
+export interface ProductData {
   productCode: string;
   productName: string;
   price: number;
@@ -21,7 +21,7 @@ interface ProductData {
   // Other product fields may be added here.
 }
 
-interface InvoiceLine {
+export interface InvoiceLine {
   productCode: string; // should match the code of the product created
   description: string;
   quantity: number;
@@ -29,7 +29,7 @@ interface InvoiceLine {
   vatPercentage: number;
 }
 
-interface InvoiceData {
+export interface InvoiceData {
   customerId: string; // ID obtained after creating the customer
   invoiceDate: string; // ISO string format
   dueDate: string; // ISO string format

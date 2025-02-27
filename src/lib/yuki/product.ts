@@ -1,10 +1,9 @@
 import { createSoapClient } from "@/lib/yuki/soap";
+import { yukiConfig } from "@/lib/yuki/config";
+import { ProductData } from "@/lib/types/yuki";
 
-async function searchProduct(
-  config: YukiConfig,
-  productCode: string,
-): Promise<any | null> {
-  const client = await createSoapClient(config.salesEndpoint, config);
+async function searchProduct(productCode: string): Promise<any | null> {
+  const client = await createSoapClient(yukiConfig.salesEndpoint);
   const searchParams = { ProductSearch: { Code: productCode } };
   // Assume a method "SearchProduct" exists.
   const [result] = await client.SearchProductAsync(searchParams);
@@ -14,11 +13,8 @@ async function searchProduct(
   return null;
 }
 
-async function createProduct(
-  config: YukiConfig,
-  productData: ProductData,
-): Promise<any> {
-  const client = await createSoapClient(config.salesEndpoint, config);
+async function createProduct(productData: ProductData): Promise<any> {
+  const client = await createSoapClient(yukiConfig.salesEndpoint);
   const requestParams = {
     Product: {
       Code: productData.productCode,
@@ -32,16 +28,13 @@ async function createProduct(
   return result;
 }
 
-async function ensureProduct(
-  config: YukiConfig,
-  productData: ProductData,
-): Promise<string> {
-  const existing = await searchProduct(config, productData.productCode);
+async function ensureProduct(productData: ProductData): Promise<string> {
+  const existing = await searchProduct(productData.productCode);
   if (existing) {
     console.log("Product exists:", existing.Code);
     return existing.Code;
   } else {
-    const newProduct = await createProduct(config, productData);
+    const newProduct = await createProduct(productData);
     console.log("Created new product:", newProduct.Code);
     return newProduct.Code;
   }

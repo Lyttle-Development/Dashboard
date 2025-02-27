@@ -1,10 +1,9 @@
 import { createSoapClient } from "@/lib/yuki/soap";
+import { yukiConfig } from "@/lib/yuki/config";
+import { InvoiceData } from "@/lib/types/yuki";
 
-async function createInvoice(
-  config: YukiConfig,
-  invoiceData: InvoiceData,
-): Promise<any> {
-  const client = await createSoapClient(config.salesEndpoint, config);
+async function createInvoice(invoiceData: InvoiceData): Promise<any> {
+  const client = await createSoapClient(yukiConfig.salesEndpoint);
   const requestParams = {
     Invoice: {
       CustomerID: invoiceData.customerId,
