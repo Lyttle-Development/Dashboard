@@ -1,24 +1,15 @@
-import * as soap from "soap";
+import { createSoapClient } from "@/lib/yuki/soap";
 
 async function createInvoice(
   config: YukiConfig,
   invoiceData: InvoiceData,
 ): Promise<any> {
-  // Create the SOAP client for the Sales webservice
-  const client = await soap.createClientAsync(config.salesEndpoint);
-
-  client.addSoapHeader({
-    APIKey: config.apiKey,
-    CompanyID: config.companyId,
-  });
-
-  // Construct the invoice payload according to Yuki's schema.
+  const client = await createSoapClient(config.salesEndpoint, config);
   const requestParams = {
     Invoice: {
       CustomerID: invoiceData.customerId,
       InvoiceDate: invoiceData.invoiceDate,
       DueDate: invoiceData.dueDate,
-      // Additional header fields as needed...
       InvoiceLines: invoiceData.lines.map((line) => ({
         ProductCode: line.productCode,
         Description: line.description,
@@ -28,8 +19,6 @@ async function createInvoice(
       })),
     },
   };
-
-  // Call the method to create the invoice (replace 'CreateInvoice' with the actual method name)
   const [result] = await client.CreateInvoiceAsync(requestParams);
   return result;
 }
