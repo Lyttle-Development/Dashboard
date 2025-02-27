@@ -17,7 +17,7 @@ export function mapProjectsToOptions(
   projects: any[],
   skipFilter = false,
 ): SelectItemProps[] {
-  projects = projects?.sort((a, b) => {
+  projects.sort((a, b) => {
     // find newest timeLog
     const newestTimeLogA = a.timeLogs.reduce((acc, cur) => {
       const curTime = new Date(cur.startTime)?.getTime() ?? 0;
@@ -44,7 +44,12 @@ export function mapProjectsToOptions(
   };
 
   return projects
-    .filter((p) => (!skipFilter ? p.parentProjectId : true))
+    .filter(
+      (p) =>
+        !skipFilter
+          ? p.priceId != "133f319d-101f-4b0a-91ae-c3ebb0483714"
+          : true, // If filter enabled filter out Project-Project Project Prices
+    )
     .map((project: Project) => {
       return {
         value: project.id,
