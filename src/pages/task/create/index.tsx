@@ -147,7 +147,7 @@ function Page() {
         <Select
           label="Project"
           alwaysShowLabel
-          options={mapProjectsToOptions(projects)}
+          options={mapProjectsToOptions(projects, true)}
           onValueChange={(s) => updateTask("projectId", s)}
           value={task.projectId ?? undefined}
         />

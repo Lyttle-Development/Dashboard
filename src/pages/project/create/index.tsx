@@ -81,6 +81,7 @@ function Page() {
       table: "project",
       where: { invoiceId: null },
       orderBy: { updatedAt: "desc" },
+      relations: { timeLogs: true },
     });
     setProjects(projectsData ?? []);
     updateLoading("project", false);
@@ -180,7 +181,7 @@ function Page() {
               label: "None",
               value: null,
             },
-            ...mapProjectsToOptions(projects, true),
+            ...mapProjectsToOptions(projects, false),
           ]}
           alwaysShowLabel
           onValueChange={(value) =>
@@ -212,7 +213,7 @@ function Page() {
           onValueChange={(value) =>
             setPrice(prices.find((p) => p.id === value))
           }
-          value={price?.id ?? null}
+          value={price?.id ?? undefined}
         />
       )}
       {price && category && (customer || projectParent) && name && (
