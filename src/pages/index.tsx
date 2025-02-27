@@ -47,6 +47,7 @@ function Page() {
       relations: {
         price: true,
         timeLogs: true,
+        tasks: true,
       },
     });
 
@@ -97,6 +98,22 @@ function Page() {
       <section>
         <h2>Invoices to create:</h2>
         <p>Projects inactive for 30 days should be closed and invoiced.</p>
+      </section>
+
+      <section>
+        <h2>Open Projects:</h2>
+        <p>Projects with open tasks</p>
+        <ul>
+          {projects
+            .filter(
+              (project) => project.tasks.filter((t) => !t.done).length > 0,
+            )
+            .map((project) => (
+              <li key={project.id}>
+                <Link href={`/project/${project.id}`}>{project.name}</Link>
+              </li>
+            ))}
+        </ul>
       </section>
 
       <section>

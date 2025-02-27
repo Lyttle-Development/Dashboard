@@ -8,15 +8,9 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/Button";
 import { Loader } from "@/components/Loader";
 import { FormOptionType } from "@/components/Form";
-import { mapProjectsToOptions } from "@/pages/project";
 import { Switch } from "@/components/Switch";
 import { useApp } from "@/contexts/App.context";
-
-interface updatePrice {
-  categoryId: string | null;
-  service: string | null;
-  price: number | null;
-}
+import { mapProjectsToOptions } from "@/lib/project";
 
 function Page() {
   const app = useApp();
@@ -146,7 +140,7 @@ function Page() {
           }))}
           alwaysShowLabel
           onValueChange={(c) => updateTask("categoryId", c)}
-          value={task.categoryId}
+          value={task.categoryId ?? undefined}
         />
       )}
       {!task.categoryId && (
@@ -155,7 +149,7 @@ function Page() {
           alwaysShowLabel
           options={mapProjectsToOptions(projects)}
           onValueChange={(s) => updateTask("projectId", s)}
-          value={task.projectId}
+          value={task.projectId ?? undefined}
         />
       )}
       {validTask && <Button onClick={createTask}>Create Task</Button>}

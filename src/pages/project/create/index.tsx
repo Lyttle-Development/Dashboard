@@ -10,8 +10,8 @@ import styles from "./index.module.scss";
 import { FormOptionType } from "@/components/Form";
 import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
-import { mapProjectsToOptions } from "@/pages/project";
 import { Loader } from "@/components/Loader";
+import { mapProjectsToOptions } from "@/lib/project";
 
 function Page() {
   const router = useRouter();

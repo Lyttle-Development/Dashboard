@@ -5,60 +5,15 @@ import {
   faCalendarPlus,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
-import { Select, SelectItemProps } from "@/components/Select";
+import { Select } from "@/components/Select";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Loader } from "@/components/Loader";
 import { Button } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
 import { Project } from "@/lib/prisma";
-
-export function mapProjectsToOptions(
-  projects: any[],
-  skipFilter = false,
-): SelectItemProps[] {
-  projects.sort((a, b) => {
-    // find newest timeLog
-    const newestTimeLogA = a.timeLogs.reduce((acc, cur) => {
-      const curTime = new Date(cur.startTime)?.getTime() ?? 0;
-      return acc < curTime ? curTime : acc;
-    }, 0);
-    const newestTimeLogB = b.timeLogs.reduce((acc, cur) => {
-      const curTime = new Date(cur.startTime)?.getTime() ?? 0;
-      return acc < curTime ? curTime : acc;
-    }, 0);
-    return newestTimeLogB - newestTimeLogA;
-  });
-
-  const getParentProjectName = (id: string, str: string = ""): string => {
-    const parentProject = projects.find(
-      (project: Project) => project.id === id,
-    );
-
-    str = parentProject.name + " > " + str;
-    if (parentProject.parentProjectId) {
-      return getParentProjectName(parentProject.parentProjectId, str);
-    }
-
-    return str;
-  };
-
-  return projects
-    .filter(
-      (p) =>
-        !skipFilter
-          ? p.priceId != "133f319d-101f-4b0a-91ae-c3ebb0483714"
-          : true, // If filter enabled filter out Project-Project Project Prices
-    )
-    .map((project: Project) => {
-      return {
-        value: project.id,
-        children: project.parentProjectId
-          ? getParentProjectName(project.parentProjectId) + project.name
-          : project.name,
-      } as SelectItemProps;
-    });
-}
+import { SideToSide } from "@/components/SideToSide";
+import { mapProjectsToOptions } from "@/lib/project";
 
 export function Page() {
   const router = useRouter();
@@ -91,15 +46,17 @@ export function Page() {
   return (
     <Container>
       <h1>Projects</h1>
-      <Select
-        label="Select Project"
-        icon={faMagnifyingGlass}
-        options={mapProjectsToOptions(projects)}
-        onValueChange={(projectId) => router.push(`/project/${projectId}`)}
-      />
-      <Button href="/project/create">
-        <Icon icon={faCalendarPlus}>Create Project</Icon>
-      </Button>
+      <SideToSide>
+        <Select
+          label="Select Project"
+          icon={faMagnifyingGlass}
+          options={mapProjectsToOptions(projects)}
+          onValueChange={(projectId) => router.push(`/project/${projectId}`)}
+        />
+        <Button href="/project/create">
+          <Icon icon={faCalendarPlus}>Create Project</Icon>
+        </Button>
+      </SideToSide>
     </Container>
   );
 }
