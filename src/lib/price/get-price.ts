@@ -1,4 +1,5 @@
 import { TimeLog } from "@/lib/prisma";
+import { formatNumber } from "@/lib/format/number";
 
 export function getPrice(
   totalHours: number | TimeLog[],
@@ -11,7 +12,9 @@ export function getPrice(
       ? totalHours
       : getTotalHours(totalHours as TimeLog[]);
   const amount = Math.round(totalHours * hourPrice * 100) / 100;
-  return getAmount ? amount : `€${amount} (€${hourPrice}/h)`;
+  return getAmount
+    ? amount
+    : `€${formatNumber(amount)} (€${formatNumber(hourPrice)}/h)`;
 }
 
 export function getPriceFromPrices(
@@ -24,7 +27,7 @@ export function getPriceFromPrices(
     return acc + (getPrice(totalHours[index], hourPrice, true) as number);
   }, 0);
   totalAmount = Math.round(totalAmount * 100) / 100;
-  return getAmount ? totalAmount : `€${totalAmount}`;
+  return getAmount ? totalAmount : `€${formatNumber(totalAmount)}`;
 }
 
 export function getTotal(timeLogs: TimeLog[]) {
@@ -41,10 +44,14 @@ export function getTotal(timeLogs: TimeLog[]) {
 }
 
 export function getTotalHours(timeLogs: TimeLog[], returnExact = false) {
-  const exact = getTotal(timeLogs) / 3600000; // Convert milliseconds to hours;
+  const duration = getTotal(timeLogs);
+  return getTotalHoursDuration(duration, returnExact);
+}
+
+export function getTotalHoursDuration(duration: number, returnExact = false) {
+  const exact = duration / 3600000; // Convert milliseconds to hours;
   if (returnExact) return exact;
-  // round down to the minutes
-  return Math.floor(exact * 100) / 100;
+  return Math.floor(exact); // Return the rounded down hours
 }
 
 export function getFinishedTimeLogs(timeLogs: TimeLog[], returnActive = false) {
@@ -58,16 +65,15 @@ export function getFinishedTimeLogs(timeLogs: TimeLog[], returnActive = false) {
   return timeLogs.filter((timeLog) => new Date(timeLog.endTime).getTime() > 0);
 }
 
-export function getTotalFormattedHours(duration: number) {
-  // return xx:xx (hours:minutes) from duration in milliseconds
-  const days = Math.floor(duration / 86400000);
-  const hours = Math.floor(duration / 3600000);
-  const minutes = Math.floor((duration % 3600000) / 60000);
-
-  const totalHours = days * 24 + hours;
+export function getTotalFormattedHours(duration: number, exact = false) {
+  const totalHours = getTotalHoursDuration(duration);
+  // Start from minutes and convert to hours and days keeping the remainder
+  const minutes = Math.floor((duration / 60000) % 60);
+  const hours = totalHours % 24;
+  const days = Math.floor(totalHours / 24);
 
   if (days > 0) {
-    return `${days}d ${hours}h ${minutes}m (${totalHours}h)`;
+    return `${days}d ${hours}h (${minutes}m) (${formatNumber(totalHours)}h)`;
   }
 
   return `${hours}h ${minutes}m`;
