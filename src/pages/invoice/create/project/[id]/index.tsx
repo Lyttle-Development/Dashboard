@@ -13,6 +13,12 @@ import {
   getPriceFromPrices,
   getTotalFormattedTimeLogsHours,
 } from "@/lib/price/get-price";
+import { Icon } from "@/components/Icon";
+import {
+  faDiagramProject,
+  faPersonBreastfeeding,
+} from "@fortawesome/free-solid-svg-icons";
+import { formatNumber } from "@/lib/format/number";
 
 function Page() {
   const router = useRouter();
@@ -21,7 +27,9 @@ function Page() {
   const [loading, setLoading] = useState(false);
   const [loadingTask, setLoadingTask] = useState("Initializing");
   const [projects, setProjects] = useState<Project[]>([]);
+  const [project, setProject] = useState<Project>(null);
   const [invoice, setInvoice] = useState({});
+  const [discount, setDiscount] = useState(0);
 
   const updateProjects = (newProjects: Project[]) => {
     // Update the projects state with the new projects, but filter out any duplicates.
@@ -53,6 +61,12 @@ function Page() {
     });
     setLoadingTask("Updating projects");
 
+    const projectData: Project =
+      projectsData?.filter((p) => p.id === projectId)[0] || null;
+    if (projectData) {
+      setProject(projectData);
+    }
+
     updateProjects(projectsData);
     const childProjects = projectsData.flatMap(
       (project) => project.childProjects,
@@ -74,44 +88,91 @@ function Page() {
     void fetchProjects([projectId as string]);
   }, [projectId]);
 
+  const totalPriceTimeLogs: number = getPriceFromPrices(
+    projects.map((project) => project.timeLogs),
+    projects.map((project) => project.price.price),
+    true,
+  ) as number;
+
+  const costTax = 0.21; // 21% BTW/TAX
+
+  const totalPriceCalculatedDiscount = totalPriceTimeLogs * (1 - discount); // Subtract discount
+  const totalPriceCalculatedTax = totalPriceCalculatedDiscount * (1 + costTax); // Add TAX/BTW
+
   if (!projectId) return null;
   if (loading) return <Loader info={loadingTask} />;
 
   return (
-    <Container>
-      <h1>Create Invoice</h1>
-      <h2>Projects:</h2>
-      <p>
-        All these projects prices will be listed combined, and after creating
-        this invoice closed.
-      </p>
-      <ul className={styles.projects}>
-        {projects
-          .filter((p) => p.priceId !== "133f319d-101f-4b0a-91ae-c3ebb0483714") // Filter out the project price, as it should not have time booked.
-          .map((project) => (
-            <li key={project.id} className={styles.project}>
-              <Button href={`/project/${project.id}`}>{project.name}</Button>
-              <article>
-                <KeyValue
-                  label="Hours worked"
-                  value={getTotalFormattedTimeLogsHours(project.timeLogs)}
-                />
-                <KeyValue
-                  label="Price"
-                  value={getPrice(project.timeLogs, project.price.price)}
-                />
-              </article>
-            </li>
-          ))}
-      </ul>
-      <article>
-        <h3>
-          Total price:{" "}
-          {getPriceFromPrices(
-            projects.map((project) => project.timeLogs),
-            projects.map((project) => project.price.price),
+    <Container className={styles.container}>
+      <h1 className={styles.invoice_title}>
+        <span>Create Invoice</span>
+        <article className={styles.invoice_actions}>
+          {project?.parentProjectId && (
+            <Button
+              href={`/invoice/create/project/${project?.parentProjectId}`}
+            >
+              <Icon icon={faPersonBreastfeeding} />
+              Open Parent Project
+            </Button>
           )}
-        </h3>
+          <Button href={`/project/${project?.id}`}>
+            <Icon icon={faDiagramProject} />
+            Open Project
+          </Button>
+        </article>
+      </h1>
+      <article className={styles.projects_container}>
+        <h2>Projects:</h2>
+        <p>
+          All these projects prices will be listed combined, and after creating
+          this invoice closed.
+        </p>
+        <ul className={styles.projects}>
+          {projects
+            .filter((p) => p.priceId !== "133f319d-101f-4b0a-91ae-c3ebb0483714") // Filter out the project price, as it should not have time booked.
+            .map((project) => (
+              <li key={project.id} className={styles.project}>
+                <Button href={`/project/${project.id}`}>{project.name}</Button>
+                <article>
+                  <KeyValue
+                    label="Hours worked"
+                    value={getTotalFormattedTimeLogsHours(project.timeLogs)}
+                  />
+                  <KeyValue
+                    label="Price"
+                    value={getPrice(project.timeLogs, project.price.price)}
+                  />
+                </article>
+              </li>
+            ))}
+        </ul>
+      </article>
+      <article className={styles.calculations}>
+        <h3>Calculations:</h3>
+        <p>
+          Prices are calculated by the total hours worked on the projects, and
+          the price set for each project.
+        </p>
+        <KeyValue
+          label="Price worked hours"
+          value={`€${formatNumber(totalPriceTimeLogs)}`}
+        />
+        <KeyValue
+          label="Discount"
+          value={`0% (€${formatNumber(totalPriceCalculatedDiscount - totalPriceTimeLogs)})`}
+        />
+        <KeyValue
+          label="TAX/BTW"
+          value={`21% (€${formatNumber(totalPriceCalculatedTax - totalPriceCalculatedDiscount)})`}
+        />
+      </article>
+      <article>
+        <h3>Total price:</h3>
+        <p>Price after discount and TAX/BTW is applied.</p>
+        <KeyValue
+          label="Total"
+          value={`€${formatNumber(totalPriceCalculatedTax)}`}
+        />
       </article>
     </Container>
   );
