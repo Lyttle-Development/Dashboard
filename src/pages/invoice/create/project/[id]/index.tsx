@@ -19,6 +19,9 @@ import {
   faPersonBreastfeeding,
 } from "@fortawesome/free-solid-svg-icons";
 import { formatNumber } from "@/lib/format/number";
+import { SideToSide } from "@/components/SideToSide";
+import { Field } from "@/components/Field";
+import { FormOptionType } from "@/components/Form";
 
 function Page() {
   const router = useRouter();
@@ -96,7 +99,8 @@ function Page() {
 
   const costTax = 0.21; // 21% BTW/TAX
 
-  const totalPriceCalculatedDiscount = totalPriceTimeLogs * (1 - discount); // Subtract discount
+  const totalPriceCalculatedDiscount =
+    totalPriceTimeLogs - totalPriceTimeLogs * (discount / 100); // Subtract discount
   const totalPriceCalculatedTax = totalPriceCalculatedDiscount * (1 + costTax); // Add TAX/BTW
 
   if (!projectId) return null;
@@ -157,10 +161,21 @@ function Page() {
           label="Price worked hours"
           value={`€${formatNumber(totalPriceTimeLogs)}`}
         />
-        <KeyValue
-          label="Discount"
-          value={`0% (€${formatNumber(totalPriceCalculatedDiscount - totalPriceTimeLogs)})`}
-        />
+        <SideToSide>
+          <KeyValue
+            label="Discount"
+            value={`${discount}% (€${formatNumber(totalPriceCalculatedDiscount - totalPriceTimeLogs)})`}
+          />
+          <Field
+            label={""}
+            type={FormOptionType.NUMBER}
+            value={discount.toString()}
+            onChange={(e) => {
+              const num = parseFloat(e) || 0;
+              setDiscount(num);
+            }}
+          />
+        </SideToSide>
         <KeyValue
           label="TAX/BTW"
           value={`21% (€${formatNumber(totalPriceCalculatedTax - totalPriceCalculatedDiscount)})`}
