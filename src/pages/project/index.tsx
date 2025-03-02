@@ -2,7 +2,7 @@ import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
 import {
-  faCalendarPlus,
+  faDiagramProject,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { Select } from "@/components/Select";
@@ -54,7 +54,7 @@ export function Page() {
           onValueChange={(projectId) => router.push(`/project/${projectId}`)}
         />
         <Button href="/project/create">
-          <Icon icon={faCalendarPlus}>Create Project</Icon>
+          <Icon icon={faDiagramProject}>Create Project</Icon>
         </Button>
       </SideToSide>
     </Container>

@@ -1,7 +1,7 @@
 import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
-import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
+import { faListCheck } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useState } from "react";
 import { Loader } from "@/components/Loader";
 import { Button } from "@/components/Button";
@@ -37,7 +37,7 @@ export function Page() {
       <h1>Tasks</h1>
       <SideToSide>
         <Button href="/task/create">
-          <Icon icon={faCalendarPlus}>Create Task</Icon>
+          <Icon icon={faListCheck}>Create Task</Icon>
         </Button>
       </SideToSide>
     </Container>

@@ -1,10 +1,7 @@
 import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
-import {
-  faCalendarPlus,
-  faMagnifyingGlass,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faPrint } from "@fortawesome/free-solid-svg-icons";
 import { Select, SelectItemProps } from "@/components/Select";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
@@ -61,7 +58,7 @@ export function Page() {
           onValueChange={(projectId) => router.push(`/print/${projectId}`)}
         />
         <Button href="/print/create">
-          <Icon icon={faCalendarPlus}>Create Print Job</Icon>
+          <Icon icon={faPrint}>Create Print Job</Icon>
         </Button>
       </SideToSide>
     </Container>

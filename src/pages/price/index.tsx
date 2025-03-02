@@ -1,10 +1,7 @@
 import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
-import {
-  faCalendarPlus,
-  faMagnifyingGlass,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faTag } from "@fortawesome/free-solid-svg-icons";
 import { Select, SelectItemProps } from "@/components/Select";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
@@ -60,7 +57,7 @@ export function Page() {
           onValueChange={(projectId) => router.push(`/price/${projectId}`)}
         />
         <Button href="/price/create">
-          <Icon icon={faCalendarPlus}>Create Price</Icon>
+          <Icon icon={faTag}>Create Price</Icon>
         </Button>
       </SideToSide>
     </Container>

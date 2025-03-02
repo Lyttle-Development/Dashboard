@@ -2,7 +2,7 @@ import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
 import {
-  faCalendarPlus,
+  faCircleUser,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { Select, SelectItemProps } from "@/components/Select";
@@ -61,7 +61,7 @@ export function Page() {
           onValueChange={(projectId) => router.push(`/customer/${projectId}`)}
         />
         <Button href="/customer/create">
-          <Icon icon={faCalendarPlus}>Create Customer</Icon>
+          <Icon icon={faCircleUser}>Create Customer</Icon>
         </Button>
       </SideToSide>
     </Container>
