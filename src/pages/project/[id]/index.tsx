@@ -119,10 +119,12 @@ export function Page() {
       <h2 className={styles.project_title}>
         <span>Project: {project.name}</span>
         <article className={styles.project_actions}>
-          <Button href={`/invoice/create/project/${project.parentProjectId}`}>
-            <Icon icon={faPersonBreastfeeding} />
-            Open Parent Project
-          </Button>
+          {project.parentProjectId && (
+            <Button onClick={() => fetchProject(project.parentProjectId)}>
+              <Icon icon={faPersonBreastfeeding} />
+              Open Parent Project
+            </Button>
+          )}
           <Button href={`/invoice/create/project/${project.id}`}>
             <Icon icon={faFileInvoiceDollar} />
             Create invoice
