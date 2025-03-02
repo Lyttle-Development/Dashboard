@@ -1,6 +1,15 @@
 import styles from "./index.module.scss";
 import { MainNavItem } from "./components/MainNavItem";
 import { Logo } from "@/components/Logo";
+import { Icon } from "@/components/Icon";
+import {
+  faCircleUser,
+  faDiagramProject,
+  faFileInvoiceDollar,
+  faListCheck,
+  faPrint,
+  faTag,
+} from "@fortawesome/free-solid-svg-icons";
 
 export interface MainNavProps {}
 
@@ -10,12 +19,30 @@ export function MainNav({}: MainNavProps) {
       <Logo />
       <nav>
         <ul>
-          <MainNavItem href={"/project"}>Projects</MainNavItem>
-          <MainNavItem href={"/print"}>Printing</MainNavItem>
-          <MainNavItem href={"/customer"}>Customers</MainNavItem>
-          <MainNavItem href={"/invoice"}>Invoices</MainNavItem>
-          <MainNavItem href={"/price"}>Prices</MainNavItem>
-          <MainNavItem href={"/task"}>Tasks</MainNavItem>
+          <MainNavItem href={"/project"}>
+            <Icon icon={faDiagramProject} />
+            Projects
+          </MainNavItem>
+          <MainNavItem href={"/print"}>
+            <Icon icon={faPrint} />
+            Printing
+          </MainNavItem>
+          <MainNavItem href={"/customer"}>
+            <Icon icon={faCircleUser} />
+            Customers
+          </MainNavItem>
+          <MainNavItem href={"/invoice"}>
+            <Icon icon={faFileInvoiceDollar} />
+            Invoices
+          </MainNavItem>
+          <MainNavItem href={"/price"}>
+            <Icon icon={faTag} />
+            Prices
+          </MainNavItem>
+          <MainNavItem href={"/task"}>
+            <Icon icon={faListCheck} />
+            Tasks
+          </MainNavItem>
         </ul>
       </nav>
       <ul className={styles.sub_menu}>
