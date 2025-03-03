@@ -10,17 +10,24 @@ export interface FormProps {
   required?: boolean;
   type?: FormOptionType;
   onChange?: (value: string) => void;
+  onFile?: (value: FileList) => void;
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 export function Field({
   onChange = (v) => v,
+  onFile = (v) => v,
   onSubmit = (e) => e,
   ...option
 }: FormProps) {
   const handleOnchange = (e: React.FormEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
-    onChange(target?.value ?? e.currentTarget.value);
+    const value: string = target?.value ?? e.currentTarget.value;
+    // if file return the binary data
+    if (option.type === FormOptionType.FILE) {
+      return onFile(target.files);
+    }
+    onChange(value);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

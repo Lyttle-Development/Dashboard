@@ -79,6 +79,16 @@ function GetFormField({ option }: FormFieldProps) {
           placeholder={option.placeholder}
         />
       );
+    case FormOptionType.FILE:
+      return (
+        <input
+          className={styles.Input}
+          type="file"
+          required={option.required}
+          value={option.value}
+          placeholder={option.placeholder}
+        />
+      );
     default:
       return null;
   }

@@ -31,6 +31,7 @@ export enum FormOptionType {
   PASSWORD = "password",
   TEXT = "text",
   TEXTAREA = "textarea",
+  FILE = "file",
 }
 
 export function Form({
