@@ -7,10 +7,10 @@ import { FormOptionType } from "@/components/Form";
 
 export function Page() {
   const [data, setData] = useState({
-    firstName: "Kilian",
-    lastName: "De Bock",
-    position: "Founder",
-    telephone: "+32470216421",
+    firstName: "",
+    lastName: "",
+    position: "",
+    telephone: "+32",
     addressLine1: "Damstraat 65,",
     addressLine2: "9180 Lokeren, België",
     image: "",
@@ -38,17 +38,48 @@ export function Page() {
   }, []);
 
   const signatureRef = React.createRef<HTMLDivElement>();
+  const signatureContainerRef = React.createRef<HTMLDivElement>();
 
   const set = (key: string, value: string) => {
     setData((prev) => ({ ...prev, [key]: value }));
   };
 
   const selectSignature = () => {
+    if (
+      !data.firstName ||
+      !data.lastName ||
+      !data.position ||
+      !data.telephone ||
+      !data.addressLine1
+    ) {
+      window.alert(
+        "Please fill in all required fields before copying the signature.",
+      );
+      return;
+    }
+
+    if (!data.image) {
+      window.alert("Please upload an image before copying the signature.");
+      return;
+    }
+
+    // set "coping" class to the signature container
+    signatureContainerRef.current.classList.add(styles.coping);
+
     const selection = window.getSelection();
     const range = document.createRange();
     range.selectNodeContents(signatureRef.current);
     selection.removeAllRanges();
     selection.addRange(range);
+
+    // Make the user copy the signature
+    document.execCommand("copy");
+
+    // Notify the user
+    window.alert("Signature copied to clipboard!");
+
+    // remove "coping" class from the signature container
+    signatureContainerRef.current.classList.remove(styles.coping);
   };
 
   const formatTelephone = (telephone: string): string => {
@@ -177,13 +208,20 @@ export function Page() {
         />
         <Field label="Image" type={FormOptionType.FILE} onFile={getBinary} />
       </article>
-      <article className={styles.signature_container} onClick={selectSignature}>
+      <article
+        className={styles.signature_container}
+        onClick={selectSignature}
+        ref={signatureContainerRef}
+      >
         <div ref={signatureRef}>
           <p>
             Beste
             <br />
             <br />
             Text
+            <br />
+            <br />
+            Alvast bedankt.
             <br />
             <br />
             Met vriendelijke groeten / Kind regards
@@ -200,38 +238,139 @@ export function Page() {
                     paddingRight: "41px",
                     width: "160px",
                     borderRight: "1px solid #E5E4E4",
+                    verticalAlign: "top",
                   }}
                 >
-                  <img
-                    src={data.image}
-                    alt="Profile Picture"
+                  <div
                     style={{
-                      width: "92px",
-                      height: "110px",
-                      marginBottom: "24px",
+                      paddingBottom: "24px",
                     }}
-                  />
-                  <img
-                    src={data.logo}
-                    alt="LyttleDevelopment Logo"
-                    style={{
-                      width: "120px",
-                      height: "43px",
-                    }}
-                  />
+                  >
+                    <img
+                      src={data.image}
+                      alt="Profile Picture"
+                      style={{
+                        width: "92px",
+                        height: "110px",
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <img
+                      src={data.logo}
+                      alt="LyttleDevelopment Logo"
+                      style={{
+                        width: "120px",
+                        height: "43px",
+                      }}
+                    />
+                  </div>
                 </td>
                 <td
                   style={{
                     paddingLeft: "45px",
+                    verticalAlign: "top",
                   }}
                 >
-                  <p>
+                  <p
+                    style={{
+                      color: "#100429",
+                      fontFamily: "Arial",
+                      fontSize: "13px",
+                      fontStyle: "normal",
+                      fontWeight: "700",
+                      lineHeight: "18px",
+                    }}
+                  >
                     {data.firstName} {data.lastName}
                   </p>
-                  <p>{data.position}</p>
-                  <p>{formatTelephone(data.telephone)}</p>
-                  <p>{data.addressLine1}</p>
-                  <p>{data.addressLine2}</p>
+                  <p
+                    style={{
+                      color: "#100429",
+                      fontFamily: "Arial",
+                      fontSize: "13px",
+                      fontStyle: "normal",
+                      fontWeight: "400",
+                      lineHeight: "18px",
+                    }}
+                  >
+                    {data.position}
+                  </p>
+                  <p
+                    style={{
+                      paddingTop: "20px",
+                      color: "#100429",
+                      fontFamily: "Arial",
+                      fontSize: "11px",
+                      fontStyle: "normal",
+                      fontWeight: "400",
+                      lineHeight: "16px",
+                    }}
+                  >
+                    {formatTelephone(data.telephone)}
+                  </p>
+                  <p
+                    style={{
+                      paddingTop: "20px",
+                      color: "#100429",
+                      fontFamily: "Arial",
+                      fontSize: "11px",
+                      fontStyle: "normal",
+                      fontWeight: "400",
+                      lineHeight: "16px",
+                    }}
+                  >
+                    {data.addressLine1}
+                    <br />
+                    {data.addressLine2}
+                  </p>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <p
+                            style={{
+                              paddingTop: "20px",
+                              color: "#100429",
+                              fontFamily: "Arial",
+                              fontSize: "11px",
+                              fontStyle: "normal",
+                              fontWeight: "400",
+                              lineHeight: "16px",
+                            }}
+                          >
+                            Ontdek de succesverhalen
+                            <br />
+                            via{" "}
+                            <a href="https://www.lyttledevelopment.com/?ref=email-signature">
+                              lyttledevelopment.com
+                            </a>
+                          </p>
+                        </td>
+                        <td
+                          style={{
+                            paddingLeft: "65px",
+                          }}
+                        >
+                          <p
+                            style={{
+                              paddingTop: "20px",
+                              color: "#100429",
+                              fontFamily: "Arial",
+                              fontSize: "11px",
+                              fontStyle: "normal",
+                              fontWeight: "700",
+                              lineHeight: "18px",
+                            }}
+                          >
+                            Let’s make the Lyttle details,
+                            <br />
+                            become a lasting impression!
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </td>
               </tr>
             </tbody>

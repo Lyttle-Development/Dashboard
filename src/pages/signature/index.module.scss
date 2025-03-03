@@ -16,11 +16,13 @@
     color: #fff;
   }
 
-  &:hover {
-    background-color: rgba(121, 121, 121, 0.8);
+  &:not(.coping) {
+    &:hover {
+      background-color: rgba(121, 121, 121, 0.8);
 
-    &::after, &::before {
-      display: block;
+      &::after, &::before {
+        display: block;
+      }
     }
   }
 
@@ -31,6 +33,6 @@
 
   &::before {
     top: calc(50% + .6rem);
-    content: '(copy with CTRL + C)';
+    content: 'and copy to clipboard';
   }
 }
