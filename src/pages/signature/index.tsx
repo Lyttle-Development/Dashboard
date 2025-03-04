@@ -214,7 +214,16 @@ export function Page() {
         ref={signatureContainerRef}
       >
         <div ref={signatureRef}>
-          <p>
+          <p
+            style={{
+              color: "#333",
+              fontFamily: "Arial",
+              fontSize: "12px",
+              fontStyle: "normal",
+              fontWeight: "400",
+              lineHeight: "130%",
+            }}
+          >
             Beste
             <br />
             <br />
@@ -282,7 +291,7 @@ export function Page() {
                       lineHeight: "18px",
                     }}
                   >
-                    {data.firstName} {data.lastName}
+                    {data.firstName || "John"} {data.lastName || "Doe"}
                   </p>
                   <p
                     style={{
@@ -294,7 +303,7 @@ export function Page() {
                       lineHeight: "18px",
                     }}
                   >
-                    {data.position}
+                    {data.position || "Placeholder"}
                   </p>
                   <p
                     style={{
