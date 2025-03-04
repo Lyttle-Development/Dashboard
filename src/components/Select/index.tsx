@@ -18,7 +18,7 @@ export interface SelectProps extends RadixSelectProps {
   icon?: IconProp;
   options: SelectItemProps[] | SelectGroupProps[];
   alwaysShowLabel?: boolean;
-  className: string;
+  className?: string;
 }
 
 export interface SelectGroupProps {
