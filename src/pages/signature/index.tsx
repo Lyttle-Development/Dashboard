@@ -244,7 +244,7 @@ export function Page() {
               <tr>
                 <td
                   style={{
-                    paddingRight: "41px",
+                    paddingRight: "11px",
                     width: "160px",
                     borderRight: "1px solid #E5E4E4",
                     verticalAlign: "top",
