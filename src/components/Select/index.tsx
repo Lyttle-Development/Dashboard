@@ -8,6 +8,7 @@ import {
 } from "@radix-ui/react-icons";
 import type { SelectProps as RadixSelectProps } from "@radix-ui/react-select";
 import classnames from "classnames";
+import classNames from "classnames";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import styles from "./index.module.scss";
 import { Icon } from "@/components/Icon";
@@ -17,6 +18,7 @@ export interface SelectProps extends RadixSelectProps {
   icon?: IconProp;
   options: SelectItemProps[] | SelectGroupProps[];
   alwaysShowLabel?: boolean;
+  className: string;
 }
 
 export interface SelectGroupProps {
@@ -36,6 +38,7 @@ export function Select({
   icon,
   options,
   alwaysShowLabel = false,
+  className,
   ...props
 }: SelectProps) {
   return (
@@ -43,7 +46,7 @@ export function Select({
       {(props.value || alwaysShowLabel) && (
         <label className={styles.label}>{label}</label>
       )}
-      <RadixSelect.Trigger className={styles.Trigger}>
+      <RadixSelect.Trigger className={classNames(styles.Trigger, className)}>
         <RadixSelect.Value
           placeholder={
             <span className={styles.value}>

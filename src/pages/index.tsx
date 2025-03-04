@@ -11,8 +11,11 @@ import Link from "next/link";
 import { AvatarCard } from "@/components/AvatarCard";
 import { getProjectFullName } from "@/lib/project";
 import { findNewestTimeLog } from "@/lib/project/find-newest-time-log";
+import { useMobile } from "@/hooks/useMobile";
+import { router } from "next/client";
 
 function Page() {
+  const mobile = useMobile();
   const app = useApp();
   const [loadings, _setLoading] = useState<{ [key: string]: boolean }>({
     timeLogs: false,
@@ -83,6 +86,10 @@ function Page() {
   }, []);
 
   useEffect(() => {
+    if (mobile.onMobile) {
+      router.push("/mobile/task");
+      return;
+    }
     void fetchTimeLogs();
     void fetchProjects();
     void fetchPrintJobs();
