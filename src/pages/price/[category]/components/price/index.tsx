@@ -4,6 +4,7 @@ import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
 import { Button } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
+import { useState } from "react";
 
 export interface PriceProps {
   price: ServicePrice;
@@ -16,6 +17,19 @@ export function Price({
   setPrice: _setPrice,
   reloadPrices,
 }: PriceProps) {
+  const [priceString, _setPriceString] = useState(price.price.toString());
+
+  const setPriceString = (value: string) => {
+    _setPriceString(value);
+    const p = parseFloat(value);
+    if (!isNaN(p)) {
+      _setPrice({
+        ...price,
+        price: p,
+      });
+    }
+  };
+
   const setPrice = (key: string, value: string | number) => {
     _setPrice({
       ...price,
@@ -46,8 +60,8 @@ export function Price({
         type={FormOptionType.TEXT}
       />
       <Field
-        onChange={(v) => setPrice("price", parseInt(v))}
-        value={price.price?.toString() ?? "0"}
+        onChange={setPriceString}
+        value={priceString || "0"}
         label="Price"
         type={FormOptionType.TEXT}
       />

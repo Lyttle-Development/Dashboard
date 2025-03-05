@@ -4,12 +4,14 @@ import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
-import { Customer, PrintJob, ServicePrice } from "@/lib/prisma";
+import { Customer, PrintJob, PrintMaterial } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Select } from "@/components/Select";
 import { Field } from "@/components/Field";
 import { Button, ButtonStyle } from "@/components/Button";
 import { PrintTimeLog } from "@/components/PrintTimeLog";
+import { Icon } from "@/components/Icon";
+import { faFileInvoiceDollar } from "@fortawesome/free-solid-svg-icons";
 
 export function Page() {
   const router = useRouter();
@@ -18,7 +20,7 @@ export function Page() {
   const [printJob, setPrintJob] = useState<PrintJob>(null);
   const [originalPrintJob, setOriginalPrintJob] = useState<PrintJob>(null);
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [services, setServices] = useState<ServicePrice[]>([]);
+  const [materials, setMaterials] = useState<PrintMaterial[]>([]);
 
   // Fetch the project details by id.
   const fetchPrintJob = useCallback(async (printJobId: string) => {
@@ -42,14 +44,13 @@ export function Page() {
     setLoading(false);
   }, []);
 
-  const fetchServices = useCallback(async () => {
+  const fetchMaterials = useCallback(async () => {
     setLoading(true);
-    const servicesData = await fetchApi<ServicePrice[]>({
-      table: "servicePrice",
-      where: { categoryId: "71e25dc1-f273-4b1e-a91a-7758d0394d3f" },
+    const materialsData = await fetchApi<PrintMaterial[]>({
+      table: "printMaterial",
     });
 
-    setServices(servicesData);
+    setMaterials(materialsData);
     setLoading(false);
   }, []);
 
@@ -59,7 +60,7 @@ export function Page() {
       void fetchPrintJob(printJobId);
     }
     void fetchCustomers();
-    void fetchServices();
+    void fetchMaterials();
   }, []);
 
   const changes = Object.keys(printJob ?? {}).filter(
@@ -81,8 +82,9 @@ export function Page() {
       method: "PUT",
       body: {
         customerId: printJob.customerId,
-        priceId: printJob.priceId,
+        materialId: printJob.materialId,
         quantity: printJob.quantity,
+        weight: printJob.weight,
       },
     });
     void fetchPrintJob(printJob.id);
@@ -106,9 +108,15 @@ export function Page() {
     <Container>
       <h2 className={styles.title}>
         <span>Print Job: {printJob.name}</span>
-        <Button onClick={deletePrintJob} style={ButtonStyle.Danger}>
-          Delete Print Job
-        </Button>
+        <article className={styles.actions}>
+          <Button href={`/invoice/create/print/${printJob.id}`}>
+            <Icon icon={faFileInvoiceDollar} />
+            Create invoice
+          </Button>
+          <Button onClick={deletePrintJob} style={ButtonStyle.Danger}>
+            Delete Print Job
+          </Button>
+        </article>
       </h2>
       <article className={styles.information}>
         <Select
@@ -122,21 +130,26 @@ export function Page() {
         />
 
         <Select
-          label="Service"
-          options={services.map((service) => ({
-            label: service.service,
+          label="Material"
+          options={materials.map((service) => ({
+            label: `${service.type}: ${service.color}`,
             value: service.id,
           }))}
-          value={printJob.priceId}
-          onValueChange={(value) => handleChange("priceId", value)}
+          value={printJob.materialId}
+          onValueChange={(value) => handleChange("materialId", value)}
         />
         <Field
-          label="Print Amount"
+          label="Print Amount (total items)"
           value={printJob.quantity?.toString() ?? "0"}
           onChange={(e) => handleChange("quantity", parseInt(e) || 0)}
         />
+        <Field
+          label="Print Gram (per item)"
+          value={printJob.weight?.toString() ?? "0"}
+          onChange={(e) => handleChange("weight", parseInt(e) || 0)}
+        />
       </article>
-      {hasChanges && <Button onClick={updatePrintJob}>Update Customer</Button>}
+      {hasChanges && <Button onClick={updatePrintJob}>Update Print Job</Button>}
 
       <PrintTimeLog printJobId={printJob.id} />
     </Container>

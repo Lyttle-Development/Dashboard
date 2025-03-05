@@ -80,7 +80,7 @@ function Page() {
       <Field
         label="Price"
         required
-        onChange={(p) => updatePrice("price", parseInt(p) || 0)}
+        onChange={(p) => updatePrice("price", parseFloat(p) || 0)}
       />
       {validPrice && <Button onClick={createPrice}>Create Price</Button>}
     </Container>
