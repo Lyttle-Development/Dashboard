@@ -113,8 +113,16 @@ function Page() {
   }
 
   const invoicesToCreate = projects.filter((project) => {
+    // Check if the project has time logs
+    if (project.timeLogs.length === 0) return false;
+    // Check if the project has an invoice
+    if (project.invoiceId) return false;
+
+    // Get the last time log
     const lastTimeLog = findNewestTimeLog(project.timeLogs);
     if (!lastTimeLog) return false;
+
+    // Check if the last time log is older than 30 days
     const lastTimeLogDate = new Date(lastTimeLog.startTime);
     const now = new Date();
     return (
