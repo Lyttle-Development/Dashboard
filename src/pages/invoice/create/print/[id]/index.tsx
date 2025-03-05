@@ -2,33 +2,40 @@ import { Layout } from "@/layouts";
 import { useRouter } from "next/router";
 import { Container } from "@/components/Container";
 import { useEffect, useState } from "react";
-import { PrintJob } from "@/lib/prisma";
+import { PrintJob, ServicePrice } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/Button";
 import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { KeyValue } from "@/components/KeyValue";
-import { getPrice } from "@/lib/price/get-price";
+import { getTotalHours } from "@/lib/price/get-price";
 import { Icon } from "@/components/Icon";
 import { faDiagramProject } from "@fortawesome/free-solid-svg-icons";
 import { formatNumber } from "@/lib/format/number";
 import { SideToSide } from "@/components/SideToSide";
 import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
-import { TAX_COST_PROCENT } from "@/constants";
+import { PRINT_MARGIN_PROCENT, TAX_COST_PROCENT } from "@/constants";
 
 function Page() {
   const router = useRouter();
   const { id: printJobId } = router.query;
 
-  const [loading, setLoading] = useState(false);
+  const [loadings, setLoading] = useState({
+    printJob: true,
+    prices: true,
+  });
+  const updateLoading = (key: string, value: boolean) =>
+    setLoading((prev) => ({ ...prev, [key]: value }));
+  const loading = Object.values(loadings).some((v) => v);
   const [loadingTask, setLoadingTask] = useState("Initializing");
   const [printJob, setPrintJob] = useState<PrintJob>(null);
+  const [prices, setPrices] = useState<ServicePrice[]>([]);
   const [invoice, setInvoice] = useState({});
   const [discount, setDiscount] = useState(0);
 
   const fetchPrintJob = async (id: string) => {
-    setLoading(true);
+    updateLoading("printJob", true);
     setLoadingTask("Fetching print job");
     const printJobData = await fetchApi<PrintJob>({
       table: "printJob",
@@ -36,30 +43,68 @@ function Page() {
       relations: {
         timeLogs: true,
         price: true,
+        material: true,
       },
     });
     setPrintJob(printJobData);
-    setLoading(false);
+    updateLoading("printJob", false);
+  };
+
+  const fetchPrices = async () => {
+    updateLoading("prices", true);
+    setLoadingTask("Fetching prices");
+    const prices = await fetchApi<ServicePrice[]>({
+      table: "servicePrice",
+    });
+    setPrices(prices);
+    updateLoading("prices", false);
   };
 
   const createInvoice = async () => {};
 
   useEffect(() => {
     void fetchPrintJob(printJobId as string);
+    void fetchPrices();
   }, [printJobId]);
 
-  const totalPriceTimeLogs: number = printJob
-    ? (getPrice(printJob.timeLogs, printJob.price.price, true) as number)
-    : null;
-
-  const totalPriceCalculatedDiscount =
-    totalPriceTimeLogs - totalPriceTimeLogs * (discount / 100); // Subtract discount
-  const totalPriceCalculatedTax =
-    totalPriceCalculatedDiscount * (1 + TAX_COST_PROCENT); // Add TAX/BTW
-
-  if (!printJobId) return null;
-  if (!printJob) return null;
+  if (!printJobId || !printJob) return <Loader />;
   if (loading) return <Loader info={loadingTask} />;
+
+  // Electricity cost
+  const electricityPrice =
+    prices?.find(
+      (p) => p.id === "cd90b1ef-af06-49e1-80b5-f6920b2d3a92", // ELECTRICITY_PRICE
+    ).price ?? 0;
+  const printTime = getTotalHours(printJob.timeLogs, true);
+  const electricityCost = Math.ceil(printTime * electricityPrice * 100) / 100;
+
+  const totalPriceElectricity = electricityCost; // Electricity cost
+
+  // Material cost
+  const materialPricePerGram = printJob
+    ? Math.ceil(
+        (printJob.material?.unitPrice / printJob.material?.unitAmount) * 100,
+      ) / 100
+    : 0;
+  const materialCost =
+    Math.ceil(
+      printJob.quantity * printJob.weight * materialPricePerGram * 100,
+    ) / 100;
+
+  const totalPriceMaterial = totalPriceElectricity + materialCost; // Material cost
+
+  const margin = totalPriceMaterial * PRINT_MARGIN_PROCENT;
+
+  const totalPriceCalculatedDiscount = margin - margin * (discount / 100); // Subtract discount
+
+  const totalPriceCalculatedTax =
+    Math.ceil(totalPriceCalculatedDiscount * (1 + TAX_COST_PROCENT) * 100) /
+    100; // Add TAX/BTW
+
+  console.log("totalPriceElectricity", totalPriceElectricity);
+  console.log("totalPriceMaterial", totalPriceMaterial);
+  console.log("totalPriceCalculatedDiscount", totalPriceCalculatedDiscount);
+  console.log("totalPriceCalculatedTax", totalPriceCalculatedTax);
 
   return (
     <Container className={styles.container}>
@@ -79,13 +124,21 @@ function Page() {
           the price set for each project.
         </p>
         <KeyValue
-          label="Price worked hours"
-          value={`€${formatNumber(totalPriceTimeLogs)}`}
+          label="Price electricity"
+          value={`€${formatNumber(electricityCost)} (${printTime}h x €${formatNumber(electricityPrice)})`}
+        />
+        <KeyValue
+          label="Material cost"
+          value={`€${formatNumber(materialCost)} (${printJob.quantity}p x ${printJob.weight}g x €${formatNumber(materialPricePerGram)}/g)`}
+        />
+        <KeyValue
+          label="Labour / Margin"
+          value={`€${formatNumber(margin)} (${PRINT_MARGIN_PROCENT}00%)`}
         />
         <SideToSide>
           <KeyValue
             label="Discount"
-            value={`${discount}% (€${formatNumber(totalPriceCalculatedDiscount - totalPriceTimeLogs)})`}
+            value={`${formatNumber(discount)}% (€${formatNumber(Math.ceil(totalPriceCalculatedDiscount - margin * 100) / 100)})`}
           />
           <Field
             label={""}
