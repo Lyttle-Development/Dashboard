@@ -112,7 +112,7 @@ function Page() {
     groupedTimeLogs[category.name].push(timeLog);
   }
 
-  const invoicesToCreate = projects.filter((project) => {
+  const invoicesToCreateProjects = projects.filter((project) => {
     // Check if the project has time logs
     if (project.timeLogs.length === 0) return false;
     // Check if the project has an invoice
@@ -131,6 +131,20 @@ function Page() {
     );
   });
 
+  const invoicesToCreatePrintJobs = printJobs.filter((printJob) => {
+    return printJob.invoiceId === null && printJob.completed;
+  });
+
+  const runningTimeLogs = Object.entries(groupedTimeLogs);
+
+  const openPrintJobs = printJobs.filter(
+    (printJob) => printJob.invoiceId === null && !printJob.completed,
+  );
+
+  const openProjects = projects.filter(
+    (project) => project.tasks.filter((t) => !t.done).length > 0,
+  );
+
   if (loading) {
     return <Loader />;
   }
@@ -139,37 +153,57 @@ function Page() {
     <Container className={styles.container}>
       <h1>Activity:</h1>
 
-      {app.isManager && invoicesToCreate && invoicesToCreate.length > 0 && (
-        <section>
-          <h2>Invoices to create:</h2>
-          <p>Projects inactive for 30 days should be closed and invoiced.</p>
-          <ul className={styles.invoices}>
-            {invoicesToCreate.map((project) => (
-              <li key={project.id} className={styles.invoice}>
-                <Link href={`/invoice/create/project/${project.id}`}>
-                  <h6>
-                    <strong>Name: </strong>
-                    {getProjectFullName(project, projects)}
-                  </h6>
-                  <p>
-                    <strong>Last active: </strong>
-                    {new Date(
-                      findNewestTimeLog(project.timeLogs).startTime,
-                    ).toLocaleDateString()}
-                  </p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      {app.isManager &&
+        (invoicesToCreateProjects.length > 0 ||
+          invoicesToCreatePrintJobs.length > 0) && (
+          <section>
+            <h2>Invoices to create:</h2>
+            <p>Projects inactive for 30 days should be closed and invoiced.</p>
+            <ul className={styles.invoices}>
+              {invoicesToCreateProjects &&
+                invoicesToCreateProjects.map((project) => (
+                  <li key={project.id} className={styles.invoice}>
+                    <Link href={`/invoice/create/project/${project.id}`}>
+                      <h6>
+                        <strong>Name: </strong>
+                        {getProjectFullName(project, projects)}
+                      </h6>
+                      <p>
+                        <strong>Last active: </strong>
+                        {new Date(
+                          findNewestTimeLog(project.timeLogs).startTime,
+                        ).toLocaleDateString()}
+                      </p>
+                    </Link>
+                  </li>
+                ))}
+              {invoicesToCreatePrintJobs &&
+                invoicesToCreatePrintJobs.map((printJob) => (
+                  <li key={printJob.id} className={styles.invoice}>
+                    <Link href={`/invoice/create/print/${printJob.id}`}>
+                      <h6>
+                        <strong>Name: </strong>
+                        {printJob.name}
+                      </h6>
+                      <p>
+                        <strong>Last active: </strong>
+                        {new Date(
+                          findNewestTimeLog(printJob.timeLogs).startTime,
+                        ).toLocaleDateString()}
+                      </p>
+                    </Link>
+                  </li>
+                ))}
+            </ul>
+          </section>
+        )}
 
-      {Object.entries(groupedTimeLogs).length > 0 && (
+      {runningTimeLogs.length > 0 && (
         <section>
           <h2>Active Time Logs:</h2>
           <p>Time logs currently running</p>
           <ul className={styles.active_logs}>
-            {Object.entries(groupedTimeLogs).map(([categoryName, timeLogs]) => (
+            {runningTimeLogs.map(([categoryName, timeLogs]) => (
               <li key={categoryName} className={styles.active_logs__group}>
                 <h5>{categoryName}</h5>
                 <ul className={styles.active_logs__group__projects}>
@@ -205,42 +239,37 @@ function Page() {
         </section>
       )}
 
-      {app.isAdmin && (
+      {app.isAdmin && openPrintJobs.length > 0 && (
         <section>
           <h2>Open PrintJobs:</h2>
-          <p>Print Jobs not started.</p>
+          <p>Print Jobs not marked as completed.</p>
           <ul className={styles.print_jobs}>
-            {printJobs
-              .filter((printJob) => printJob.timeLogs.length === 0)
-              .map((printJob) => (
-                <li key={printJob.id} className={styles.print_job}>
-                  <Link href={`/print/${printJob.id}`}>
-                    <h6>
-                      <strong>Title: </strong>
-                      {printJob.name}
-                    </h6>
-                    <p>
-                      <strong>Amount to print: </strong>
-                      {printJob.quantity}
-                    </p>
-                  </Link>
-                </li>
-              ))}
+            {openPrintJobs.map((printJob) => (
+              <li key={printJob.id} className={styles.print_job}>
+                <Link href={`/print/${printJob.id}`}>
+                  <h6>
+                    <strong>Title: </strong>
+                    {printJob.name}
+                  </h6>
+                  <p>
+                    <strong>Amount to print: </strong>
+                    {printJob.quantity}
+                  </p>
+                </Link>
+              </li>
+            ))}
             {printJobs.filter((printJob) => printJob.timeLogs.length === 0)
               .length === 0 && <li>No open print jobs</li>}
           </ul>
         </section>
       )}
 
-      <section>
-        <h2>Open Projects:</h2>
-        <p>Projects with open tasks</p>
-        <ul className={styles.projects}>
-          {projects
-            .filter(
-              (project) => project.tasks.filter((t) => !t.done).length > 0,
-            )
-            .map((project) => (
+      {openProjects && (
+        <section>
+          <h2>Open Projects:</h2>
+          <p>Projects with open tasks</p>
+          <ul className={styles.projects}>
+            {openProjects.map((project) => (
               <li key={project.id} className={styles.project}>
                 <Link href={`/project/${project.id}`}>
                   <h6>
@@ -254,10 +283,11 @@ function Page() {
                 </Link>
               </li>
             ))}
-          {projects.filter((project) => project.tasks.length === 0).length ===
-            0 && <li>No open projects</li>}
-        </ul>
-      </section>
+            {projects.filter((project) => project.tasks.length === 0).length ===
+              0 && <li>No open projects</li>}
+          </ul>
+        </section>
+      )}
     </Container>
   );
 }
