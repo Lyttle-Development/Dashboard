@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useApp } from "@/contexts/App.context";
 import { fetchApi } from "@/lib/fetchApi";
 import { Project, TimeLog } from "@/lib/prisma";
-import styles from "./index.module.scss";
 import { Form, FormOptionType } from "@/components/Form";
 import { Dialog } from "@/components/Dialog";
 import { Button, ButtonStyle } from "@/components/Button";
 import { Icon } from "@/components/Icon";
 import { faGaugeHigh, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
+import { SideToSide } from "@/components/SideToSide";
 
 export interface ProjectTimeLogProps {
   projectId: string;
@@ -116,7 +116,6 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
 
   const submitQuickTime = async (data: { date: string; time: string }) => {
     setDialogOpen(false);
-    console.log(data);
     const [hours, minutes] = data.time?.split(":") ?? [];
     if (!hours || !minutes) return;
     const [year, month, day] = data.date.split("-");
@@ -137,7 +136,6 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
         endTime: endDate.toISOString(),
       },
     });
-    console.log(res);
 
     if (!res) {
       window.alert("Failed to add time");
@@ -151,55 +149,53 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
   if (!project) return <div>Project not found</div>;
 
   return (
-    <div>
-      <article className={styles.side_to_side}>
-        {timeLog ? (
+    <SideToSide>
+      {timeLog ? (
+        <>
+          <Button onClick={endTimeLog} style={ButtonStyle.Danger}>
+            <Icon icon={faStop} />
+            End Time Log ({timer})
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button onClick={startTimeLog} style={ButtonStyle.Primary}>
+            <Icon icon={faPlay} />
+            Start Time Log
+          </Button>
+        </>
+      )}
+      <Dialog
+        title="Quickly add time"
+        description="Add time to the project"
+        buttonText={
           <>
-            <Button onClick={endTimeLog} style={ButtonStyle.Danger}>
-              <Icon icon={faStop} />
-              End Time Log ({timer})
-            </Button>
+            <Icon icon={faGaugeHigh} />
+            <span>Quickly add time</span>
           </>
-        ) : (
-          <>
-            <Button onClick={startTimeLog} style={ButtonStyle.Primary}>
-              <Icon icon={faPlay} />
-              Start Time Log
-            </Button>
-          </>
-        )}
-        <Dialog
-          title="Quickly add time"
-          description="Add time to the project"
-          buttonText={
-            <>
-              <Icon icon={faGaugeHigh} />
-              <span>Quickly add time</span>
-            </>
-          }
-          onOpenChange={setDialogOpen}
-          open={dialogOpen}
-        >
-          <Form
-            onSubmit={submitQuickTime}
-            options={[
-              {
-                key: "date",
-                label: "Date",
-                type: FormOptionType.DATE,
-                required: true,
-              },
-              {
-                key: "time",
-                label: "Time",
-                type: FormOptionType.TEXT,
-                placeholder: "HH:MM",
-                required: true,
-              },
-            ]}
-          />
-        </Dialog>
-      </article>
-    </div>
+        }
+        onOpenChange={setDialogOpen}
+        open={dialogOpen}
+      >
+        <Form
+          onSubmit={submitQuickTime}
+          options={[
+            {
+              key: "date",
+              label: "Date",
+              type: FormOptionType.DATE,
+              required: true,
+            },
+            {
+              key: "time",
+              label: "Time",
+              type: FormOptionType.TEXT,
+              placeholder: "HH:MM",
+              required: true,
+            },
+          ]}
+        />
+      </Dialog>
+    </SideToSide>
   );
 }

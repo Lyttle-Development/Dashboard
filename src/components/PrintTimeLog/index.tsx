@@ -5,7 +5,10 @@ import { TimeLog } from "@/lib/prisma";
 import styles from "./index.module.scss";
 import { Button, ButtonStyle } from "@/components/Button";
 import { Icon } from "@/components/Icon";
-import { faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
+import { faGaugeHigh, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
+import { Dialog } from "@/components/Dialog";
+import { Form, FormOptionType } from "@/components/Form";
+import { SideToSide } from "@/components/SideToSide";
 
 export interface PrintTimeLogProps {
   printJobId: string;
@@ -18,6 +21,7 @@ export function PrintTimeLog({ printJobId }: PrintTimeLogProps) {
   const [timer, setTimer] = useState<string>("00:00");
   const [lastTimePlayed, setLastTimePlayed] = useState<number>(0);
   const [elapsed, setElapsed] = useState<number>(0);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const fetchEmptyTimeLog = useCallback(async () => {
     setLoading(true);
@@ -96,10 +100,41 @@ export function PrintTimeLog({ printJobId }: PrintTimeLogProps) {
     }
   }, [timer]);
 
+  const submitQuickTime = async (data: { date: string; time: string }) => {
+    setDialogOpen(false);
+    const [hours, minutes] = data.time?.split(":") ?? [];
+    if (!hours || !minutes) return;
+    const [year, month, day] = data.date.split("-");
+
+    const startDate = new Date(Number(year), Number(month) - 1, Number(day));
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(Number(year), Number(month) - 1, Number(day));
+    endDate.setHours(Number(hours), Number(minutes), 0, 0);
+
+    const res = await fetchApi<TimeLog>({
+      method: "POST",
+      table: "time-log",
+      body: {
+        user: app.userId,
+        printJobId,
+        startTime: startDate.toISOString(),
+        endTime: endDate.toISOString(),
+      },
+    });
+
+    if (!res) {
+      window.alert("Failed to add time");
+      return;
+    }
+
+    void refreshData();
+  };
+
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div>
+    <SideToSide>
       <article className={styles.side_to_side}>
         {timeLog ? (
           <>
@@ -117,6 +152,37 @@ export function PrintTimeLog({ printJobId }: PrintTimeLogProps) {
           </>
         )}
       </article>
-    </div>
+      <Dialog
+        title="Quickly add time"
+        description="Add time to the project"
+        buttonText={
+          <>
+            <Icon icon={faGaugeHigh} />
+            <span>Quickly add time</span>
+          </>
+        }
+        onOpenChange={setDialogOpen}
+        open={dialogOpen}
+      >
+        <Form
+          onSubmit={submitQuickTime}
+          options={[
+            {
+              key: "date",
+              label: "Date",
+              type: FormOptionType.DATE,
+              required: true,
+            },
+            {
+              key: "time",
+              label: "Time",
+              type: FormOptionType.TEXT,
+              placeholder: "HH:MM",
+              required: true,
+            },
+          ]}
+        />
+      </Dialog>
+    </SideToSide>
   );
 }
