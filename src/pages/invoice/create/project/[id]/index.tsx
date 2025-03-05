@@ -22,6 +22,7 @@ import { formatNumber } from "@/lib/format/number";
 import { SideToSide } from "@/components/SideToSide";
 import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
+import { TAX_COST_PROCENT } from "@/constants";
 
 function Page() {
   const router = useRouter();
@@ -97,11 +98,10 @@ function Page() {
     true,
   ) as number;
 
-  const costTax = 0.21; // 21% BTW/TAX
-
   const totalPriceCalculatedDiscount =
     totalPriceTimeLogs - totalPriceTimeLogs * (discount / 100); // Subtract discount
-  const totalPriceCalculatedTax = totalPriceCalculatedDiscount * (1 + costTax); // Add TAX/BTW
+  const totalPriceCalculatedTax =
+    totalPriceCalculatedDiscount * (1 + TAX_COST_PROCENT); // Add TAX/BTW
 
   if (!projectId) return null;
   if (loading) return <Loader info={loadingTask} />;
