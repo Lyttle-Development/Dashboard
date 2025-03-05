@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "PrintMaterial" ADD COLUMN     "unitAmount" DOUBLE PRECISION NOT NULL DEFAULT 0;

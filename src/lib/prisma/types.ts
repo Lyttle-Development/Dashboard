@@ -88,6 +88,7 @@ export interface PrintMaterial {
   stock: number;
   color: string;
   unitPrice: number;
+  unitAmount?: number;
   printJobs: PrintJob[];
   updatedAt: Date;
   createdAt: Date;

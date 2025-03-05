@@ -42,7 +42,14 @@ const fallbackKeys: Record<string, string[]> = {
     "printTime",
     "weight",
   ],
-  "print-material": ["type", "subType", "stock", "color", "unitPrice"],
+  "print-material": [
+    "type",
+    "subType",
+    "stock",
+    "color",
+    "unitPrice",
+    "unitAmount",
+  ],
   project: ["name", "customerId", "priceId", "invoiceId"], // Updated clientId -> customerId
   "time-log": ["projectId", "startTime", "endTime", "user", "printJobId"], // Added printJobId if needed
   "service-price": ["categoryId", "service", "price"], // Updated to match the schema
