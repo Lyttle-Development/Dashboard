@@ -87,7 +87,7 @@ export interface Expense {
   neededAt?: Date;
   name?: string;
   link?: string;
-  unitPrice?: string;
+  unitPrice?: number;
   quantity?: number;
   approved?: boolean;
   approvedAt?: Date;
