@@ -7,227 +7,188 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Customer {
-  id        String  @id @default(uuid())
-  lastname  String?
-  firstname String?
-  email     String  @unique
-  phone     String?
-
-  addresses Address[]
-  invoices  Invoice[]
-
-  projects  Project[]
-  printJobs PrintJob[]
-
-  updatedAt DateTime  @default(now()) @updatedAt
-  createdAt DateTime  @default(now())
-  Expense   Expense[]
-}
-
-model Address {
-  id      String  @id @default(uuid())
-  street  String?
-  number  String?
-  city    String?
-  state   String?
-  country String?
-  zipCode String?
-
-  customerId String
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
-}
-
+// 1. Independent or low-dependency models
 model Category {
-  id   String @id @default(uuid())
-  name String @unique
-
-  prices ServicePrice[]
-  tasks  Task[]
-
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
-}
-
-model Invoice {
-  id          String   @id @default(uuid())
-  invoiceDate DateTime @default(now())
-  amount      Float
-
-  statusId String
-  status   InvoiceStatus @relation(fields: [statusId], references: [id])
-
-  customerId String
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  projects  Project[]
-  printJobs PrintJob[]
-
-  priceId String?
-  price   ServicePrice? @relation(fields: [priceId], references: [id])
-
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
-}
-
-model InvoiceStatus {
-  id     String @id @default(uuid())
-  status String @unique
-
-  invoices Invoice[]
-
-  updatedAt DateTime  @default(now()) @updatedAt
-  createdAt DateTime  @default(now())
-  Expense   Expense[]
-}
-
-model Expense {
-  id         String    @id @default(uuid())
-  neededAt   DateTime?
-  link       String?
-  unitPrice  String?
-  quantity   Int?
-  approved   Boolean?  @default(false)
-  approvedAt DateTime?
-  orderedAt  DateTime?
-
-  statusId String
-  status   InvoiceStatus @relation(fields: [statusId], references: [id])
-
-  customerId String?
-  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  updatedAt       DateTime       @default(now()) @updatedAt
-  createdAt       DateTime       @default(now())
-  ExpenseStatus   ExpenseStatus? @relation(fields: [expenseStatusId], references: [id])
-  expenseStatusId String?
+  id        String         @id @default(uuid())
+  name      String         @unique
+  prices    ServicePrice[]
+  tasks     Task[]
+  updatedAt DateTime       @default(now()) @updatedAt
+  createdAt DateTime       @default(now())
 }
 
 model ExpenseStatus {
-  id     String @id @default(uuid())
-  status String @unique
-
-  expenses Expense[]
-
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
+  id        String    @id @default(uuid())
+  status    String    @unique
+  expenses  Expense[]
+  updatedAt DateTime  @default(now()) @updatedAt
+  createdAt DateTime  @default(now())
 }
 
-model PrintJob {
-  id            String    @id @default(uuid())
-  name          String
-  scheduledDate DateTime?
-  ordered       Boolean?  @default(false)
-  completed     Boolean?  @default(false)
-  quantity      Int?
-  printTime     Int? // Store in minutes
-  weight        Float? // Store in grams
+model InvoiceStatus {
+  id        String    @id @default(uuid())
+  status    String    @unique
+  invoices  Invoice[]
+  Expense   Expense[]
+  updatedAt DateTime  @default(now()) @updatedAt
+  createdAt DateTime  @default(now())
+}
 
-  customerId String?
-  customer   Customer? @relation(fields: [customerId], references: [id])
+// 2. Core models referenced by many others
+model Customer {
+  id        String     @id @default(uuid())
+  lastname  String?
+  firstname String?
+  email     String     @unique
+  phone     String?
+  addresses Address[]
+  invoices  Invoice[]
+  projects  Project[]
+  printJobs PrintJob[]
+  Expense   Expense[]
+  updatedAt DateTime   @default(now()) @updatedAt
+  createdAt DateTime   @default(now())
+}
 
-  priceId String?
-  price   ServicePrice? @relation(fields: [priceId], references: [id])
+model Address {
+  id         String   @id @default(uuid())
+  street     String?
+  number     String?
+  city       String?
+  state      String?
+  country    String?
+  zipCode    String?
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  updatedAt  DateTime @default(now()) @updatedAt
+  createdAt  DateTime @default(now())
+}
 
-  materialId String
-  material   PrintMaterial @relation(fields: [materialId], references: [id])
+model ServicePrice {
+  id         String     @id @default(uuid())
+  service    String?
+  price      Float?
+  categoryId String?
+  category   Category?  @relation(fields: [categoryId], references: [id])
+  projects   Project[]
+  printJobs  PrintJob[]
+  Invoice    Invoice[]
+  updatedAt  DateTime   @default(now()) @updatedAt
+  createdAt  DateTime   @default(now())
+}
 
-  invoiceId String?
-  invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+model Invoice {
+  id          String        @id @default(uuid())
+  invoiceDate DateTime      @default(now())
+  amount      Float
+  statusId    String
+  status      InvoiceStatus @relation(fields: [statusId], references: [id])
+  customerId  String
+  customer    Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  projects    Project[]
+  printJobs   PrintJob[]
+  priceId     String?
+  price       ServicePrice? @relation(fields: [priceId], references: [id])
+  updatedAt   DateTime      @default(now()) @updatedAt
+  createdAt   DateTime      @default(now())
+}
 
-  timeLogs TimeLog[]
-
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
+model Expense {
+  id              String         @id @default(uuid())
+  neededAt        DateTime?
+  link            String?
+  unitPrice       String?
+  quantity        Int?
+  approved        Boolean?       @default(false)
+  approvedAt      DateTime?
+  orderedAt       DateTime?
+  statusId        String
+  status          InvoiceStatus  @relation(fields: [statusId], references: [id])
+  customerId      String?
+  customer        Customer?      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  expenseStatusId String?
+  ExpenseStatus   ExpenseStatus? @relation(fields: [expenseStatusId], references: [id])
+  updatedAt       DateTime       @default(now()) @updatedAt
+  createdAt       DateTime       @default(now())
 }
 
 model PrintMaterial {
-  id         String @id @default(uuid())
+  id         String     @id @default(uuid())
   type       String // FDM, SLA, etc.
   subType    String // PLA, ABS, RESIN, etc.
   stock      Float // Available material in grams
   color      String
   unitPrice  Float // Price per gram
   unitAmount Float? // Amount per gram
+  printJobs  PrintJob[]
+  updatedAt  DateTime   @default(now()) @updatedAt
+  createdAt  DateTime   @default(now())
+}
 
-  printJobs PrintJob[]
-
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
+// 3. Models that reference multiple core models and may have circular relations
+model PrintJob {
+  id            String        @id @default(uuid())
+  name          String
+  scheduledDate DateTime?
+  ordered       Boolean?      @default(false)
+  completed     Boolean?      @default(false)
+  quantity      Int?
+  printTime     Int? // Store in minutes
+  weight        Float? // Store in grams
+  customerId    String?
+  customer      Customer?     @relation(fields: [customerId], references: [id])
+  priceId       String?
+  price         ServicePrice? @relation(fields: [priceId], references: [id])
+  materialId    String
+  material      PrintMaterial @relation(fields: [materialId], references: [id])
+  invoiceId     String?
+  invoice       Invoice?      @relation(fields: [invoiceId], references: [id])
+  timeLogs      TimeLog[]
+  updatedAt     DateTime      @default(now()) @updatedAt
+  createdAt     DateTime      @default(now())
 }
 
 model Project {
-  id   String @id @default(uuid())
-  name String
-
+  id              String        @id @default(uuid())
+  name            String
   parentProjectId String?
-  parentProject   Project?  @relation("ProjectToParent", fields: [parentProjectId], references: [id])
-  childProjects   Project[] @relation("ProjectToParent")
-
-  customerId String?
-  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  priceId String?
-  price   ServicePrice? @relation(fields: [priceId], references: [id])
-
-  Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
-  invoiceId String?
-
-  timeLogs TimeLog[]
-  tasks    Task[]
-
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
-}
-
-model TimeLog {
-  id        String    @id @default(uuid())
-  startTime DateTime?
-  endTime   DateTime?
-  user      String?
-
-  projectId String?
-  project   Project? @relation(fields: [projectId], references: [id])
-
-  printJobId String?
-  printJob   PrintJob? @relation(fields: [printJobId], references: [id])
-
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
-}
-
-model ServicePrice {
-  id      String  @id @default(uuid())
-  service String?
-  price   Float?
-
-  categoryId String?
-  category   Category? @relation(fields: [categoryId], references: [id])
-
-  projects  Project[]
-  printJobs PrintJob[]
-  Invoice   Invoice[]
-
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
+  parentProject   Project?      @relation("ProjectToParent", fields: [parentProjectId], references: [id])
+  childProjects   Project[]     @relation("ProjectToParent")
+  customerId      String?
+  customer        Customer?     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  priceId         String?
+  price           ServicePrice? @relation(fields: [priceId], references: [id])
+  invoiceId       String?
+  Invoice         Invoice?      @relation(fields: [invoiceId], references: [id])
+  timeLogs        TimeLog[]
+  tasks           Task[]
+  updatedAt       DateTime      @default(now()) @updatedAt
+  createdAt       DateTime      @default(now())
 }
 
 model Task {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String?
   description String?
   userId      String?
-  done        Boolean? @default(false)
+  done        Boolean?  @default(false)
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  projectId   String?
+  project     Project?  @relation(fields: [projectId], references: [id])
+  updatedAt   DateTime  @default(now()) @updatedAt
+  createdAt   DateTime  @default(now())
+}
 
-  categoryId String?
-  category   Category? @relation(fields: [categoryId], references: [id])
-
-  projectId String?
-  project   Project? @relation(fields: [projectId], references: [id])
-
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
+model TimeLog {
+  id         String    @id @default(uuid())
+  startTime  DateTime?
+  endTime    DateTime?
+  user       String?
+  projectId  String?
+  project    Project?  @relation(fields: [projectId], references: [id])
+  printJobId String?
+  printJob   PrintJob? @relation(fields: [printJobId], references: [id])
+  updatedAt  DateTime  @default(now()) @updatedAt
+  createdAt  DateTime  @default(now())
 }
