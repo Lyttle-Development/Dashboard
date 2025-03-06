@@ -1,15 +1,15 @@
 import * as React from "react";
 import { Form as RadixForm } from "radix-ui";
-import { FormOptionType } from "../Form";
+import { FormOptionType, FormValueTypes } from "../Form";
 import { FormField } from "../Form/components/Field";
 
 export interface FormProps {
   label: string;
-  value?: string;
+  value?: FormValueTypes;
   placeholder?: string;
   required?: boolean;
   type?: FormOptionType;
-  onChange?: (value: string) => void;
+  onChange?: (value: FormValueTypes) => void;
   onFile?: (value: FileList) => void;
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 }

@@ -10,14 +10,14 @@ export interface FormResult {
 
 export interface FormProps {
   options: FormOption[];
-  onChange?: (value: string) => void;
+  onChange?: (value: FormValueTypes) => void;
   onSubmit?: (event: FormResult) => void;
 }
 
 export interface FormOption {
   key: string;
   label: string;
-  value?: string;
+  value?: FormValueTypes;
   placeholder?: string;
   required?: boolean;
   type?: FormOptionType;
@@ -33,6 +33,8 @@ export enum FormOptionType {
   TEXTAREA = "textarea",
   FILE = "file",
 }
+
+export type FormValueTypes = string | number | boolean | File | Date;
 
 export function Form({
   options,

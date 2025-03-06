@@ -1,0 +1,66 @@
+.expense_title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.time_log_day {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+
+.information {
+  width: 100%;
+  max-width: 30rem;
+}
+
+.expenses {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+
+  .expense {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: .8rem 1rem;
+    border-radius: 8px;
+    background: #0000001a;
+  }
+}
+
+.addresses {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+
+  .address {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+    padding: .8rem 1rem;
+    border-radius: 8px;
+    background: #0000001a;
+  }
+}
+
+.printJobs {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+
+  .printJob {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: .8rem 1rem;
+    border-radius: 8px;
+    background: #0000001a;
+  }
+}
