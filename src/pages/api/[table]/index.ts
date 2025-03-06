@@ -2,6 +2,7 @@ import type {NextApiRequest, NextApiResponse} from 'next';
 import prisma from '../../../lib/prisma';
 import {requireAuth} from '@/lib/auth';
 import {debugBuffer} from '@/lib/debug';
+import {reopenRecurringExpenses} from '@/lib/prisma/expense';
 
 /**
  * Helper: convert hyphenated strings to camelCase.
@@ -40,6 +41,10 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
+      if (tableKey === "expense") {
+        await reopenRecurringExpenses();
+      }
+
       const result = await prisma[tableKey].findMany({
         where: JSON.parse((req.query.where as string) || "{}"),
         include: JSON.parse((req.query.relations as string) || "{}"),

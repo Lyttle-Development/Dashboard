@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { Expense } from "@/lib/prisma";
 import { Loader } from "@/components/Loader";
 import { safeParseFloat, safeParseInt } from "@/lib/parse";
+import { Switch } from "@/components/Switch";
 
 // Optional keys of Expense
 interface OptionalExpense {
@@ -18,6 +19,7 @@ interface OptionalExpense {
   link: string;
   unitPrice: number;
   quantity: number;
+  recurring: boolean;
 }
 
 const emptyExpense: OptionalExpense = {
@@ -26,6 +28,7 @@ const emptyExpense: OptionalExpense = {
   link: "",
   unitPrice: 0,
   quantity: 1,
+  recurring: false,
 };
 
 function Page() {
@@ -38,7 +41,8 @@ function Page() {
     setExpense(emptyExpense);
   };
 
-  const handleChange = (field: string, value: string | number) => {
+  const handleChange = (field: string, value: boolean | string | number) => {
+    console.log(field, value);
     setExpense((prev) => ({
       ...prev,
       [field]: value,
@@ -107,6 +111,11 @@ function Page() {
         type={FormOptionType.NUMBER}
         onChange={(value) => handleChange("quantity", safeParseInt(value))}
         value={expense.quantity.toString()}
+      />
+      <Switch
+        label="Recurring"
+        onCheckedChange={(value) => handleChange("recurring", value)}
+        checked={expense.recurring}
       />
 
       {expense &&

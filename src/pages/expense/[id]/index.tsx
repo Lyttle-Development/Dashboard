@@ -101,7 +101,7 @@ export function Page() {
 
   if (loading) return <Loader />;
   if (!expense) return <div>Expense not found</div>;
-  const canAction = app.isOperationsManager; //|| app.isManager;
+  const canAction = app.isOperationsManager; // || app.isManager;
 
   const approveExpense = async (approved: boolean) => {
     await fetchApi<Expense>({
@@ -144,7 +144,10 @@ export function Page() {
   return (
     <Container>
       <h2 className={styles.title}>
-        <span>Expense: {expense.name}</span>
+        <span>
+          Expense: {expense.name}
+          {!!expense.recurring && <span> (Recurring)</span>}
+        </span>
         <Button onClick={deleteExpense} style={ButtonStyle.Danger}>
           Delete Expense
         </Button>
