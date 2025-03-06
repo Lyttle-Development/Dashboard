@@ -106,12 +106,16 @@ function Page() {
       <Field
         label="title"
         required
-        onChange={(p) => updateTask("title", p)}
+        onChange={(value) =>
+          updateTask("title", typeof value === "string" ? value : "")
+        }
         value={task.title}
       />
       <Field
         label="description"
-        onChange={(p) => updateTask("description", p)}
+        onChange={(value) =>
+          updateTask("description", typeof value === "string" ? value : "")
+        }
         type={FormOptionType.TEXTAREA}
         value={task.description}
       />

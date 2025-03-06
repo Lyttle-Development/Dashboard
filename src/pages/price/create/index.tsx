@@ -8,6 +8,7 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/Button";
 import { useRouter } from "next/router";
 import { Loader } from "@/components/Loader";
+import { safeParseFloat } from "@/lib/parse";
 
 interface updatePrice {
   categoryId: string | null;
@@ -75,12 +76,14 @@ function Page() {
       <Field
         label="Service"
         required
-        onChange={(s) => updatePrice("service", s)}
+        onChange={(value) =>
+          updatePrice("service", typeof value === "string" ? value : "")
+        }
       />
       <Field
         label="Price"
         required
-        onChange={(p) => updatePrice("price", parseFloat(p) || 0)}
+        onChange={(p) => updatePrice("price", safeParseFloat(p) || 0)}
       />
       {validPrice && <Button onClick={createPrice}>Create Price</Button>}
     </Container>

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Field } from "@/components/Field";
 import styles from "./index.module.scss";
 import { FormOptionType } from "@/components/Form";
+import { safeParseFieldString } from "@/lib/parse";
 
 export function Page() {
   const [data, setData] = useState({
@@ -174,36 +175,36 @@ export function Page() {
         <Field
           label="First Name"
           required
-          onChange={(e) => set("firstName", e)}
+          onChange={(e) => set("firstName", safeParseFieldString(e))}
           value={data.firstName}
         />
         <Field
           label="Last Name"
           required
-          onChange={(e) => set("lastName", e)}
+          onChange={(e) => set("lastName", safeParseFieldString(e))}
           value={data.lastName}
         />
         <Field
           label="Position"
           required
-          onChange={(e) => set("position", e)}
+          onChange={(e) => set("position", safeParseFieldString(e))}
           value={data.position}
         />
         <Field
           label="Telephone"
           required
-          onChange={(e) => set("telephone", e)}
+          onChange={(e) => set("telephone", safeParseFieldString(e))}
           value={data.telephone}
         />
         <Field
           label="Address Line 1"
           required
-          onChange={(e) => set("addressLine1", e)}
+          onChange={(e) => set("addressLine1", safeParseFieldString(e))}
           value={data.addressLine1}
         />
         <Field
           label="Address Line 2"
-          onChange={(e) => set("addressLine2", e)}
+          onChange={(e) => set("addressLine2", safeParseFieldString(e))}
           value={data.addressLine2}
         />
         <Field label="Image" type={FormOptionType.FILE} onFile={getBinary} />

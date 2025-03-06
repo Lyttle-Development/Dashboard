@@ -12,6 +12,7 @@ import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
 import { Loader } from "@/components/Loader";
 import { mapProjectsToOptions } from "@/lib/project";
+import { safeParseFieldString } from "@/lib/parse";
 
 function Page() {
   const router = useRouter();
@@ -139,7 +140,7 @@ function Page() {
         label="Project Name"
         type={FormOptionType.TEXT}
         required
-        onChange={setName}
+        onChange={(value) => setName(typeof value === "string" ? value : "")}
       />
       {customer && !projectParent && (
         <KeyValue
@@ -167,7 +168,9 @@ function Page() {
               label="Search Customer"
               type={FormOptionType.TEXT}
               required
-              onChange={setCustomerSearch}
+              onChange={(value) =>
+                setCustomerSearch(safeParseFieldString(value))
+              }
               onSubmit={fetchCustomers}
             />
           </article>

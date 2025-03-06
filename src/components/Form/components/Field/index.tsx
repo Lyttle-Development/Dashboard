@@ -16,7 +16,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="text"
           required={option.required}
-          value={option.value}
+          value={typeof option.value === "string" ? option.value : ""}
           placeholder={option.placeholder}
         />
       );
@@ -26,7 +26,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="email"
           required={option.required}
-          value={option.value}
+          value={typeof option.value === "string" ? option.value : ""}
           placeholder={option.placeholder}
         />
       );
@@ -36,7 +36,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="password"
           required={option.required}
-          value={option.value}
+          value={typeof option.value === "string" ? option.value : ""}
           placeholder={option.placeholder}
         />
       );
@@ -45,7 +45,7 @@ function GetFormField({ option }: FormFieldProps) {
         <textarea
           className={styles.Textarea}
           required={option.required}
-          value={option.value}
+          value={typeof option.value === "string" ? option.value : ""}
           placeholder={option.placeholder}
         />
       );
@@ -55,7 +55,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="checkbox"
           required={option.required}
-          value={option.value}
+          value={typeof option.value === "string" ? option.value : ""}
           placeholder={option.placeholder}
         />
       );
@@ -65,7 +65,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="date"
           required={option.required}
-          value={option.value}
+          value={typeof option.value === "string" ? option.value : ""}
           placeholder={option.placeholder}
         />
       );
@@ -75,7 +75,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="number"
           required={option.required}
-          value={option.value}
+          value={typeof option.value === "string" ? option.value : ""}
           placeholder={option.placeholder}
         />
       );
@@ -85,7 +85,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="file"
           required={option.required}
-          value={option.value}
+          value={typeof option.value === "string" ? option.value : ""}
           placeholder={option.placeholder}
         />
       );

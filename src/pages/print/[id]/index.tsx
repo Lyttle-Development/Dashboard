@@ -12,6 +12,7 @@ import { Button, ButtonStyle } from "@/components/Button";
 import { PrintTimeLog } from "@/components/PrintTimeLog";
 import { Icon } from "@/components/Icon";
 import { faFileInvoiceDollar } from "@fortawesome/free-solid-svg-icons";
+import { safeParseInt } from "@/lib/parse";
 
 export function Page() {
   const router = useRouter();
@@ -141,12 +142,12 @@ export function Page() {
         <Field
           label="Print Amount (total items)"
           value={printJob.quantity?.toString() ?? "0"}
-          onChange={(e) => handleChange("quantity", parseInt(e) || 0)}
+          onChange={(e) => handleChange("quantity", safeParseInt(e) || 0)}
         />
         <Field
           label="Print Gram (per item)"
           value={printJob.weight?.toString() ?? "0"}
-          onChange={(e) => handleChange("weight", parseInt(e) || 0)}
+          onChange={(e) => handleChange("weight", safeParseInt(e) || 0)}
         />
       </article>
       {hasChanges && <Button onClick={updatePrintJob}>Update Print Job</Button>}

@@ -54,7 +54,9 @@ export function Price({
   return (
     <article className={styles.price}>
       <Field
-        onChange={(v) => setPrice("service", v)}
+        onChange={(value) =>
+          setPrice("service", typeof value === "string" ? value : "")
+        }
         value={price.service}
         label="Service"
         type={FormOptionType.TEXT}

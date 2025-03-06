@@ -11,6 +11,7 @@ import { FormOptionType } from "@/components/Form";
 import { Switch } from "@/components/Switch";
 import { useApp } from "@/contexts/App.context";
 import { mapProjectsToOptions } from "@/lib/project";
+import { safeParseFieldString } from "@/lib/parse";
 
 function Page() {
   const app = useApp();
@@ -122,12 +123,12 @@ function Page() {
       <Field
         label="title"
         required
-        onChange={(p) => updateTask("title", p)}
+        onChange={(p) => updateTask("title", safeParseFieldString(p))}
         value={task.title}
       />
       <Field
         label="description"
-        onChange={(p) => updateTask("description", p)}
+        onChange={(p) => updateTask("description", safeParseFieldString(p))}
         type={FormOptionType.TEXTAREA}
         value={task.description}
       />

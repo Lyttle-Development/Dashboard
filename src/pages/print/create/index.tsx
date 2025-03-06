@@ -114,7 +114,7 @@ function Page() {
         label="Print Job Name"
         type={FormOptionType.TEXT}
         required
-        onChange={setName}
+        onChange={(value) => setName(typeof value === "string" ? value : "")}
       />
       {customer && (
         <KeyValue
@@ -141,7 +141,9 @@ function Page() {
               label="Search Customer"
               type={FormOptionType.TEXT}
               required
-              onChange={setCustomerSearch}
+              onChange={(value) =>
+                setCustomerSearch(typeof value === "string" ? value : "")
+              }
               onSubmit={fetchCustomers}
             />
           </article>

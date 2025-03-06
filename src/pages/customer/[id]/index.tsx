@@ -102,25 +102,33 @@ export function Page() {
           label="firstname"
           type={FormOptionType.TEXT}
           value={customer.firstname}
-          onChange={(value) => handleChange("firstname", value)}
+          onChange={(value) =>
+            handleChange("firstname", typeof value === "string" ? value : "")
+          }
         />
         <Field
           label="lastname"
           type={FormOptionType.TEXT}
           value={customer.lastname}
-          onChange={(value) => handleChange("lastname", value)}
+          onChange={(value) =>
+            handleChange("lastname", typeof value === "string" ? value : "")
+          }
         />
         <Field
           label="email"
           type={FormOptionType.EMAIL}
           value={customer.email}
-          onChange={(value) => handleChange("email", value)}
+          onChange={(value) =>
+            handleChange("email", typeof value === "string" ? value : "")
+          }
         />
         <Field
           label="phone"
           type={FormOptionType.TEXT}
           value={customer.phone}
-          onChange={(value) => handleChange("phone", value)}
+          onChange={(value) =>
+            handleChange("phone", typeof value === "string" ? value : "")
+          }
         />
       </article>
       {hasChanges && <Button onClick={updateProject}>Update Customer</Button>}

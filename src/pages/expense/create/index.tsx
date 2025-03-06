@@ -9,6 +9,7 @@ import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
 import { Expense } from "@/lib/prisma";
 import { Loader } from "@/components/Loader";
+import { safeParseFloat, safeParseInt } from "@/lib/parse";
 
 // Optional keys of Expense
 interface OptionalExpense {
@@ -75,30 +76,36 @@ function Page() {
         label="Name"
         type={FormOptionType.TEXT}
         required
-        onChange={(value) => handleChange("name", value)}
+        onChange={(value) =>
+          handleChange("name", typeof value === "string" ? value : "")
+        }
         value={expense.name}
       />
       <Field
         label="Needed At"
         type={FormOptionType.DATE}
-        onChange={(value) => handleChange("neededAt", value)}
+        onChange={(value) =>
+          handleChange("neededAt", typeof value === "string" ? value : "")
+        }
       />
       <Field
         label="Link"
         type={FormOptionType.TEXT}
-        onChange={(value) => handleChange("link", value)}
+        onChange={(value) =>
+          handleChange("link", typeof value === "string" ? value : "")
+        }
         value={expense.link}
       />
       <Field
         label="Unit Price"
         type={FormOptionType.NUMBER}
-        onChange={(value) => handleChange("unitPrice", parseFloat(value))}
+        onChange={(value) => handleChange("unitPrice", safeParseFloat(value))}
         value={expense.unitPrice.toString()}
       />
       <Field
         label="Quantity"
         type={FormOptionType.NUMBER}
-        onChange={(value) => handleChange("quantity", parseInt(value))}
+        onChange={(value) => handleChange("quantity", safeParseInt(value))}
         value={expense.quantity.toString()}
       />
 

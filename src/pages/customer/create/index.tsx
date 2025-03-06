@@ -73,25 +73,33 @@ function Page() {
         label="First Name"
         type={FormOptionType.TEXT}
         required
-        onChange={(value) => handleChange("firstname", value)}
+        onChange={(value) =>
+          handleChange("firstname", typeof value === "string" ? value : "")
+        }
       />
       <Field
         label="First Name"
         type={FormOptionType.TEXT}
         required
-        onChange={(value) => handleChange("lastname", value)}
+        onChange={(value) =>
+          handleChange("lastname", typeof value === "string" ? value : "")
+        }
       />
       <Field
         label="Email"
         type={FormOptionType.EMAIL}
         required
-        onChange={(value) => handleChange("email", value)}
+        onChange={(value) =>
+          handleChange("email", typeof value === "string" ? value : "")
+        }
       />
       <Field
         label="Phone"
         type={FormOptionType.TEXT}
         required
-        onChange={(value) => handleChange("phone", value)}
+        onChange={(value) =>
+          handleChange("phone", typeof value === "string" ? value : "")
+        }
       />
       {customer &&
         !!customer.firstname &&

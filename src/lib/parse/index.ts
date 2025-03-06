@@ -29,3 +29,10 @@ export function safeParseFieldDate(value: FormValueTypes): string {
   } catch (error) {}
   return null;
 }
+
+export function safeParseFieldString(value: FormValueTypes): string {
+  if (typeof value === "string") {
+    return value;
+  }
+  return "";
+}

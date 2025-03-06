@@ -16,6 +16,7 @@ import { SideToSide } from "@/components/SideToSide";
 import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
 import { PRINT_MARGIN_PROCENT, TAX_COST_PROCENT } from "@/constants";
+import { safeParseFloat } from "@/lib/parse";
 
 function Page() {
   const router = useRouter();
@@ -145,7 +146,7 @@ function Page() {
             type={FormOptionType.NUMBER}
             value={discount.toString()}
             onChange={(e) => {
-              const num = parseFloat(e) || 0;
+              const num = safeParseFloat(e) || 0;
               setDiscount(num);
             }}
           />
