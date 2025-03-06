@@ -98,7 +98,7 @@ model Expense {
   neededAt        DateTime?
   name            String?
   link            String?
-  unitPrice       String?
+  unitPrice       Float?
   quantity        Int?
   approved        Boolean?       @default(false)
   approvedAt      DateTime?
@@ -108,7 +108,7 @@ model Expense {
   customerId      String?
   customer        Customer?      @relation(fields: [customerId], references: [id], onDelete: Cascade)
   expenseStatusId String?
-  ExpenseStatus   ExpenseStatus? @relation(fields: [expenseStatusId], references: [id])
+  expenseStatus   ExpenseStatus? @relation(fields: [expenseStatusId], references: [id])
   updatedAt       DateTime       @default(now()) @updatedAt
   createdAt       DateTime       @default(now())
 }
