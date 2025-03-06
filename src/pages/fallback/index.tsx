@@ -5,33 +5,57 @@ import { Layout } from "@/layouts";
 const tableConfigs: {
   [key: string]: { label: string; endpoint: string };
 } = {
-  customers: { label: "Customers", endpoint: "/api/customer" },
-  addresses: { label: "Addresses", endpoint: "/api/address" },
   category: { label: "Categories", endpoint: "/api/category" },
-  invoice: { label: "Invoices", endpoint: "/api/invoice" },
+  "expense-status": { label: "Expense Status", endpoint: "/api/expenseStatus" },
   "invoice-status": {
     label: "Invoice Status",
     endpoint: "/api/invoiceStatus",
   },
-  "print-job": { label: "Print Jobs", endpoint: "/api/printJob" },
+  customers: { label: "Customers", endpoint: "/api/customer" },
+  addresses: { label: "Addresses", endpoint: "/api/address" },
+  "service-price": { label: "Service Prices", endpoint: "/api/servicePrice" },
+  invoice: { label: "Invoices", endpoint: "/api/invoice" },
+  expense: { label: "Expenses", endpoint: "/api/expense" },
   "print-material": {
     label: "Print Materials",
     endpoint: "/api/printMaterial",
   },
+  "print-job": { label: "Print Jobs", endpoint: "/api/printJob" },
   project: { label: "Projects", endpoint: "/api/project" },
+  task: { label: "Tasks", endpoint: "/api/task" },
   "time-log": { label: "Time Logs", endpoint: "/api/timeLog" },
-  "service-price": { label: "Service Prices", endpoint: "/api/servicePrice" },
-  task: { label: "Tasks", endpoint: "/api/task" }, // New table for Task model
 };
 
 // Fallback keys for each table when no data exists.
 // (These are the fields you wish to create/edit manually; exclude auto-managed fields.)
 const fallbackKeys: Record<string, string[]> = {
-  customers: ["firstname", "lastname", "email", "phone"], // Updated for separate first/last names
-  addresses: ["street", "city", "state", "country", "zipCode", "customerId"],
   category: ["name"],
-  invoice: ["invoiceDate", "amount", "statusId", "customerId"],
+  "expense-status": ["status"],
   "invoice-status": ["status"],
+  customers: ["firstname", "lastname", "email", "phone"],
+  addresses: ["street", "city", "state", "country", "zipCode", "customerId"],
+  "service-price": ["categoryId", "service", "price"],
+  invoice: ["invoiceDate", "amount", "statusId", "customerId"],
+  expense: [
+    "neededAt",
+    "link",
+    "unitPrice",
+    "quantity",
+    "approved",
+    "approvedAt",
+    "orderedAt",
+    "statusId",
+    "customerId",
+    "expenseStatusId",
+  ],
+  "print-material": [
+    "type",
+    "subType",
+    "stock",
+    "color",
+    "unitPrice",
+    "unitAmount",
+  ],
   "print-job": [
     "name",
     "scheduledDate",
@@ -42,18 +66,9 @@ const fallbackKeys: Record<string, string[]> = {
     "printTime",
     "weight",
   ],
-  "print-material": [
-    "type",
-    "subType",
-    "stock",
-    "color",
-    "unitPrice",
-    "unitAmount",
-  ],
-  project: ["name", "customerId", "priceId", "invoiceId"], // Updated clientId -> customerId
-  "time-log": ["projectId", "startTime", "endTime", "user", "printJobId"], // Added printJobId if needed
-  "service-price": ["categoryId", "service", "price"], // Updated to match the schema
-  task: ["title", "description", "userId", "done", "categoryId"], // New fallback for Task model
+  project: ["name", "customerId", "priceId", "invoiceId"],
+  task: ["title", "description", "userId", "done", "categoryId"],
+  "time-log": ["projectId", "startTime", "endTime", "user", "printJobId"],
 };
 
 /**
@@ -61,6 +76,7 @@ const fallbackKeys: Record<string, string[]> = {
  */
 const getInputType = (key: string, value?: any): string => {
   const lower = key.toLowerCase();
+  if (lower.includes("date") || key.includes("At")) return "datetime-local";
   if (
     typeof value === "boolean" ||
     lower.includes("ordered") ||
@@ -68,7 +84,6 @@ const getInputType = (key: string, value?: any): string => {
     lower.includes("done")
   )
     return "checkbox";
-  if (lower.includes("date")) return "datetime-local";
   if (lower.includes("email")) return "email";
   if (
     lower.includes("amount") ||
@@ -105,7 +120,7 @@ export function Page() {
   let [data, setData] = useState<Array<Record<string, any>>>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Remove created at and updated at fields from the data.
+  // Remove createdAt and updatedAt fields from the data.
   data = data.map((record) => {
     const { createdAt, updatedAt, ...rest } = record;
     return rest;
