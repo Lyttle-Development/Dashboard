@@ -1,9 +1,10 @@
 @use '../../styles/variables.scss' as v;
 
-.main-menu {
+.main_menu {
   position: fixed;
   display: flex;
   flex-direction: column;
+  gap: 2rem;
   width: v.$main-nav-width;
   background-color: v.$background-light-200;
   top: 0;
@@ -28,6 +29,16 @@
       text-overflow: ellipsis;
       color: v.$color-text;
       font-weight: 600;
+    }
+  }
+
+  h5 {
+    margin: 1rem;
+    color: v.$color-text;
+    font-weight: 600;
+
+    &:first-child {
+      margin-top: 0;
     }
   }
 }
