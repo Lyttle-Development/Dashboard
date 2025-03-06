@@ -12,7 +12,7 @@ export function AppProvider({ children }: AppContextProps) {
   const { session, isLoading, isAuthenticated, isAllowed } = useAuth();
 
   if (isLoading) {
-    return <Loader info={"Initializing session"} />;
+    return <Loader />;
   }
 
   if (!isAuthenticated) {
