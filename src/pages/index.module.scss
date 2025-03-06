@@ -18,6 +18,28 @@
   }
 }
 
+.expenses_grouped {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  .expenses_group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .expense {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      padding: .5rem 1rem;
+      border-radius: 1rem;
+      background-color: #f5f5f5;
+    }
+  }
+}
+
 .projects {
   display: flex;
   flex-direction: column;

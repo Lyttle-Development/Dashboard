@@ -14,6 +14,8 @@ import { findNewestTimeLog } from "@/lib/project/find-newest-time-log";
 import { useMobile } from "@/hooks/useMobile";
 import { router } from "next/client";
 import { ExpenseStatus } from "@/pages/expense/[id]";
+import { groupArrayBy, sortGroupedListBy } from "@/lib/array";
+import { capitalizeWords } from "@/lib/format/string";
 
 function Page() {
   const mobile = useMobile();
@@ -121,21 +123,26 @@ function Page() {
     void fetchExpenses();
   }, []);
 
-  // Group by category, category can be found inside the price object
-  const groupedTimeLogs = [];
-  for (const timeLog of timeLogs) {
-    const category = categories.find(
-      (category) =>
-        projects.find((project) => project.id === timeLog.projectId)?.price
-          .categoryId === category.id,
-    );
-    if (!category) continue;
+  const groupedExpenses = groupArrayBy(expenses, (expense) => {
+    if (expense.recurring) return "Recurring";
+    if (expense.approved) return "Approved";
+    return "Requested";
+  });
+  const objectGroupedExpenses = Object.entries(
+    sortGroupedListBy(groupedExpenses, ["Recurring", "Requested", "Approved"]),
+  );
 
-    if (!groupedTimeLogs[category.name]) {
-      groupedTimeLogs[category.name] = [];
-    }
-    groupedTimeLogs[category.name].push(timeLog);
-  }
+  const groupedTimeLogs = groupArrayBy(timeLogs, (timeLog) => {
+    const project = projects.find(
+      (project) => project.id === timeLog.projectId,
+    );
+    if (!project) return null;
+    const category = categories.find(
+      (category) => category.id === project.price.categoryId,
+    );
+    return category?.name ?? null;
+  });
+  const runningTimeLogs = Object.entries(groupedTimeLogs);
 
   const invoicesToCreateProjects = projects.filter((project) => {
     // Check if the project has time logs
@@ -159,8 +166,6 @@ function Page() {
   const invoicesToCreatePrintJobs = printJobs.filter((printJob) => {
     return printJob.completed;
   });
-
-  const runningTimeLogs = Object.entries(groupedTimeLogs);
 
   const openPrintJobs = printJobs.filter((printJob) => !printJob.completed);
 
@@ -229,21 +234,28 @@ function Page() {
             Expenses that are not closed should be reviewed and closed if
             necessary.
           </p>
-          <ul className={styles.invoices}>
-            {expenses &&
-              expenses.map((expense) => (
-                <li key={expense.id} className={styles.invoice}>
-                  <Link href={`/expense/${expense.id}`}>
-                    <h6>
-                      <strong>Name: </strong>
-                      {expense.name}
-                    </h6>
-                    <p>
-                      <strong>Status: </strong>
-                      {expense.status.status}
-                    </p>
-                  </Link>
-                </li>
+          <ul className={styles.expenses_grouped}>
+            {objectGroupedExpenses &&
+              objectGroupedExpenses.map(([group, expenses]) => (
+                <>
+                  <h5>{capitalizeWords(group)}:</h5>
+                  <ul className={styles.expenses_group}>
+                    {expenses.map((expense) => (
+                      <li key={expense.id} className={styles.expense}>
+                        <Link href={`/expense/${expense.id}`}>
+                          <h6>
+                            <strong>Name: </strong>
+                            {expense.name}
+                          </h6>
+                          <p>
+                            <strong>Status: </strong>
+                            {capitalizeWords(expense.status.status)}
+                          </p>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </>
               ))}
           </ul>
         </section>
@@ -256,7 +268,7 @@ function Page() {
           <ul className={styles.active_logs}>
             {runningTimeLogs.map(([categoryName, timeLogs]) => (
               <li key={categoryName} className={styles.active_logs__group}>
-                <h5>{categoryName}</h5>
+                <h5>{capitalizeWords(categoryName)}</h5>
                 <ul className={styles.active_logs__group__projects}>
                   {timeLogs.map((timeLog) => {
                     const project = projects.find(
