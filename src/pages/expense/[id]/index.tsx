@@ -200,12 +200,20 @@ export function Page() {
           {expense.statusId !== ExpenseStatus.CLOSED ? (
             <>
               {!expense.approved ? (
-                <Button
-                  onClick={() => approveExpense(true)}
-                  style={ButtonStyle.Primary}
-                >
-                  Approve Expense
-                </Button>
+                <>
+                  <Button
+                    onClick={() => approveExpense(true)}
+                    style={ButtonStyle.Primary}
+                  >
+                    Approve Expense
+                  </Button>
+                  <Button
+                    onClick={() => setExpenseClosed(true)}
+                    style={ButtonStyle.Danger}
+                  >
+                    Decline Expense
+                  </Button>
+                </>
               ) : (
                 <>
                   <Button

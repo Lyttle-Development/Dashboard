@@ -1,7 +1,7 @@
 import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { useCallback, useEffect, useState } from "react";
-import { Category, PrintJob, Project, TimeLog } from "@/lib/prisma";
+import { Category, Expense, PrintJob, Project, TimeLog } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Loader } from "@/components/Loader";
 
@@ -13,6 +13,7 @@ import { getProjectFullName } from "@/lib/project";
 import { findNewestTimeLog } from "@/lib/project/find-newest-time-log";
 import { useMobile } from "@/hooks/useMobile";
 import { router } from "next/client";
+import { ExpenseStatus } from "@/pages/expense/[id]";
 
 function Page() {
   const mobile = useMobile();
@@ -22,6 +23,7 @@ function Page() {
     projects: false,
     printJobs: false,
     categories: false,
+    expenses: false,
   });
   const setLoading = (key: string, value: boolean) => {
     _setLoading((prev) => ({ ...prev, [key]: value }));
@@ -32,6 +34,7 @@ function Page() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [printJobs, setPrintJobs] = useState<PrintJob[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
 
   const fetchTimeLogs = useCallback(async () => {
     setLoading("projects", true);
@@ -66,6 +69,9 @@ function Page() {
     setLoading("printJobs", true);
     const printJobData = await fetchApi<PrintJob[]>({
       table: "print-job",
+      where: {
+        invoiceId: null,
+      },
       relations: {
         timeLogs: true,
       },
@@ -85,6 +91,24 @@ function Page() {
     setLoading("categories", false);
   }, []);
 
+  const fetchExpenses = useCallback(async () => {
+    setLoading("expenses", true);
+    const expenseData = await fetchApi<Expense[]>({
+      table: "expense",
+      where: {
+        statusId: {
+          not: ExpenseStatus.CLOSED,
+        },
+      },
+      relations: {
+        status: true,
+      },
+    });
+
+    setExpenses(expenseData ?? []);
+    setLoading("expenses", false);
+  }, []);
+
   useEffect(() => {
     if (mobile.onMobile) {
       router.push("/mobile/task");
@@ -94,6 +118,7 @@ function Page() {
     void fetchProjects();
     void fetchPrintJobs();
     void fetchCategories();
+    void fetchExpenses();
   }, []);
 
   // Group by category, category can be found inside the price object
@@ -132,14 +157,12 @@ function Page() {
   });
 
   const invoicesToCreatePrintJobs = printJobs.filter((printJob) => {
-    return printJob.invoiceId === null && printJob.completed;
+    return printJob.completed;
   });
 
   const runningTimeLogs = Object.entries(groupedTimeLogs);
 
-  const openPrintJobs = printJobs.filter(
-    (printJob) => printJob.invoiceId === null && !printJob.completed,
-  );
+  const openPrintJobs = printJobs.filter((printJob) => !printJob.completed);
 
   const openProjects = projects.filter(
     (project) => project.tasks.filter((t) => !t.done).length > 0,
@@ -197,6 +220,33 @@ function Page() {
             </ul>
           </section>
         )}
+
+      {app.isManager && expenses.length > 0 && (
+        <section>
+          <h2>Open Expenses:</h2>
+          <p>
+            Expenses that are not closed should be reviewed and closed if
+            necessary.
+          </p>
+          <ul className={styles.invoices}>
+            {expenses &&
+              expenses.map((expense) => (
+                <li key={expense.id} className={styles.invoice}>
+                  <Link href={`/expense/${expense.id}`}>
+                    <h6>
+                      <strong>Name: </strong>
+                      {expense.name}
+                    </h6>
+                    <p>
+                      <strong>Status: </strong>
+                      {expense.status.status}
+                    </p>
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        </section>
+      )}
 
       {runningTimeLogs.length > 0 && (
         <section>
