@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { AppContext } from "./App.context";
-import { isAdmin, isManager } from "@/lib/auth";
+import { isAdmin, isManager, isOperationsManager } from "@/lib/auth";
 import { Loader } from "@/components/Loader";
 
 export interface AppContextProps {
@@ -35,6 +35,7 @@ export function AppProvider({ children }: AppContextProps) {
         userEmail: session!.user.email,
         isAdmin: isAdmin(session),
         isManager: isManager(session),
+        isOperationsManager: isOperationsManager(session),
       }}
     >
       {children}

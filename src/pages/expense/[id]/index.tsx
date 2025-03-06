@@ -10,10 +10,25 @@ import { Field } from "@/components/Field";
 import { FormOptionType, FormValueTypes } from "@/components/Form";
 import { Button, ButtonStyle } from "@/components/Button";
 import { safeParseFieldDate, safeParseFloat, safeParseInt } from "@/lib/parse";
+import { SideToSide } from "@/components/SideToSide";
+import { Icon } from "@/components/Icon";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
+import { Link, LinkTarget } from "@/components/Link";
+import { useApp } from "@/contexts/App.context";
+import { KeyValue } from "@/components/KeyValue";
+
+export enum ExpenseStatus {
+  REQUESTED = "a2f734b1-613b-4383-b742-a4d5067f0a0c",
+  APPROVED = "986a0ba6-96ce-431b-a3b7-d8f028afb2dd",
+  ORDERED = "9c3be7d7-b09c-4aec-a58a-8c8a52f800a1",
+  CLOSED = "2dee2fe0-e126-4ac4-b451-8e75c3316c7b",
+  REOPENED = "22a537e3-7588-4639-a774-d1762a2e1718",
+}
 
 export function Page() {
   const router = useRouter();
   const { id: expenseId } = router.query;
+  const app = useApp();
 
   const [expense, setExpense] = useState<Expense>(null);
   const [originalExpense, setOriginalExpense] = useState<Expense>(null);
@@ -86,16 +101,56 @@ export function Page() {
 
   if (loading) return <Loader />;
   if (!expense) return <div>Expense not found</div>;
+  const canAction = app.isOperationsManager; // || app.isManager;
+
+  const approveExpense = async (approved: boolean) => {
+    await fetchApi<Expense>({
+      table: "expense",
+      id: expense.id,
+      method: "PUT",
+      body: {
+        approved,
+        statusId: approved ? ExpenseStatus.APPROVED : ExpenseStatus.REQUESTED,
+      },
+    });
+    await fetchExpense(expenseId as string);
+  };
+
+  const setExpenseOrdered = async (ordered: boolean) => {
+    await fetchApi<Expense>({
+      table: "expense",
+      id: expense.id,
+      method: "PUT",
+      body: {
+        orderedAt: ordered ? new Date() : null,
+        statusId: ordered ? ExpenseStatus.ORDERED : ExpenseStatus.APPROVED,
+      },
+    });
+    await fetchExpense(expenseId as string);
+  };
+
+  const setExpenseClosed = async (closed: boolean) => {
+    await fetchApi<Expense>({
+      table: "expense",
+      id: expense.id,
+      method: "PUT",
+      body: {
+        statusId: closed ? ExpenseStatus.CLOSED : ExpenseStatus.REOPENED,
+      },
+    });
+    await fetchExpense(expenseId as string);
+  };
 
   return (
     <Container>
-      <h2 className={styles.expense_title}>
+      <h2 className={styles.title}>
         <span>Expense: {expense.name}</span>
         <Button onClick={deleteExpense} style={ButtonStyle.Danger}>
           Delete Expense
         </Button>
       </h2>
       <article className={styles.information}>
+        <KeyValue label="Status" value={expense.status.status} />
         <Field
           label="Name"
           type={FormOptionType.TEXT}
@@ -104,17 +159,28 @@ export function Page() {
           value={expense.name}
         />
         <Field
-          label="Needed At"
+          label={`Needed At${!expense.neededAt ? " (No date added)" : ""}`}
           type={FormOptionType.DATE}
           onChange={(value) => handleChange("neededAt", value)}
           value={safeParseFieldDate(expense.neededAt)}
         />
-        <Field
-          label="Link"
-          type={FormOptionType.TEXT}
-          onChange={(value) => handleChange("link", value)}
-          value={expense.link}
-        />
+        <SideToSide className={styles.side_to_side}>
+          <Field
+            label="Link"
+            type={FormOptionType.TEXT}
+            onChange={(value) => handleChange("link", value)}
+            value={expense.link}
+            className={styles.link}
+          />
+          <Link
+            href={expense.link}
+            target={LinkTarget.BLANK}
+            className={styles.linkButton}
+          >
+            <Icon icon={faLink} className={styles.icon} />
+            <span>Open Link</span>
+          </Link>
+        </SideToSide>
         <Field
           label="Unit Price"
           type={FormOptionType.NUMBER}
@@ -129,6 +195,62 @@ export function Page() {
         />
       </article>
       {hasChanges && <Button onClick={updateExpense}>Update Expense</Button>}
+      {canAction && (
+        <SideToSide>
+          {expense.statusId !== ExpenseStatus.CLOSED ? (
+            <>
+              {!expense.approved ? (
+                <Button
+                  onClick={() => approveExpense(true)}
+                  style={ButtonStyle.Primary}
+                >
+                  Approve Expense
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    onClick={() => approveExpense(false)}
+                    style={ButtonStyle.Danger}
+                    disabled={!!expense.orderedAt}
+                  >
+                    Remove Approval Expense
+                  </Button>
+                  {!expense.orderedAt ? (
+                    <Button
+                      onClick={() => setExpenseOrdered(true)}
+                      style={ButtonStyle.Primary}
+                    >
+                      Set as ordered
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        onClick={() => setExpenseOrdered(false)}
+                        style={ButtonStyle.Danger}
+                      >
+                        Remove ordered
+                      </Button>
+                      <Button
+                        onClick={() => setExpenseClosed(true)}
+                        style={ButtonStyle.Primary}
+                      >
+                        Close Expense Request
+                      </Button>
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          ) : (
+            <Button
+              onClick={() => setExpenseClosed(false)}
+              style={ButtonStyle.Danger}
+            >
+              Reopen Expense
+            </Button>
+          )}
+        </SideToSide>
+      )}
     </Container>
   );
 }

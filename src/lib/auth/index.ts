@@ -52,3 +52,11 @@ export function isManager(session: any) {
   ];
   return managerEmails.includes(session.user.id);
 }
+
+export function isOperationsManager(session: any) {
+  // Check if the user is a manager by email & env variable
+  const managerEmails = process.env.MANAGER_EMAILS?.split(";") ?? [
+    "469271199143428099", // Lmikha
+  ];
+  return managerEmails.includes(session.user.id);
+}

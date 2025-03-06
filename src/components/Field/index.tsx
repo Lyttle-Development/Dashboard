@@ -12,12 +12,14 @@ export interface FormProps {
   onChange?: (value: FormValueTypes) => void;
   onFile?: (value: FileList) => void;
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
+  className?: string;
 }
 
 export function Field({
   onChange = (v) => v,
   onFile = (v) => v,
   onSubmit = (e) => e,
+  className,
   ...option
 }: FormProps) {
   const handleOnchange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -38,7 +40,7 @@ export function Field({
   option.type = option.type ?? FormOptionType.TEXT;
 
   return (
-    <RadixForm.Root onSubmit={handleSubmit}>
+    <RadixForm.Root onSubmit={handleSubmit} className={className}>
       <FormField
         option={{ key: "field", ...option }}
         onChange={handleOnchange}

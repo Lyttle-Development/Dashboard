@@ -5,6 +5,7 @@ export interface AppContextInterface {
   userEmail?: string | null;
   isAdmin: boolean;
   isManager: boolean;
+  isOperationsManager: boolean;
 }
 
 export type AppContextType = AppContextInterface | null;

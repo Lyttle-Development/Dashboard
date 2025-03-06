@@ -1,9 +1,17 @@
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 
+export enum LinkTarget {
+  BLANK = "_blank",
+  PARENT = "_parent",
+  SELF = "_self",
+  TOP = "_top",
+}
+
 export interface LinkProps {
   href?: string;
   route?: string;
+  target?: LinkTarget;
   onClick?: () => void;
   children: React.ReactNode;
   className?: string;
@@ -13,6 +21,7 @@ export interface LinkProps {
 export function Link({
   href,
   route,
+  target,
   onClick,
   children,
   className,
@@ -24,7 +33,7 @@ export function Link({
 
   if (!href && onClick) {
     return (
-      <a onClick={onClick} className={`${className} ${active}`}>
+      <a onClick={onClick} className={`${className} ${active}`} target={target}>
         {children}
       </a>
     );
@@ -32,7 +41,11 @@ export function Link({
 
   if (href && !onClick) {
     return (
-      <NextLink href={href} className={`${className} ${active}`}>
+      <NextLink
+        href={href}
+        className={`${className} ${active}`}
+        target={target}
+      >
         {children}
       </NextLink>
     );
