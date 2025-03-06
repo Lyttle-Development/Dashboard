@@ -54,7 +54,7 @@ function Page() {
     void fetchCategories();
   }, []);
 
-  const validPrice = price.categoryId && price.service && price.price;
+  const validPrice = !!price.categoryId && !!price.service && !!price.price;
 
   if (loading) {
     return <Loader />;

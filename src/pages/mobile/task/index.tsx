@@ -61,7 +61,7 @@ function Page() {
     void fetchProjects();
   }, [fetchProjects]);
 
-  const validTask = task.title && task.projectId;
+  const validTask = !!task.title && !!task.projectId;
 
   const createTask = async () => {
     updateLoading("global", true);

@@ -178,7 +178,7 @@ function Page() {
             }
           />
         ))}
-      {material && price && customer && name && (
+      {!!material && !!price && !!customer && !!name && (
         <Button onClick={createPrintJob}>Create Print Job</Button>
       )}
     </Container>

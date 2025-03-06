@@ -94,10 +94,10 @@ function Page() {
         onChange={(value) => handleChange("phone", value)}
       />
       {customer &&
-        customer.firstname &&
-        customer.lastname &&
-        customer.email &&
-        customer.phone && (
+        !!customer.firstname &&
+        !!customer.lastname &&
+        !!customer.email &&
+        !!customer.phone && (
           <Button onClick={createPrintJob}>Create Customer</Button>
         )}
     </Container>

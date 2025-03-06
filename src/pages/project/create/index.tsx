@@ -216,7 +216,7 @@ function Page() {
           value={price?.id ?? undefined}
         />
       )}
-      {price && category && (customer || projectParent) && name && (
+      {!!price && !!category && (!!customer || !!projectParent) && !!name && (
         <Button onClick={createProject}>Create Project</Button>
       )}
     </Container>

@@ -75,7 +75,7 @@ function Page() {
     void fetchProjects();
   }, [fetchCategories, fetchProjects]);
 
-  const validTask = task.title && (task.categoryId || task.projectId);
+  const validTask = !!task.title && (!!task.categoryId || !!task.projectId);
 
   const createTask = async () => {
     updateLoading("global", true);
