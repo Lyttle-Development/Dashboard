@@ -15,8 +15,13 @@ import { formatNumber } from "@/lib/format/number";
 import { SideToSide } from "@/components/SideToSide";
 import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
-import { PRINT_MARGIN_PROCENT, TAX_COST_PROCENT } from "@/constants";
+import {
+  PRINT_LABOUR_BASE_COST,
+  PRINT_MARGIN_PROCENT,
+  TAX_COST_PROCENT,
+} from "@/constants";
 import { safeParseFloat } from "@/lib/parse";
+import { procentToNumber } from "@/lib/procent";
 
 function Page() {
   const router = useRouter();
@@ -77,9 +82,10 @@ function Page() {
       (p) => p.id === "cd90b1ef-af06-49e1-80b5-f6920b2d3a92", // ELECTRICITY_PRICE
     ).price ?? 0;
   const printTime = getTotalHours(printJob.timeLogs, true);
-  const electricityCost = Math.ceil(printTime * electricityPrice * 100) / 100;
+  const costPriceElectricity =
+    Math.ceil(printTime * electricityPrice * 100) / 100;
 
-  const totalPriceElectricity = electricityCost; // Electricity cost
+  const totalPriceElectricity = costPriceElectricity; // Electricity cost
 
   // Material cost
   const materialPricePerGram = printJob
@@ -87,25 +93,66 @@ function Page() {
         (printJob.material?.unitPrice / printJob.material?.unitAmount) * 100,
       ) / 100
     : 0;
-  const materialCost =
+  const costPriceMaterial =
     Math.ceil(
       printJob.quantity * printJob.weight * materialPricePerGram * 100,
     ) / 100;
+  const totalPriceMaterial = totalPriceElectricity + totalPriceElectricity; // Material cost
 
-  const totalPriceMaterial = totalPriceElectricity + materialCost; // Material cost
+  // Labour cost
+  const totalPriceCalculatedLabour =
+    Math.ceil(
+      (totalPriceMaterial + PRINT_LABOUR_BASE_COST * printJob.quantity) * 100,
+    ) / 100;
+  const costPriceCalculatedLabour =
+    totalPriceCalculatedLabour - totalPriceMaterial;
 
-  const margin = totalPriceMaterial * PRINT_MARGIN_PROCENT;
+  // Margin cost
+  const totalPriceCalculatedMargin =
+    Math.ceil(totalPriceCalculatedLabour * PRINT_MARGIN_PROCENT * 100) / 100;
+  const costPriceCalculatedMargin =
+    totalPriceCalculatedMargin - totalPriceCalculatedLabour;
 
-  const totalPriceCalculatedDiscount = margin - margin * (discount / 100); // Subtract discount
+  // Discount cost
+  const totalPriceCalculatedDiscount =
+    discount !== 0
+      ? Math.ceil(totalPriceCalculatedMargin * (1 - discount / 100) * 100) / 100
+      : totalPriceCalculatedMargin;
+  const costPriceCalculatedDiscount =
+    totalPriceCalculatedDiscount - totalPriceCalculatedMargin;
 
+  // TAX/BTW cost
   const totalPriceCalculatedTax =
-    Math.ceil(totalPriceCalculatedDiscount * (1 + TAX_COST_PROCENT) * 100) /
-    100; // Add TAX/BTW
+    Math.ceil(totalPriceCalculatedDiscount * TAX_COST_PROCENT * 100) / 100; // Add TAX/BTW
+  const costPriceCalculatedTax =
+    totalPriceCalculatedTax - totalPriceCalculatedDiscount;
 
-  console.log("totalPriceElectricity", totalPriceElectricity);
-  console.log("totalPriceMaterial", totalPriceMaterial);
-  console.log("totalPriceCalculatedDiscount", totalPriceCalculatedDiscount);
-  console.log("totalPriceCalculatedTax", totalPriceCalculatedTax);
+  console.log(
+    "totalPriceElectricity",
+    totalPriceElectricity,
+    costPriceElectricity,
+  );
+  console.log("totalPriceMaterial", totalPriceMaterial, costPriceMaterial);
+  console.log(
+    "totalPriceCalculatedLabour",
+    totalPriceCalculatedLabour,
+    costPriceCalculatedLabour,
+  );
+  console.log(
+    "totalPriceCalculatedMargin",
+    totalPriceCalculatedMargin,
+    costPriceCalculatedMargin,
+  );
+  console.log(
+    "totalPriceCalculatedDiscount",
+    totalPriceCalculatedDiscount,
+    costPriceCalculatedDiscount,
+  );
+  console.log(
+    "totalPriceCalculatedTax",
+    totalPriceCalculatedTax,
+    costPriceCalculatedTax,
+  );
 
   return (
     <Container className={styles.container}>
@@ -126,20 +173,24 @@ function Page() {
         </p>
         <KeyValue
           label="Price electricity"
-          value={`€${formatNumber(electricityCost)} (${printTime}h x €${formatNumber(electricityPrice)})`}
+          value={`€${formatNumber(costPriceElectricity)} (${printTime}h x €${formatNumber(electricityPrice)})`}
         />
         <KeyValue
           label="Material cost"
-          value={`€${formatNumber(materialCost)} (${printJob.quantity}p x ${printJob.weight}g x €${formatNumber(materialPricePerGram)}/g)`}
+          value={`€${formatNumber(costPriceMaterial)} (${printJob.quantity}p x ${printJob.weight}g x €${formatNumber(materialPricePerGram)}/g)`}
         />
         <KeyValue
-          label="Labour / Margin"
-          value={`€${formatNumber(margin)} (${PRINT_MARGIN_PROCENT}00%)`}
+          label="Labour"
+          value={`€${formatNumber(costPriceCalculatedLabour)} (€${PRINT_LABOUR_BASE_COST} * ${printJob.quantity}p)`}
+        />
+        <KeyValue
+          label="Margin"
+          value={`€${formatNumber(costPriceCalculatedMargin)} (${procentToNumber(PRINT_MARGIN_PROCENT)}%)`}
         />
         <SideToSide>
           <KeyValue
             label="Discount"
-            value={`${formatNumber(discount)}% (€${formatNumber(Math.ceil(totalPriceCalculatedDiscount - margin * 100) / 100)})`}
+            value={`€${formatNumber(costPriceCalculatedDiscount)} (${formatNumber(discount)}%)`}
           />
           <Field
             label={""}
@@ -152,8 +203,8 @@ function Page() {
           />
         </SideToSide>
         <KeyValue
-          label="TAX/BTW"
-          value={`21% (€${formatNumber(totalPriceCalculatedTax - totalPriceCalculatedDiscount)})`}
+          label={`TAX/BTW`}
+          value={`€${formatNumber(costPriceCalculatedTax)} (${procentToNumber(TAX_COST_PROCENT)}%)`}
         />
       </article>
       <article>

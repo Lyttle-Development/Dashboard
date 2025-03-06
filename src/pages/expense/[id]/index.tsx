@@ -101,7 +101,7 @@ export function Page() {
 
   if (loading) return <Loader />;
   if (!expense) return <div>Expense not found</div>;
-  const canAction = app.isOperationsManager; // || app.isManager;
+  const canAction = app.isOperationsManager; //|| app.isManager;
 
   const approveExpense = async (approved: boolean) => {
     await fetchApi<Expense>({

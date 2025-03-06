@@ -24,6 +24,7 @@ import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
 import { TAX_COST_PROCENT } from "@/constants";
 import { safeParseFloat } from "@/lib/parse";
+import { procentToNumber } from "@/lib/procent";
 
 function Page() {
   const router = useRouter();
@@ -101,8 +102,12 @@ function Page() {
 
   const totalPriceCalculatedDiscount =
     totalPriceTimeLogs - totalPriceTimeLogs * (discount / 100); // Subtract discount
+
+  // Cost TAX
   const totalPriceCalculatedTax =
-    totalPriceCalculatedDiscount * (1 + TAX_COST_PROCENT); // Add TAX/BTW
+    totalPriceCalculatedDiscount * TAX_COST_PROCENT; // Add TAX/BTW
+  const costPriceCalculatedTax =
+    totalPriceCalculatedTax - totalPriceCalculatedDiscount;
 
   if (!projectId) return null;
   if (loading) return <Loader info={loadingTask} />;
@@ -178,8 +183,8 @@ function Page() {
           />
         </SideToSide>
         <KeyValue
-          label="TAX/BTW"
-          value={`21% (€${formatNumber(totalPriceCalculatedTax - totalPriceCalculatedDiscount)})`}
+          label={`TAX/BTW`}
+          value={`€${formatNumber(costPriceCalculatedTax)} (${procentToNumber(TAX_COST_PROCENT)}%)`}
         />
       </article>
       <article>

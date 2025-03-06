@@ -177,8 +177,9 @@ function Page() {
       <h1>Activity:</h1>
 
       {app.isManager &&
-        (invoicesToCreateProjects.length > 0 ||
-          invoicesToCreatePrintJobs.length > 0) && (
+        ((invoicesToCreateProjects && invoicesToCreateProjects.length > 0) ||
+          (invoicesToCreatePrintJobs &&
+            invoicesToCreatePrintJobs.length > 0)) && (
           <section>
             <h2>Invoices to create:</h2>
             <p>Projects inactive for 30 days should be closed and invoiced.</p>
@@ -221,7 +222,7 @@ function Page() {
           </section>
         )}
 
-      {app.isManager && expenses.length > 0 && (
+      {app.isOperationsManager && expenses && expenses.length > 0 && (
         <section>
           <h2>Open Expenses:</h2>
           <p>
