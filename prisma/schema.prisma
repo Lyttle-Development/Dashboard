@@ -20,8 +20,9 @@ model Customer {
   projects  Project[]
   printJobs PrintJob[]
 
-  updatedAt DateTime @default(now()) @updatedAt
-  createdAt DateTime @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  createdAt DateTime  @default(now())
+  Expense   Expense[]
 }
 
 model Address {
@@ -77,6 +78,39 @@ model InvoiceStatus {
   status String @unique
 
   invoices Invoice[]
+
+  updatedAt DateTime  @default(now()) @updatedAt
+  createdAt DateTime  @default(now())
+  Expense   Expense[]
+}
+
+model Expense {
+  id         String    @id @default(uuid())
+  neededAt   DateTime?
+  link       String?
+  unitPrice  String?
+  quantity   Int?
+  approved   Boolean?  @default(false)
+  approvedAt DateTime?
+  orderedAt  DateTime?
+
+  statusId String
+  status   InvoiceStatus @relation(fields: [statusId], references: [id])
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  updatedAt       DateTime       @default(now()) @updatedAt
+  createdAt       DateTime       @default(now())
+  ExpenseStatus   ExpenseStatus? @relation(fields: [expenseStatusId], references: [id])
+  expenseStatusId String?
+}
+
+model ExpenseStatus {
+  id     String @id @default(uuid())
+  status String @unique
+
+  expenses Expense[]
 
   updatedAt DateTime @default(now()) @updatedAt
   createdAt DateTime @default(now())
