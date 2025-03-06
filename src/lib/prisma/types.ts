@@ -85,6 +85,7 @@ export interface Invoice {
 export interface Expense {
   id: string;
   neededAt?: Date;
+  name?: string;
   link?: string;
   unitPrice?: string;
   quantity?: number;

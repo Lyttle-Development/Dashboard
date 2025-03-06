@@ -96,6 +96,7 @@ model Invoice {
 model Expense {
   id              String         @id @default(uuid())
   neededAt        DateTime?
+  name            String?
   link            String?
   unitPrice       String?
   quantity        Int?
