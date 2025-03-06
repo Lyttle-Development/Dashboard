@@ -2,6 +2,7 @@ import * as React from "react";
 import styles from "@/components/Form/index.module.scss";
 import { Form as RadixForm } from "radix-ui";
 import { FormOption, FormOptionType } from "@/components/Form";
+import { safeParseFieldString } from "@/lib/parse";
 
 interface FormFieldProps {
   option: FormOption;
@@ -16,7 +17,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="text"
           required={option.required}
-          value={typeof option.value === "string" ? option.value : ""}
+          value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
         />
       );
@@ -26,7 +27,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="email"
           required={option.required}
-          value={typeof option.value === "string" ? option.value : ""}
+          value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
         />
       );
@@ -36,7 +37,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="password"
           required={option.required}
-          value={typeof option.value === "string" ? option.value : ""}
+          value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
         />
       );
@@ -45,7 +46,7 @@ function GetFormField({ option }: FormFieldProps) {
         <textarea
           className={styles.Textarea}
           required={option.required}
-          value={typeof option.value === "string" ? option.value : ""}
+          value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
         />
       );
@@ -55,7 +56,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="checkbox"
           required={option.required}
-          value={typeof option.value === "string" ? option.value : ""}
+          value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
         />
       );
@@ -65,7 +66,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="date"
           required={option.required}
-          value={typeof option.value === "string" ? option.value : ""}
+          value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
         />
       );
@@ -75,7 +76,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="number"
           required={option.required}
-          value={typeof option.value === "string" ? option.value : ""}
+          value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
         />
       );
@@ -85,7 +86,7 @@ function GetFormField({ option }: FormFieldProps) {
           className={styles.Input}
           type="file"
           required={option.required}
-          value={typeof option.value === "string" ? option.value : ""}
+          value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
         />
       );

@@ -34,5 +34,10 @@ export function safeParseFieldString(value: FormValueTypes): string {
   if (typeof value === "string") {
     return value;
   }
-  return "";
+
+  try {
+    return value?.toString();
+  } catch (error) {}
+
+  return null;
 }
