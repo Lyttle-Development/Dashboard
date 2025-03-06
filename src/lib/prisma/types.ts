@@ -1,3 +1,29 @@
+export interface Category {
+  id: string;
+  name: string;
+  prices: ServicePrice[];
+  tasks: Task[];
+  updatedAt: Date;
+  createdAt: Date;
+}
+
+export interface ExpenseStatus {
+  id: string;
+  status: string;
+  expenses: Expense[];
+  updatedAt: Date;
+  createdAt: Date;
+}
+
+export interface InvoiceStatus {
+  id: string;
+  status: string;
+  invoices: Invoice[];
+  Expense: Expense[];
+  updatedAt: Date;
+  createdAt: Date;
+}
+
 export interface Customer {
   id: string;
   lastname?: string;
@@ -8,6 +34,7 @@ export interface Customer {
   invoices: Invoice[];
   projects: Project[];
   printJobs: PrintJob[];
+  Expense: Expense[];
   updatedAt: Date;
   createdAt: Date;
 }
@@ -26,11 +53,15 @@ export interface Address {
   createdAt: Date;
 }
 
-export interface Category {
+export interface ServicePrice {
   id: string;
-  name: string;
-  prices: ServicePrice[];
-  tasks: Task[];
+  service?: string;
+  price?: number;
+  categoryId?: string;
+  category?: Category;
+  projects: Project[];
+  printJobs: PrintJob[];
+  Invoice: Invoice[];
   updatedAt: Date;
   createdAt: Date;
 }
@@ -51,10 +82,34 @@ export interface Invoice {
   createdAt: Date;
 }
 
-export interface InvoiceStatus {
+export interface Expense {
   id: string;
-  status: string;
-  invoices: Invoice[];
+  neededAt?: Date;
+  link?: string;
+  unitPrice?: string;
+  quantity?: number;
+  approved?: boolean;
+  approvedAt?: Date;
+  orderedAt?: Date;
+  statusId: string;
+  status: InvoiceStatus;
+  customerId?: string;
+  customer?: Customer;
+  expenseStatusId?: string;
+  expenseStatus?: ExpenseStatus;
+  updatedAt: Date;
+  createdAt: Date;
+}
+
+export interface PrintMaterial {
+  id: string;
+  type: string;
+  subType: string;
+  stock: number;
+  color: string;
+  unitPrice: number;
+  unitAmount?: number;
+  printJobs: PrintJob[];
   updatedAt: Date;
   createdAt: Date;
 }
@@ -81,33 +136,34 @@ export interface PrintJob {
   createdAt: Date;
 }
 
-export interface PrintMaterial {
-  id: string;
-  type: string;
-  subType: string;
-  stock: number;
-  color: string;
-  unitPrice: number;
-  unitAmount?: number;
-  printJobs: PrintJob[];
-  updatedAt: Date;
-  createdAt: Date;
-}
-
 export interface Project {
   id: string;
   name: string;
   parentProjectId?: string;
   parentProject?: Project;
-  childProjects?: Project[];
+  childProjects: Project[];
   customerId?: string;
   customer?: Customer;
   priceId?: string;
   price?: ServicePrice;
   invoiceId?: string;
-  invoice?: Invoice;
+  Invoice?: Invoice;
   timeLogs: TimeLog[];
   tasks: Task[];
+  updatedAt: Date;
+  createdAt: Date;
+}
+
+export interface Task {
+  id: string;
+  title?: string;
+  description?: string;
+  userId?: string;
+  done?: boolean;
+  categoryId?: string;
+  category?: Category;
+  projectId?: string;
+  project?: Project;
   updatedAt: Date;
   createdAt: Date;
 }
@@ -121,33 +177,6 @@ export interface TimeLog {
   project?: Project;
   printJobId?: string;
   printJob?: PrintJob;
-  updatedAt: Date;
-  createdAt: Date;
-}
-
-export interface ServicePrice {
-  id: string;
-  service?: string;
-  price?: number;
-  categoryId?: string;
-  category?: Category;
-  projects: Project[];
-  printJobs: PrintJob[];
-  invoices: Invoice[];
-  updatedAt: Date;
-  createdAt: Date;
-}
-
-export interface Task {
-  id: string;
-  title?: string;
-  description?: string;
-  userId?: string;
-  done?: boolean;
-  categoryId?: string;
-  category?: Category;
-  projectId: string;
-  project: Project;
   updatedAt: Date;
   createdAt: Date;
 }
