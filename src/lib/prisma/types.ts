@@ -90,6 +90,7 @@ export interface Expense {
   unitPrice?: number;
   quantity?: number;
   approved?: boolean;
+  recurring?: boolean;
   approvedAt?: Date;
   orderedAt?: Date;
   statusId: string;

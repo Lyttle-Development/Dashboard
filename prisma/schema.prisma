@@ -100,6 +100,7 @@ model Expense {
   unitPrice  Float?
   quantity   Int?
   approved   Boolean?      @default(false)
+  recurring  Boolean?      @default(false)
   approvedAt DateTime?
   orderedAt  DateTime?
   customerId String?
