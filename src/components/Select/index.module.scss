@@ -37,6 +37,12 @@
   }
 }
 
+.disabled {
+  cursor: not-allowed !important;
+  background-color: var(--mauve-2);
+  color: var(--mauve-8);
+}
+
 .Icon {
   color: var(--violet-11);
   transition: transform 0.2s ease-in-out;

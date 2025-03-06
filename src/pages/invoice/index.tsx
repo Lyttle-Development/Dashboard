@@ -21,6 +21,11 @@ export function Page() {
       relations: {
         projects: true,
       },
+      where: {
+        statusId: {
+          not: "3f5c10b6-1301-4c0b-8da9-e2515865339e", // PAID
+        },
+      },
     });
     setInvoices(invoicesData ?? []);
     setLoading(false);
@@ -31,7 +36,6 @@ export function Page() {
   }, [fetchInvoices]);
 
   if (loading) return <Loader />;
-  if (!invoices?.length) return <div>No invoices found</div>;
 
   return (
     <Container>
@@ -46,6 +50,7 @@ export function Page() {
             value: invoice.id,
           }))}
           onValueChange={(invoiceId) => router.push(`/invoice/${invoiceId}`)}
+          disabled={!(invoices && invoices.length)}
         />
       </SideToSide>
     </Container>

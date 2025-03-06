@@ -52,6 +52,7 @@ export function Page() {
           icon={faMagnifyingGlass}
           options={mapProjectsToOptions(projects, true)}
           onValueChange={(projectId) => router.push(`/project/${projectId}`)}
+          disabled={!(projects && projects.length)}
         />
         <Button href="/project/create">
           <Icon icon={faDiagramProject}>Create Project</Icon>

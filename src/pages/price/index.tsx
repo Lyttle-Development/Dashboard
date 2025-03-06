@@ -55,6 +55,7 @@ export function Page() {
           label="Select Price Category"
           options={mapPrintsToOptions(categories)}
           onValueChange={(projectId) => router.push(`/price/${projectId}`)}
+          disabled={!(categories && categories.length)}
         />
         <Button href="/price/create">
           <Icon icon={faTag}>Create Price</Icon>

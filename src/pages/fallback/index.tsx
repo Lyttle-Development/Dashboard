@@ -115,7 +115,7 @@ const formatDateTimeLocal = (val: any): string => {
 export function Page() {
   // Currently selected table. (Use keys as in tableConfigs.)
   const [selectedTable, setSelectedTable] =
-    useState<keyof typeof tableConfigs>("customers");
+    useState<keyof typeof tableConfigs>("category");
   // Data for the selected table.
   let [data, setData] = useState<Array<Record<string, any>>>([]);
   const [loading, setLoading] = useState<boolean>(false);

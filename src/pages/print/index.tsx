@@ -45,7 +45,6 @@ export function Page() {
   }, [fetchPrints]);
 
   if (loading) return <Loader />;
-  if (!prints?.length) return <div>No projects found</div>;
 
   return (
     <Container>
@@ -56,6 +55,7 @@ export function Page() {
           icon={faMagnifyingGlass}
           options={mapPrintsToOptions(prints)}
           onValueChange={(projectId) => router.push(`/print/${projectId}`)}
+          disabled={!(prints && prints.length)}
         />
         <Button href="/print/create">
           <Icon icon={faPrint}>Create Print Job</Icon>

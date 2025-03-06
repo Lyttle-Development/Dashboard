@@ -46,7 +46,15 @@ export function Select({
       {(props.value || alwaysShowLabel) && (
         <label className={styles.label}>{label}</label>
       )}
-      <RadixSelect.Trigger className={classNames(styles.Trigger, className)}>
+      <RadixSelect.Trigger
+        className={classNames(
+          styles.Trigger,
+          {
+            [styles.disabled]: props.disabled,
+          },
+          className,
+        )}
+      >
         <RadixSelect.Value
           placeholder={
             <span className={styles.value}>

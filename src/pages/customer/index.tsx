@@ -31,23 +31,22 @@ function mapPrintsToOptions(prints: any[]): SelectItemProps[] {
 export function Page() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [prints, setPrints] = useState<PrintJob[]>([]);
+  const [customer, setCustomer] = useState<PrintJob[]>([]);
 
-  const fetchPrints = useCallback(async () => {
+  const fetchCustomer = useCallback(async () => {
     setLoading(true);
     const projectsData = await fetchApi<PrintJob[]>({
       table: "customer",
     });
-    setPrints(projectsData ?? []);
+    setCustomer(projectsData ?? []);
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    void fetchPrints();
-  }, [fetchPrints]);
+    void fetchCustomer();
+  }, [fetchCustomer]);
 
   if (loading) return <Loader />;
-  if (!prints?.length) return <div>No projects found</div>;
 
   return (
     <Container>
@@ -57,8 +56,9 @@ export function Page() {
         <Select
           label="Select Customer"
           icon={faMagnifyingGlass}
-          options={mapPrintsToOptions(prints)}
+          options={mapPrintsToOptions(customer)}
           onValueChange={(projectId) => router.push(`/customer/${projectId}`)}
+          disabled={!(customer && customer.length)}
         />
         <Button href="/customer/create">
           <Icon icon={faCircleUser}>Create Customer</Icon>
