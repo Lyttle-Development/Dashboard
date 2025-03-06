@@ -70,6 +70,11 @@ export function ChildProject({
         <ul className={styles.tasks}>
           {project.tasks
             .filter((t) => !t.done)
+            .sort(
+              (a, b) =>
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime(),
+            )
             .map((task) => (
               <li key={task.id} className={styles.task}>
                 <Button
