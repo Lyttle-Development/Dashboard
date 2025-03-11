@@ -1,0 +1,18 @@
+.task {
+  display: flex;
+  gap: .8rem;
+  align-items: center;
+  width: 100%;
+  max-width: 50rem;
+
+  .task_details {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+.title_input,
+.description_input {
+  width: 100% !important;
+}

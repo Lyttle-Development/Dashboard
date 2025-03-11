@@ -1,4 +1,4 @@
-import styles from "../../index.module.scss";
+import styles from "./index.module.scss";
 import { KeyValue } from "@/components/KeyValue";
 import { ProjectTimeLog } from "@/components/ProjectTimeLog";
 import {
@@ -7,14 +7,14 @@ import {
   getTotalFormattedTimeLogsHours,
 } from "@/lib/price/get-price";
 import { Project, TimeLog } from "@/lib/prisma";
-import { Button } from "@/components/Button";
-import { fetchApi } from "@/lib/fetchApi";
-import { Icon } from "@/components/Icon";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { Field } from "@/components/Field";
+import { FormOptionType } from "@/components/Form";
+import { useState } from "react";
+import TaskItem from "@/pages/project/[id]/components/ChildProject/components/TaskItem";
 
 interface ChildProjectProps {
   project: Project;
-  fetchProject: (projectId: string) => void;
+  fetchProject: (projectId: string, noReload?: boolean) => void;
   activeTimeLogs: TimeLog[];
   timeLogsGrouped: Map<string, Map<string, number>>;
 }
@@ -25,15 +25,12 @@ export function ChildProject({
   activeTimeLogs,
   timeLogsGrouped,
 }: ChildProjectProps) {
-  const closeTask = async (taskId: string) => {
-    await fetchApi({
-      method: "PUT",
-      table: "task",
-      id: taskId,
-      body: { done: true },
-    });
-
-    void fetchProject(project.id);
+  const [filter, _setFilter] = useState<string>(
+    localStorage?.getItem("projectFilter") || "",
+  );
+  const setFilter = (filter: string) => {
+    _setFilter(filter);
+    localStorage?.setItem("projectFilter", filter);
   };
 
   return (
@@ -67,27 +64,33 @@ export function ChildProject({
 
       <section>
         <h2>Tasks:</h2>
+        <Field
+          label="Search Tasks"
+          type={FormOptionType.TEXT}
+          onChange={setFilter}
+          value={filter}
+        />
         <ul className={styles.tasks}>
-          {project.tasks
-            .filter((t) => !t.done)
-            .sort(
+          {project?.tasks
+            ?.filter(
+              (t) =>
+                !t.done &&
+                (t?.title?.toLowerCase()?.includes(filter?.toLowerCase()) ||
+                  t?.description
+                    ?.toLowerCase()
+                    ?.includes(filter?.toLowerCase())),
+            )
+            ?.sort(
               (a, b) =>
                 new Date(a.createdAt).getTime() -
                 new Date(b.createdAt).getTime(),
             )
-            .map((task) => (
-              <li key={task.id} className={styles.task}>
-                <Button
-                  onClick={() => closeTask(task.id)}
-                  title={"Mark completed, and close task."}
-                >
-                  <Icon icon={faCircleCheck} />
-                </Button>
-                <article className={styles.task_details}>
-                  <h6>{task.title}</h6>
-                  {task.description && <p>{task.description}</p>}
-                </article>
-              </li>
+            ?.map((task) => (
+              <TaskItem
+                project={project}
+                task={task}
+                fetchProject={fetchProject}
+              />
             ))}
           {project.tasks.filter((t) => !t.done).length === 0 && (
             <li className={styles.task}>

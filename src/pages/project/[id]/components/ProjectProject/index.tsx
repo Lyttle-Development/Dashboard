@@ -1,10 +1,10 @@
-import styles from "../../index.module.scss";
+import styles from "./index.module.scss";
 import { Button } from "@/components/Button";
 import { Project } from "@/lib/prisma";
 
 interface ProjectProjectProps {
   project: Project;
-  fetchProject: (projectId: string) => void;
+  fetchProject: (projectId: string, noReload?: boolean) => void;
 }
 
 export function ProjectProject({ project, fetchProject }: ProjectProjectProps) {

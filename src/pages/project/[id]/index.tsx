@@ -51,44 +51,47 @@ export function Page() {
   const [loading, setLoading] = useState<boolean>(false);
 
   // Fetch the project details by id.
-  const fetchProject = useCallback(async (projectId: string) => {
-    setLoading(true);
-    try {
-      const projectData = await fetchApi<Project>({
-        table: "project",
-        id: projectId,
-        method: "GET",
-        relations: {
-          timeLogs: true,
-          customer: true,
-          price: true,
-          childProjects: true,
-          tasks: true,
-        },
-      });
+  const fetchProject = useCallback(
+    async (projectId: string, noReload: boolean = false) => {
+      if (!noReload) setLoading(true);
+      try {
+        const projectData = await fetchApi<Project>({
+          table: "project",
+          id: projectId,
+          method: "GET",
+          relations: {
+            timeLogs: true,
+            customer: true,
+            price: true,
+            childProjects: true,
+            tasks: true,
+          },
+        });
 
-      if (!projectData) {
-        throw new Error("Project not found");
+        if (!projectData) {
+          throw new Error("Project not found");
+        }
+
+        projectData.price.category = await fetchApi<Category>({
+          table: "category",
+          id: projectData.price.categoryId,
+          method: "GET",
+        });
+
+        projectData.timeLogs = projectData.timeLogs.sort((a, b) => {
+          return (
+            new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
+          );
+        });
+
+        setProject(projectData);
+      } catch (err) {
+        setProject(null);
       }
-
-      projectData.price.category = await fetchApi<Category>({
-        table: "category",
-        id: projectData.price.categoryId,
-        method: "GET",
-      });
-
-      projectData.timeLogs = projectData.timeLogs.sort((a, b) => {
-        return (
-          new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
-        );
-      });
-
-      setProject(projectData);
-    } catch (err) {
-      setProject(null);
-    }
-    setLoading(false);
-  }, []);
+      if (!noReload) setLoading(false);
+    },
+    [],
+  );
 
   useEffect(() => {
     const projectId = router.query.id as string;
