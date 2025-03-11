@@ -182,14 +182,13 @@ function Page() {
       <h1>Activity:</h1>
 
       {app.isManager &&
-        ((invoicesToCreateProjects && invoicesToCreateProjects.length > 0) ||
-          (invoicesToCreatePrintJobs &&
-            invoicesToCreatePrintJobs.length > 0)) && (
+        (invoicesToCreateProjects?.length > 0 ||
+          invoicesToCreatePrintJobs?.length > 0) && (
           <section>
             <h2>Invoices to create:</h2>
             <p>Projects inactive for 30 days should be closed and invoiced.</p>
             <ul className={styles.invoices}>
-              {invoicesToCreateProjects &&
+              {invoicesToCreateProjects?.length > 0 &&
                 invoicesToCreateProjects.map((project) => (
                   <li key={project.id} className={styles.invoice}>
                     <Link href={`/invoice/create/project/${project.id}`}>
@@ -206,8 +205,8 @@ function Page() {
                     </Link>
                   </li>
                 ))}
-              {invoicesToCreatePrintJobs &&
-                invoicesToCreatePrintJobs.map((printJob) => (
+              {invoicesToCreatePrintJobs?.length > 0 &&
+                invoicesToCreatePrintJobs?.map((printJob) => (
                   <li key={printJob.id} className={styles.invoice}>
                     <Link href={`/invoice/create/print/${printJob.id}`}>
                       <h6>
@@ -227,7 +226,7 @@ function Page() {
           </section>
         )}
 
-      {app.isOperationsManager && expenses && expenses.length > 0 && (
+      {app.isOperationsManager && objectGroupedExpenses?.length > 0 && (
         <section>
           <h2>Open Expenses:</h2>
           <p>
@@ -235,33 +234,35 @@ function Page() {
             necessary.
           </p>
           <ul className={styles.expenses_grouped}>
-            {objectGroupedExpenses &&
-              objectGroupedExpenses.map(([group, expenses]) => (
-                <>
-                  <h5>{capitalizeWords(group)}:</h5>
-                  <ul className={styles.expenses_group}>
-                    {expenses.map((expense) => (
-                      <li key={expense.id} className={styles.expense}>
-                        <Link href={`/expense/${expense.id}`}>
-                          <h6>
-                            <strong>Name: </strong>
-                            {expense.name}
-                          </h6>
-                          <p>
-                            <strong>Status: </strong>
-                            {capitalizeWords(expense.status.status)}
-                          </p>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ))}
+            {objectGroupedExpenses?.map(
+              ([group, expenses]) =>
+                expenses?.length > 0 && (
+                  <>
+                    <h5>{capitalizeWords(group)}:</h5>
+                    <ul className={styles.expenses_group}>
+                      {expenses?.map((expense) => (
+                        <li key={expense.id} className={styles.expense}>
+                          <Link href={`/expense/${expense.id}`}>
+                            <h6>
+                              <strong>Name: </strong>
+                              {expense.name}
+                            </h6>
+                            <p>
+                              <strong>Status: </strong>
+                              {capitalizeWords(expense.status.status)}
+                            </p>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ),
+            )}
           </ul>
         </section>
       )}
 
-      {runningTimeLogs.length > 0 && (
+      {runningTimeLogs?.length > 0 && (
         <section>
           <h2>Active Time Logs:</h2>
           <p>Time logs currently running</p>
@@ -302,7 +303,7 @@ function Page() {
         </section>
       )}
 
-      {app.isAdmin && openPrintJobs.length > 0 && (
+      {app.isAdmin && openPrintJobs?.length > 0 && (
         <section>
           <h2>Open PrintJobs:</h2>
           <p>Print Jobs not marked as completed.</p>
