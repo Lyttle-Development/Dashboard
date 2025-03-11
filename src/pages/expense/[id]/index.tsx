@@ -139,6 +139,7 @@ export function Page() {
       },
     });
     await fetchExpense(expenseId as string);
+    if (closed) void router.push("/");
   };
 
   return (
