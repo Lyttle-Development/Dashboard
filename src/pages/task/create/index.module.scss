@@ -1,13 +1,11 @@
-.title {
+.container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   width: 100%;
-}
+  max-width: 50rem;
+  align-items: stretch;
 
-.side_to_side {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
+  textarea {
+    height: 20rem;
+  }
 }

@@ -12,6 +12,7 @@ import { Switch } from "@/components/Switch";
 import { useApp } from "@/contexts/App.context";
 import { mapProjectsToOptions } from "@/lib/project";
 import { safeParseFieldString } from "@/lib/parse";
+import styles from "./index.module.scss";
 
 function Page() {
   const app = useApp();
@@ -118,7 +119,7 @@ function Page() {
   if (loading) return <Loader />;
 
   return (
-    <Container>
+    <Container className={styles.container}>
       <h1>Create Task</h1>
       <Field
         label="title"
