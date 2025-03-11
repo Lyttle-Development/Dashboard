@@ -149,9 +149,14 @@ export function Page() {
           Expense: {expense.name}
           {!!expense.recurring && <span> (Recurring)</span>}
         </span>
-        <Button onClick={deleteExpense} style={ButtonStyle.Danger}>
-          Delete Expense
-        </Button>
+        <article className={styles.actions}>
+          <Button onClick={() => router.push("/")} style={ButtonStyle.Primary}>
+            Go Back
+          </Button>
+          <Button onClick={deleteExpense} style={ButtonStyle.Danger}>
+            Delete Expense
+          </Button>
+        </article>
       </h2>
       <article className={styles.information}>
         <KeyValue label="Status" value={expense.status.status} />

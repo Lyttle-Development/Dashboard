@@ -6,6 +6,11 @@
   width: 100%;
 }
 
+.actions {
+  display: flex;
+  gap: 1rem;
+}
+
 .information {
   width: 100%;
   max-width: 30rem;
