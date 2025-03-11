@@ -13,7 +13,6 @@ import { Icon } from "@/components/Icon";
 import { faDiagramProject } from "@fortawesome/free-solid-svg-icons";
 import { formatNumber } from "@/lib/format/number";
 import { SideToSide } from "@/components/SideToSide";
-import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
 import {
   PRINT_LABOUR_BASE_COST,
@@ -22,6 +21,7 @@ import {
 } from "@/constants";
 import { safeParseFloat } from "@/lib/parse";
 import { procentToNumber } from "@/lib/procent";
+import { Markdown } from "@/components/Markdown";
 
 function Page() {
   const router = useRouter();
@@ -165,55 +165,81 @@ function Page() {
           </Button>
         </article>
       </h1>
-      <article className={styles.calculations}>
+      <article className={styles.group}>
         <h3>Calculations:</h3>
         <p>
           Prices are calculated by the total hours worked on the projects, and
           the price set for each project.
         </p>
+        <hr />
         <KeyValue
           label="Price electricity"
           value={`€${formatNumber(costPriceElectricity)} (${printTime}h x €${formatNumber(electricityPrice)})`}
         />
+        <Markdown>
+          {`**Electricity cost**: hours worked (round down) x electricity price (per hour)`}
+        </Markdown>
+        <hr />
         <KeyValue
           label="Material cost"
           value={`€${formatNumber(costPriceMaterial)} (${printJob.quantity}p x ${printJob.weight}g x €${formatNumber(materialPricePerGram)}/g)`}
         />
+        <Markdown>
+          {`**Material cost**: quantity x weight x material price per gram`}
+        </Markdown>
+        <hr />
         <KeyValue
           label="Labour"
           value={`€${formatNumber(costPriceCalculatedLabour)} (€${PRINT_LABOUR_BASE_COST} * ${printJob.quantity}p)`}
         />
+        <Markdown>
+          {`**Labour cost**: material cost + labour base cost per print (amount)`}
+        </Markdown>
+        <hr />
         <KeyValue
           label="Margin"
           value={`€${formatNumber(costPriceCalculatedMargin)} (${procentToNumber(PRINT_MARGIN_PROCENT)}%)`}
         />
-        <SideToSide>
-          <KeyValue
-            label="Discount"
-            value={`€${formatNumber(costPriceCalculatedDiscount)} (${formatNumber(discount)}%)`}
-          />
-          <Field
-            label={""}
+        <Markdown>{`**Margin cost**: labour cost x margin procent`}</Markdown>
+        <hr />
+        <SideToSide className={styles.discount_wrapper}>
+          <KeyValue label="Discount" value={""} />
+          <input
             type={FormOptionType.NUMBER}
             value={discount.toString()}
             onChange={(e) => {
-              const num = safeParseFloat(e) || 0;
+              const num = safeParseFloat(e.target.value) || 0;
               setDiscount(num);
             }}
+            className={styles.discount_input}
           />
+          <span>% (€{formatNumber(costPriceCalculatedDiscount)})</span>
         </SideToSide>
+        <Markdown>
+          {`**Discount cost**: margin cost x discount procent (if any)`}
+        </Markdown>
+        <hr />
         <KeyValue
           label={`TAX/BTW`}
           value={`€${formatNumber(costPriceCalculatedTax)} (${procentToNumber(TAX_COST_PROCENT)}%)`}
         />
+        <Markdown>{`**TAX/BTW cost**: discount cost x TAX/BTW procent`}</Markdown>
+        <hr />
       </article>
-      <article>
+      <article className={styles.group}>
         <h3>Total price:</h3>
         <p>Price after discount and TAX/BTW is applied.</p>
+        <hr />
         <KeyValue
-          label="Total"
+          label="Total (excl. TAX/BTW)"
+          value={`€${formatNumber(totalPriceCalculatedDiscount)}`}
+        />
+        <hr />
+        <KeyValue
+          label="Total (incl. TAX/BTW)"
           value={`€${formatNumber(totalPriceCalculatedTax)}`}
         />
+        <hr />
       </article>
     </Container>
   );

@@ -12,7 +12,7 @@
 }
 
 .main-menu-item:not(.main-menu-item--active) a:hover {
-  background-color: transparentize(v.$color-background, 0.5);
+  background-color: transparentize(v.$background-light-500, 0.5);
 }
 
 .main-menu-item--active a {

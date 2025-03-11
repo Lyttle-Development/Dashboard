@@ -43,8 +43,21 @@
   }
 }
 
-.calculations {
+.group {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
+  max-width: 50rem;
+}
+
+.discount_wrapper {
+  gap: 0 !important;
+
+  .discount_input {
+    width: 3rem;
+    text-align: right;
+    margin: -.8rem;
+    //border: 1px solid #dcdcdc;
+  }
 }
