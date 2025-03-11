@@ -5,7 +5,7 @@ import { Select } from "@/components/Select";
 import { Category, Project, Task } from "@/lib/prisma";
 import { useCallback, useEffect, useState } from "react";
 import { fetchApi } from "@/lib/fetchApi";
-import { Button } from "@/components/Button";
+import { Button, ButtonStyle } from "@/components/Button";
 import { Loader } from "@/components/Loader";
 import { FormOptionType } from "@/components/Form";
 import { Switch } from "@/components/Switch";
@@ -14,6 +14,7 @@ import { mapProjectsToOptions } from "@/lib/project";
 import { safeParseFieldString } from "@/lib/parse";
 import styles from "./index.module.scss";
 import { useRouter } from "next/router";
+import { SideToSide } from "@/components/SideToSide";
 
 function Page() {
   const app = useApp();
@@ -150,13 +151,23 @@ function Page() {
         />
       )}
       {!task.categoryId && (
-        <Select
-          label="Project"
-          alwaysShowLabel
-          options={mapProjectsToOptions(projects, true)}
-          onValueChange={(s) => updateTask("projectId", s)}
-          value={task.projectId ?? undefined}
-        />
+        <SideToSide className={styles.project}>
+          <div className={styles.flex_column}>
+            <Select
+              label="Project"
+              alwaysShowLabel
+              options={mapProjectsToOptions(projects, true)}
+              onValueChange={(s) => updateTask("projectId", s)}
+              value={task.projectId ?? undefined}
+            />
+          </div>
+          <Button
+            onClick={() => router.push(`/project/${task.projectId}`)}
+            style={ButtonStyle.Primary}
+          >
+            Go to Project
+          </Button>
+        </SideToSide>
       )}
       {validTask && <Button onClick={createTask}>Create Task</Button>}
       <Switch

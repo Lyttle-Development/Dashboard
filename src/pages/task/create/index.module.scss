@@ -9,3 +9,13 @@
     height: 20rem;
   }
 }
+
+.flex_column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.project {
+  align-items: flex-end;
+}
