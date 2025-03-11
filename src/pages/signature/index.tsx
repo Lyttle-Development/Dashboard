@@ -217,7 +217,7 @@ export function Page() {
         <div ref={signatureRef}>
           <p
             style={{
-              color: "#333",
+              color: "#0C0C0C",
               fontFamily: "Arial",
               fontSize: "12px",
               fontStyle: "normal",
@@ -317,7 +317,7 @@ export function Page() {
                       lineHeight: "16px",
                     }}
                   >
-                    {formatTelephone(data.telephone)}
+                    T {formatTelephone(data.telephone)}
                   </p>
                   <p
                     style={{
