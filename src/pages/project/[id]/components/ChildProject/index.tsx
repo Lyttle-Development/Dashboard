@@ -55,7 +55,7 @@ export function ChildProject({
 
       <section>
         <h2>Time Logs:</h2>
-        <ProjectTimeLog projectId={project.id} reloadTimeLogs={fetchProject} />
+        <ProjectTimeLog project={project} reloadTimeLogs={fetchProject} />
         <article>
           <KeyValue
             label="Total Time"

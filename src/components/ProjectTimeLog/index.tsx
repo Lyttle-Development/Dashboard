@@ -10,13 +10,12 @@ import { faGaugeHigh, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
 import { SideToSide } from "@/components/SideToSide";
 
 export interface ProjectTimeLogProps {
-  projectId: string;
+  project: Project;
   reloadTimeLogs: (projectId: string) => void;
 }
 
-export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
+export function ProjectTimeLog({ project, reloadTimeLogs = (p) => p }) {
   const app = useApp();
-  const [project, setProject] = useState<Project>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [timeLog, setTimeLog] = useState<TimeLog>(null);
   const [timer, setTimer] = useState<string>("00:00");
@@ -24,30 +23,19 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
   const [elapsed, setElapsed] = useState<number>(0);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
-  const fetchProject = useCallback(async () => {
-    setLoading(true);
-    const projectData = await fetchApi<Project>({
-      table: "project",
-      id: projectId,
-    });
-    setProject(projectData);
-    setLoading(false);
-  }, [projectId]);
-
   const fetchEmptyTimeLog = useCallback(async () => {
     setLoading(true);
     const timeLogData = await fetchApi<TimeLog[]>({
       table: "time-log",
-      where: { projectId, user: app.userId, endTime: null },
+      where: { projectId: project.id, user: app.userId, endTime: null },
     });
     setTimeLog(timeLogData?.length ? timeLogData[0] : null);
     setLoading(false);
-  }, [projectId, app.userId]);
+  }, [project, app.userId]);
 
   const refreshData = useCallback(async () => {
-    await fetchProject();
     await fetchEmptyTimeLog();
-  }, [fetchProject, fetchEmptyTimeLog]);
+  }, [fetchEmptyTimeLog]);
 
   const startTimeLog = useCallback(async () => {
     setLoading(true);
@@ -56,17 +44,18 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
       table: "time-log",
       body: {
         user: app.userId,
-        projectId,
+        projectId: project.id,
         startTime: new Date().toISOString(),
       },
     });
     setTimeLog(timeLogData);
     setLoading(false);
     // await refreshData();
-    void reloadTimeLogs(projectId);
-  }, [refreshData, app.userId, projectId]);
+    void reloadTimeLogs(project.id);
+  }, [refreshData, app.userId, project]);
 
   const endTimeLog = useCallback(async () => {
+    setLoading(true);
     if (!timeLog?.id) return;
     await fetchApi<TimeLog>({
       method: "PUT",
@@ -75,12 +64,13 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
       body: { endTime: new Date().toISOString() },
     });
     // await refreshData();
-    void reloadTimeLogs(projectId);
+    void reloadTimeLogs(project.id);
+    setLoading(false);
   }, [timeLog, refreshData]);
 
   useEffect(() => {
-    if (projectId) refreshData();
-  }, [projectId, refreshData]);
+    if (project.id) refreshData();
+  }, [project, refreshData]);
 
   useEffect(() => {
     if (timeLog?.startTime) {
@@ -131,7 +121,7 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
       table: "time-log",
       body: {
         user: app.userId,
-        projectId,
+        projectId: project.id,
         startTime: startDate.toISOString(),
         endTime: endDate.toISOString(),
       },
@@ -142,24 +132,29 @@ export function ProjectTimeLog({ projectId, reloadTimeLogs = (p) => p }) {
       return;
     }
 
-    void reloadTimeLogs(projectId);
+    void reloadTimeLogs(project.id);
   };
-
-  if (loading) return <p>Loading...</p>;
-  if (!project) return <div>Project not found</div>;
 
   return (
     <SideToSide>
       {timeLog ? (
         <>
-          <Button onClick={endTimeLog} style={ButtonStyle.Danger}>
+          <Button
+            onClick={endTimeLog}
+            style={ButtonStyle.Danger}
+            disabled={loading}
+          >
             <Icon icon={faStop} />
             End Time Log ({timer})
           </Button>
         </>
       ) : (
         <>
-          <Button onClick={startTimeLog} style={ButtonStyle.Primary}>
+          <Button
+            onClick={startTimeLog}
+            style={ButtonStyle.Primary}
+            disabled={loading}
+          >
             <Icon icon={faPlay} />
             Start Time Log
           </Button>
