@@ -13,9 +13,11 @@ import { useApp } from "@/contexts/App.context";
 import { mapProjectsToOptions } from "@/lib/project";
 import { safeParseFieldString } from "@/lib/parse";
 import styles from "./index.module.scss";
+import { useRouter } from "next/router";
 
 function Page() {
   const app = useApp();
+  const router = useRouter();
   const [loadings, setLoading] = useState({
     categories: true,
     projects: true,
@@ -80,16 +82,16 @@ function Page() {
   const validTask = !!task.title && (!!task.categoryId || !!task.projectId);
 
   const createTask = async () => {
-    updateLoading("global", true);
+    if (!multiple) updateLoading("global", true);
     const res = await fetchApi<Task>({
       table: "task",
       method: "POST",
       body: { ...task, userId: app.userId },
     });
-    updateLoading("global", false);
 
     if (!res) {
       alert("Failed to create task");
+      updateLoading("global", false);
       return;
     }
 
@@ -105,15 +107,17 @@ function Page() {
     }
 
     if (task.projectId) {
-      window.location.href = `/project/${task.projectId}`;
-    }
+      await router.push(`/project/${task.projectId}`);
+    } else {
+      setTask({
+        title: "",
+        description: "",
+        categoryId: null,
+        projectId: null,
+      });
 
-    setTask({
-      title: "",
-      description: "",
-      categoryId: null,
-      projectId: null,
-    });
+      updateLoading("global", false);
+    }
   };
 
   if (loading) return <Loader />;
