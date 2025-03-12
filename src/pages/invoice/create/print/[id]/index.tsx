@@ -97,7 +97,7 @@ function Page() {
     Math.ceil(
       printJob.quantity * printJob.weight * materialPricePerGram * 100,
     ) / 100;
-  const totalPriceMaterial = totalPriceElectricity + totalPriceElectricity; // Material cost
+  const totalPriceMaterial = totalPriceElectricity + costPriceMaterial; // Material cost
 
   // Labour cost
   const totalPriceCalculatedLabour =
