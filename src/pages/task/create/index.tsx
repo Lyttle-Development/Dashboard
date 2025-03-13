@@ -161,12 +161,14 @@ function Page() {
               value={task.projectId ?? undefined}
             />
           </div>
-          <Button
-            onClick={() => router.push(`/project/${task.projectId}`)}
-            style={ButtonStyle.Primary}
-          >
-            Go to Project
-          </Button>
+          {task.projectId && !task.title && !task.description && (
+            <Button
+              onClick={() => router.push(`/project/${task.projectId}`)}
+              style={ButtonStyle.Primary}
+            >
+              Go to Project
+            </Button>
+          )}
         </SideToSide>
       )}
       {validTask && <Button onClick={createTask}>Create Task</Button>}
