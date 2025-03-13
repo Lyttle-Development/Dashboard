@@ -154,6 +154,8 @@ function Page() {
   const invoicesToCreateProjects = projects.filter((project) => {
     // Check if the project has time logs
     if (project.timeLogs.length === 0) return false;
+    // Filter out projects that have tasks
+    if (project.tasks.filter((t) => !t.done).length != 0) return false;
     // Check if the project has an invoice
     if (project.invoiceId) return false;
 
