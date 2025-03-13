@@ -126,10 +126,17 @@ function Page() {
   const groupedExpenses = groupArrayBy(expenses, (expense) => {
     if (expense.recurring) return "Recurring";
     if (expense.approved) return "Approved";
+    if ((expense.statusId as ExpenseStatus) == ExpenseStatus.CREATED)
+      return "Created";
     return "Requested";
   });
   const objectGroupedExpenses = Object.entries(
-    sortGroupedListBy(groupedExpenses, ["Recurring", "Requested", "Approved"]),
+    sortGroupedListBy(groupedExpenses, [
+      "Created",
+      "Recurring",
+      "Requested",
+      "Approved",
+    ]),
   );
 
   const groupedTimeLogs = groupArrayBy(timeLogs, (timeLog) => {
@@ -176,6 +183,16 @@ function Page() {
   if (loading) {
     return <Loader />;
   }
+
+  const canSeeExpenseCategory = (group: string) => {
+    if (app.isOperationsManager) {
+      return ["Recurring", "Approved", "Requested"].includes(group);
+    }
+    if (app.isManager) {
+      return ["Created", "Requested"].includes(group);
+    }
+    return false;
+  };
 
   return (
     <Container className={styles.container}>
@@ -226,41 +243,43 @@ function Page() {
           </section>
         )}
 
-      {app.isOperationsManager && objectGroupedExpenses?.length > 0 && (
-        <section>
-          <h2>Open Expenses:</h2>
-          <p>
-            Expenses that are not closed should be reviewed and closed if
-            necessary.
-          </p>
-          <ul className={styles.expenses_grouped}>
-            {objectGroupedExpenses?.map(
-              ([group, expenses]) =>
-                expenses?.length > 0 && (
-                  <>
-                    <h5>{capitalizeWords(group)}:</h5>
-                    <ul className={styles.expenses_group}>
-                      {expenses?.map((expense) => (
-                        <li key={expense.id} className={styles.expense}>
-                          <Link href={`/expense/${expense.id}`}>
-                            <h6>
-                              <strong>Name: </strong>
-                              {expense.name}
-                            </h6>
-                            <p>
-                              <strong>Status: </strong>
-                              {capitalizeWords(expense.status.status)}
-                            </p>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                ),
-            )}
-          </ul>
-        </section>
-      )}
+      {(app.isOperationsManager || app.isManager) &&
+        objectGroupedExpenses?.length > 0 && (
+          <section>
+            <h2>Open Expenses:</h2>
+            <p>
+              Expenses that are not closed should be reviewed and closed if
+              necessary.
+            </p>
+            <ul className={styles.expenses_grouped}>
+              {objectGroupedExpenses?.map(
+                ([group, expenses]) =>
+                  expenses?.length > 0 &&
+                  canSeeExpenseCategory(group) && (
+                    <>
+                      <h5>{capitalizeWords(group)}:</h5>
+                      <ul className={styles.expenses_group}>
+                        {expenses?.map((expense) => (
+                          <li key={expense.id} className={styles.expense}>
+                            <Link href={`/expense/${expense.id}`}>
+                              <h6>
+                                <strong>Name: </strong>
+                                {expense.name}
+                              </h6>
+                              <p>
+                                <strong>Status: </strong>
+                                {capitalizeWords(expense.status.status)}
+                              </p>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ),
+              )}
+            </ul>
+          </section>
+        )}
 
       {runningTimeLogs?.length > 0 && (
         <section>

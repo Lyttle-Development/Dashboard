@@ -11,6 +11,7 @@ import { Expense } from "@/lib/prisma";
 import { Loader } from "@/components/Loader";
 import { safeParseFloat, safeParseInt } from "@/lib/parse";
 import { Switch } from "@/components/Switch";
+import { ExpenseStatus } from "@/pages/expense/[id]";
 
 // Optional keys of Expense
 interface OptionalExpense {
@@ -57,7 +58,7 @@ function Page() {
       body: {
         ...expense,
         neededAt: expense.neededAt ? new Date(expense.neededAt) : null,
-        statusId: "a2f734b1-613b-4383-b742-a4d5067f0a0c", // Requested
+        statusId: ExpenseStatus.CREATED,
         customerId: "4618597a-b352-45b8-8e70-e38d45c78f0b", // Kilian
       },
     });

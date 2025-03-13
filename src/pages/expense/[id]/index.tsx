@@ -18,6 +18,7 @@ import { useApp } from "@/contexts/App.context";
 import { KeyValue } from "@/components/KeyValue";
 
 export enum ExpenseStatus {
+  CREATED = "d4865b11-2734-4dcf-ab35-154ccd193725",
   REQUESTED = "a2f734b1-613b-4383-b742-a4d5067f0a0c",
   APPROVED = "986a0ba6-96ce-431b-a3b7-d8f028afb2dd",
   ORDERED = "9c3be7d7-b09c-4aec-a58a-8c8a52f800a1",
@@ -102,6 +103,18 @@ export function Page() {
   if (loading) return <Loader />;
   if (!expense) return <div>Expense not found</div>;
   const canAction = app.isOperationsManager; // || app.isManager;
+
+  const requestExpense = async (requested: boolean) => {
+    await fetchApi<Expense>({
+      table: "expense",
+      id: expense.id,
+      method: "PUT",
+      body: {
+        statusId: requested ? ExpenseStatus.REQUESTED : ExpenseStatus.CREATED,
+      },
+    });
+    await fetchExpense(expenseId as string);
+  };
 
   const approveExpense = async (approved: boolean) => {
     await fetchApi<Expense>({
@@ -204,6 +217,25 @@ export function Page() {
         />
       </article>
       {hasChanges && <Button onClick={updateExpense}>Update Expense</Button>}
+      {!canAction &&
+        [ExpenseStatus.CREATED, ExpenseStatus.REQUESTED].includes(
+          expense.statusId as ExpenseStatus,
+        ) && (
+          <Button
+            onClick={() =>
+              requestExpense(expense.statusId === ExpenseStatus.CREATED)
+            }
+            style={
+              expense.statusId === ExpenseStatus.CREATED
+                ? ButtonStyle.Primary
+                : ButtonStyle.Danger
+            }
+          >
+            {expense.statusId === ExpenseStatus.CREATED
+              ? "Request Expense"
+              : "Cancel Request"}
+          </Button>
+        )}
       {canAction && (
         <SideToSide>
           {expense.statusId !== ExpenseStatus.CLOSED ? (
