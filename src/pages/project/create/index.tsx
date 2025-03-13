@@ -141,6 +141,7 @@ function Page() {
         type={FormOptionType.TEXT}
         required
         onChange={(value) => setName(typeof value === "string" ? value : "")}
+        value={name}
       />
       {customer && !projectParent && (
         <KeyValue
@@ -172,6 +173,7 @@ function Page() {
                 setCustomerSearch(safeParseFieldString(value))
               }
               onSubmit={fetchCustomers}
+              value={customerSearch}
             />
           </article>
         ))}
