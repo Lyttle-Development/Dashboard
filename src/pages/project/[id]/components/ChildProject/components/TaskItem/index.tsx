@@ -119,9 +119,7 @@ function TaskItemDescription({
   if (description == null) {
     return (
       <div onClick={() => setDescription(task.description ?? "")}>
-        <Markdown>
-          {task.description?.replaceAll("\n", "\n\n") ?? "N/A"}
-        </Markdown>
+        <Markdown>{task.description ?? "N/A"}</Markdown>
       </div>
     );
   }
