@@ -6,11 +6,16 @@ import {
   getTotalFormattedHours,
   getTotalFormattedTimeLogsHours,
 } from "@/lib/price/get-price";
-import { Project, TimeLog } from "@/lib/prisma";
+import { Project, Task, TimeLog } from "@/lib/prisma";
 import { Field } from "@/components/Field";
-import { FormOptionType } from "@/components/Form";
+import { Form, FormOptionType } from "@/components/Form";
 import { useState } from "react";
 import TaskItem from "@/pages/project/[id]/components/ChildProject/components/TaskItem";
+import { Dialog } from "@/components/Dialog";
+import { Icon } from "@/components/Icon";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { fetchApi } from "@/lib/fetchApi";
+import { useApp } from "@/contexts/App.context";
 
 interface ChildProjectProps {
   project: Project;
@@ -25,12 +30,37 @@ export function ChildProject({
   activeTimeLogs,
   timeLogsGrouped,
 }: ChildProjectProps) {
+  const app = useApp();
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [filter, _setFilter] = useState<string>(
     localStorage?.getItem("projectFilter") || "",
   );
   const setFilter = (filter: string) => {
     _setFilter(filter);
     localStorage?.setItem("projectFilter", filter);
+  };
+
+  const submitTask = async (data: { title: string; description: string }) => {
+    setDialogOpen(false);
+
+    const res = await fetchApi<Task>({
+      method: "POST",
+      table: "task",
+      body: {
+        title: data.title,
+        userId: app.userId,
+        projectId: project.id,
+        description: data.description,
+        categoryId: null,
+      },
+    });
+
+    if (!res) {
+      window.alert("Failed to add time");
+      return;
+    }
+
+    void fetchProject(project.id, true);
   };
 
   return (
@@ -64,6 +94,37 @@ export function ChildProject({
 
       <section>
         <h2>Tasks:</h2>
+
+        <Dialog
+          title="Create Task"
+          description="Add task to the project"
+          buttonText={
+            <>
+              <Icon icon={faPlus} />
+              <span>Create Task</span>
+            </>
+          }
+          onOpenChange={setDialogOpen}
+          open={dialogOpen}
+        >
+          <Form
+            onSubmit={submitTask}
+            options={[
+              {
+                key: "title",
+                label: "Title",
+                type: FormOptionType.TEXT,
+                required: true,
+              },
+              {
+                key: "description",
+                label: "Description",
+                type: FormOptionType.TEXTAREA,
+                required: false,
+              },
+            ]}
+          />
+        </Dialog>
         <Field
           label="Search Tasks"
           type={FormOptionType.TEXT}
