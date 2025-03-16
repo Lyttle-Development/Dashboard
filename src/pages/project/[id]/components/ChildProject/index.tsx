@@ -17,6 +17,9 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { fetchApi } from "@/lib/fetchApi";
 import { useApp } from "@/contexts/App.context";
 import { ActiveTimeLogs } from "@/components/ActiveTimeLogs";
+import { SideToSide } from "@/components/SideToSide";
+import { Button } from "@/components/Button";
+import { LINKS } from "@/links";
 
 interface ChildProjectProps {
   project: Project;
@@ -97,38 +100,41 @@ export function ChildProject({
       </section>
 
       <section>
-        <h2>Tasks:</h2>
+        <SideToSide>
+          <h2>Tasks:</h2>
 
-        <Dialog
-          title="Create Task"
-          description="Add task to the project"
-          buttonText={
-            <>
-              <Icon icon={faPlus} />
-              <span>Create Task</span>
-            </>
-          }
-          onOpenChange={setDialogOpen}
-          open={dialogOpen}
-        >
-          <Form
-            onSubmit={submitTask}
-            options={[
-              {
-                key: "title",
-                label: "Title",
-                type: FormOptionType.TEXT,
-                required: true,
-              },
-              {
-                key: "description",
-                label: "Description",
-                type: FormOptionType.TEXTAREA,
-                required: false,
-              },
-            ]}
-          />
-        </Dialog>
+          <Dialog
+            title="Quick Create Task"
+            description="Add task to the project"
+            buttonText={
+              <>
+                <Icon icon={faPlus} />
+                <span>Quick Create Task</span>
+              </>
+            }
+            onOpenChange={setDialogOpen}
+            open={dialogOpen}
+          >
+            <Form
+              onSubmit={submitTask}
+              options={[
+                {
+                  key: "title",
+                  label: "Title",
+                  type: FormOptionType.TEXT,
+                  required: true,
+                },
+                {
+                  key: "description",
+                  label: "Description",
+                  type: FormOptionType.TEXTAREA,
+                  required: false,
+                },
+              ]}
+            />
+          </Dialog>
+          <Button href={LINKS.task.create}>Bulk Create Task</Button>
+        </SideToSide>
         <Field
           label="Search Tasks"
           type={FormOptionType.TEXT}

@@ -9,11 +9,12 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Task } from "@/lib/prisma";
 import { SideToSide } from "@/components/SideToSide";
 import { useRouter } from "next/router";
+import { LINKS } from "@/links";
 
 export function Page() {
   // Redirect to create task page; as we don't have a list of tasks
   const router = useRouter();
-  return router.push("/task/create");
+  return router.push(LINKS.task.create);
 
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -41,7 +42,7 @@ export function Page() {
     <Container>
       <h1>Tasks</h1>
       <SideToSide>
-        <Button href="/task/create">
+        <Button href={LINKS.task.create}>
           <Icon icon={faListCheck}>Create Task</Icon>
         </Button>
       </SideToSide>

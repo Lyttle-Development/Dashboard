@@ -15,6 +15,7 @@ import { safeParseFieldString } from "@/lib/parse";
 import styles from "./index.module.scss";
 import { useRouter } from "next/router";
 import { SideToSide } from "@/components/SideToSide";
+import { LINKS } from "@/links";
 
 function Page() {
   const app = useApp();
@@ -108,7 +109,7 @@ function Page() {
     }
 
     if (task.projectId) {
-      await router.push(`/project/${task.projectId}`);
+      await router.push(LINKS.project.detail(task.projectId));
     } else {
       setTask({
         title: "",
@@ -165,7 +166,7 @@ function Page() {
           </div>
           {task.projectId && !task.title && !task.description && (
             <Button
-              onClick={() => router.push(`/project/${task.projectId}`)}
+              onClick={() => router.push(LINKS.project.detail(task.projectId))}
               style={ButtonStyle.Primary}
             >
               Go to Project
