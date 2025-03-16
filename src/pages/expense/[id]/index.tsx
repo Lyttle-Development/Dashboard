@@ -12,10 +12,11 @@ import { Button, ButtonStyle } from "@/components/Button";
 import { safeParseFieldDate, safeParseFloat, safeParseInt } from "@/lib/parse";
 import { SideToSide } from "@/components/SideToSide";
 import { Icon } from "@/components/Icon";
-import { faLink } from "@fortawesome/free-solid-svg-icons";
+import { faLink, faRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link, LinkTarget } from "@/components/Link";
 import { useApp } from "@/contexts/App.context";
 import { KeyValue } from "@/components/KeyValue";
+import { Switch } from "@/components/Switch";
 
 export function Page() {
   const router = useRouter();
@@ -66,6 +67,7 @@ export function Page() {
         link: expense.link,
         unitPrice: expense.unitPrice,
         quantity: expense.quantity,
+        recurring: expense.recurring,
       },
     });
     setExpense(expense);
@@ -159,7 +161,9 @@ export function Page() {
       <h2 className={styles.title}>
         <span>
           Expense: {expense.name}
-          {!!expense.recurring && <span> (Recurring)</span>}
+          {!!expense.recurring && (
+            <Icon icon={faRotateLeft} className={styles.recurring_icon} />
+          )}
         </span>
         <article className={styles.actions}>
           <Button onClick={() => router.push("/")} style={ButtonStyle.Primary}>
@@ -172,6 +176,11 @@ export function Page() {
       </h2>
       <article className={styles.information}>
         <KeyValue label="Status" value={expense.status.status} />
+        <Switch
+          label="Recurring"
+          checked={expense.recurring}
+          onCheckedChange={(value) => handleChange("recurring", value)}
+        />
         <Field
           label="Name"
           type={FormOptionType.TEXT}

@@ -1,3 +1,5 @@
+@use '../../../styles/variables.scss' as v;
+
 .title {
   display: flex;
   justify-content: space-between;
@@ -14,6 +16,14 @@
 .information {
   width: 100%;
   max-width: 30rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.recurring_icon {
+  margin-left: 1rem;
+  color: v.$color-danger;
 }
 
 .side_to_side {
