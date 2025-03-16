@@ -19,6 +19,7 @@ function GetFormField({ option }: FormFieldProps) {
           required={option.required}
           value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
+          autoFocus={option.autoFocus}
         />
       );
     case FormOptionType.EMAIL:
@@ -29,6 +30,7 @@ function GetFormField({ option }: FormFieldProps) {
           required={option.required}
           value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
+          autoFocus={option.autoFocus}
         />
       );
     case FormOptionType.PASSWORD:
@@ -39,6 +41,7 @@ function GetFormField({ option }: FormFieldProps) {
           required={option.required}
           value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
+          autoFocus={option.autoFocus}
         />
       );
     case FormOptionType.TEXTAREA:
@@ -48,6 +51,7 @@ function GetFormField({ option }: FormFieldProps) {
           required={option.required}
           value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
+          autoFocus={option.autoFocus}
         />
       );
     case FormOptionType.CHECKBOX:
@@ -58,6 +62,7 @@ function GetFormField({ option }: FormFieldProps) {
           required={option.required}
           value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
+          autoFocus={option.autoFocus}
         />
       );
     case FormOptionType.DATE:
@@ -68,6 +73,7 @@ function GetFormField({ option }: FormFieldProps) {
           required={option.required}
           value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
+          autoFocus={option.autoFocus}
         />
       );
     case FormOptionType.NUMBER:
@@ -78,6 +84,7 @@ function GetFormField({ option }: FormFieldProps) {
           required={option.required}
           value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
+          autoFocus={option.autoFocus}
         />
       );
     case FormOptionType.FILE:
@@ -88,6 +95,7 @@ function GetFormField({ option }: FormFieldProps) {
           required={option.required}
           value={safeParseFieldString(option.value)}
           placeholder={option.placeholder}
+          autoFocus={option.autoFocus}
         />
       );
     default:

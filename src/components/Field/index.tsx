@@ -13,6 +13,7 @@ export interface FormProps {
   onFile?: (value: FileList) => void;
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
   className?: string;
+  autoFocus?: boolean;
 }
 
 export function Field({

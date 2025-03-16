@@ -21,6 +21,7 @@ export interface FormOption {
   placeholder?: string;
   required?: boolean;
   type?: FormOptionType;
+  autoFocus?: boolean;
 }
 
 export enum FormOptionType {

@@ -4,6 +4,13 @@
 
 .side_to_side {
   gap: .2rem !important;
+  align-items: flex-end;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .Trigger {

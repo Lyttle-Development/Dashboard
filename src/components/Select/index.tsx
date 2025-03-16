@@ -65,30 +65,35 @@ export function Select({
         label={`Search: ${label}`}
         onChange={setSearch}
         onSubmit={() => {
-          setOptions(
-            originalOptions.filter((option) => {
-              if (isSelectGroupProps(option)) {
-                return (
-                  option.label
+          const newOptions = originalOptions.filter((option) => {
+            if (isSelectGroupProps(option)) {
+              return (
+                option.label
+                  ?.toString()
+                  .toLowerCase()
+                  .includes(search.toString().toLowerCase()) ||
+                option.options.some((opt) =>
+                  opt.label
                     ?.toString()
                     .toLowerCase()
-                    .includes(search.toString().toLowerCase()) ||
-                  option.options.some((opt) =>
-                    opt.label
-                      ?.toString()
-                      .toLowerCase()
-                      .includes(search.toString().toLowerCase()),
-                  )
-                );
-              }
-              return (option.label ?? option.children)
-                ?.toString()
-                .toLowerCase()
-                .includes(search.toString().toLowerCase());
-            }),
-          );
+                    .includes(search.toString().toLowerCase()),
+                )
+              );
+            }
+            return (option.label ?? option.children)
+              ?.toString()
+              .toLowerCase()
+              .includes(search.toString().toLowerCase());
+          });
+
+          setOptions(newOptions);
+          if (newOptions.length === 1) {
+            // If there is only one option, select it.
+            props.onValueChange((newOptions[0] as SelectItemProps).value);
+          }
           setSearching(false);
         }}
+        autoFocus
       />
     );
   }
@@ -96,67 +101,69 @@ export function Select({
   return (
     <SideToSide className={styles.side_to_side}>
       <RadixSelect.Root {...props}>
-        {(props.value || alwaysShowLabel) && (
-          <label className={styles.label}>{label}</label>
-        )}
-        <RadixSelect.Trigger
-          className={classNames(
-            styles.Trigger,
-            {
-              [styles.disabled]: props.disabled || options.length === 0,
-            },
-            className,
+        <article className={styles.group}>
+          {(props.value || alwaysShowLabel) && (
+            <label className={styles.label}>{label}</label>
           )}
-        >
-          <RadixSelect.Value
-            placeholder={
-              <span className={styles.value}>
-                {icon && <Icon icon={icon} />}
-                {label}
-              </span>
-            }
-          />
-          <RadixSelect.Icon className={styles.Icon}>
-            <ChevronDownIcon />
-          </RadixSelect.Icon>
-        </RadixSelect.Trigger>
-        <RadixSelect.Portal>
-          <RadixSelect.Content className={styles.Content}>
-            <RadixSelect.ScrollUpButton className={styles.ScrollButton}>
-              <ChevronUpIcon />
-            </RadixSelect.ScrollUpButton>
-            <RadixSelect.Viewport className={styles.Viewport}>
-              {options.map((option, index) => {
-                const addSeparator = index > 0 && index < options.length;
-                if (isSelectGroupProps(option)) {
-                  return (
-                    <div key={index}>
-                      {addSeparator && (
-                        <RadixSelect.Separator className={styles.Separator} />
-                      )}
-                      <SelectGroup
-                        key={index}
-                        label={option.label}
-                        options={option.options}
-                      />
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div key={index}>
-                      {addSeparator && (
-                        <RadixSelect.Separator className={styles.Separator} />
-                      )}
-                      <SelectItem key={index} value={option.value}>
-                        {option.children || option.label}
-                      </SelectItem>
-                    </div>
-                  );
-                }
-              })}
-            </RadixSelect.Viewport>
-          </RadixSelect.Content>
-        </RadixSelect.Portal>
+          <RadixSelect.Trigger
+            className={classNames(
+              styles.Trigger,
+              {
+                [styles.disabled]: props.disabled || options.length === 0,
+              },
+              className,
+            )}
+          >
+            <RadixSelect.Value
+              placeholder={
+                <span className={styles.value}>
+                  {icon && <Icon icon={icon} />}
+                  {label}
+                </span>
+              }
+            />
+            <RadixSelect.Icon className={styles.Icon}>
+              <ChevronDownIcon />
+            </RadixSelect.Icon>
+          </RadixSelect.Trigger>
+          <RadixSelect.Portal>
+            <RadixSelect.Content className={styles.Content}>
+              <RadixSelect.ScrollUpButton className={styles.ScrollButton}>
+                <ChevronUpIcon />
+              </RadixSelect.ScrollUpButton>
+              <RadixSelect.Viewport className={styles.Viewport}>
+                {options.map((option, index) => {
+                  const addSeparator = index > 0 && index < options.length;
+                  if (isSelectGroupProps(option)) {
+                    return (
+                      <div key={index}>
+                        {addSeparator && (
+                          <RadixSelect.Separator className={styles.Separator} />
+                        )}
+                        <SelectGroup
+                          key={index}
+                          label={option.label}
+                          options={option.options}
+                        />
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div key={index}>
+                        {addSeparator && (
+                          <RadixSelect.Separator className={styles.Separator} />
+                        )}
+                        <SelectItem key={index} value={option.value}>
+                          {option.children || option.label}
+                        </SelectItem>
+                      </div>
+                    );
+                  }
+                })}
+              </RadixSelect.Viewport>
+            </RadixSelect.Content>
+          </RadixSelect.Portal>
+        </article>
       </RadixSelect.Root>
       {searchable && (
         <Button onClick={() => setSearching(!searching)}>
