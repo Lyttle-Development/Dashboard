@@ -6,41 +6,54 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { fetchApi } from "@/lib/fetchApi";
 import { useEffect, useState } from "react";
 import { Markdown } from "@/components/Markdown";
+import { Select } from "@/components/Select";
+import { mapProjectsToOptions } from "@/lib/project";
 
 interface ProjectProjectProps {
   project: Project;
+  projects: Project[];
   task: Task;
   fetchProject: (projectId: string, noReload?: boolean) => void;
 }
 
-export function TaskItem({ project, task, fetchProject }: ProjectProjectProps) {
+export function TaskItem({
+  project,
+  task,
+  fetchProject,
+  projects,
+}: ProjectProjectProps) {
   const [title, setTitle] = useState<string>(null);
   const [description, setDescription] = useState<string>(null);
+  const [projectId, setProjectId] = useState<string>(null);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (projectId) void updateTask();
+  }, [projectId]);
 
-  const updateTask = async (taskId: string) => {
+  const updateTask = async () => {
     await fetchApi({
       method: "PUT",
       table: "task",
-      id: taskId,
+      id: task.id,
       body: {
         title: title ?? task.title,
         description: description ?? task.description,
+        projectId: projectId ?? task.projectId,
       },
     });
 
     setTitle(null);
     setDescription(null);
+    setProjectId(null);
 
     void fetchProject(project.id, true);
   };
 
-  const closeTask = async (taskId: string) => {
+  const closeTask = async () => {
     await fetchApi({
       method: "PUT",
       table: "task",
-      id: taskId,
+      id: task.id,
       body: { done: true },
     });
 
@@ -49,10 +62,7 @@ export function TaskItem({ project, task, fetchProject }: ProjectProjectProps) {
 
   return (
     <li key={task.id} className={styles.task}>
-      <Button
-        onClick={() => closeTask(task.id)}
-        title={"Mark completed, and close task."}
-      >
+      <Button onClick={closeTask} title={"Mark completed, and close task."}>
         <Icon icon={faCircleCheck} />
       </Button>
       <article className={styles.task_details}>
@@ -69,6 +79,12 @@ export function TaskItem({ project, task, fetchProject }: ProjectProjectProps) {
           updateTask={updateTask}
         />
       </article>
+      <Select
+        label="Move"
+        options={mapProjectsToOptions(projects)}
+        onValueChange={setProjectId}
+        value={projectId ?? ""}
+      />
     </li>
   );
 }
@@ -77,7 +93,7 @@ interface TaskItemTitleProps {
   task: Task;
   title: string;
   setTitle: (title: string) => void;
-  updateTask: (taskId: string) => void;
+  updateTask: () => void;
 }
 
 function TaskItemTitle({
@@ -96,8 +112,8 @@ function TaskItemTitle({
       className={styles.title_input}
       value={title}
       onChange={(e) => setTitle(e.target.value)}
-      onSubmit={() => updateTask(task.id)}
-      onBlur={() => updateTask(task.id)}
+      onSubmit={() => updateTask()}
+      onBlur={() => updateTask()}
       autoFocus={true}
     />
   );
@@ -107,7 +123,7 @@ interface TaskItemDescriptionProps {
   task: Task;
   description: string;
   setDescription: (description: string) => void;
-  updateTask: (taskId: string) => void;
+  updateTask: () => void;
 }
 
 function TaskItemDescription({
@@ -128,8 +144,8 @@ function TaskItemDescription({
       className={styles.description_input}
       value={description}
       onChange={(e) => setDescription(e.target.value)}
-      onSubmit={() => updateTask(task.id)}
-      onBlur={() => updateTask(task.id)}
+      onSubmit={() => updateTask()}
+      onBlur={() => updateTask()}
       autoFocus={true}
     />
   );

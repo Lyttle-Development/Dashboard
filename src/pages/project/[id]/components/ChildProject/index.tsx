@@ -19,6 +19,7 @@ import { useApp } from "@/contexts/App.context";
 
 interface ChildProjectProps {
   project: Project;
+  projects: Project[];
   fetchProject: (projectId: string, noReload?: boolean) => void;
   activeTimeLogs: TimeLog[];
   timeLogsGrouped: Map<string, Map<string, number>>;
@@ -26,6 +27,7 @@ interface ChildProjectProps {
 
 export function ChildProject({
   project,
+  projects,
   fetchProject,
   activeTimeLogs,
   timeLogsGrouped,
@@ -151,6 +153,7 @@ export function ChildProject({
                 project={project}
                 task={task}
                 fetchProject={fetchProject}
+                projects={projects}
               />
             ))}
           {project.tasks.filter((t) => !t.done).length === 0 && (

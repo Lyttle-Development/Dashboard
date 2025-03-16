@@ -48,6 +48,7 @@ export function Page() {
   const router = useRouter();
 
   const [project, setProject] = useState<Project>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   // Fetch the project details by id.
@@ -93,11 +94,26 @@ export function Page() {
     [],
   );
 
+  const fetchProjects = useCallback(async () => {
+    const projectsData = await fetchApi<Project[]>({
+      table: "project",
+      where: {
+        invoiceId: null,
+      },
+      relations: {
+        timeLogs: true,
+      },
+    });
+
+    setProjects(projectsData ?? []);
+  }, []);
+
   useEffect(() => {
     const projectId = router.query.id as string;
     if (projectId) {
       void fetchProject(projectId);
     }
+    void fetchProjects();
   }, []);
 
   const deleteProject = async () => {
@@ -144,6 +160,7 @@ export function Page() {
           fetchProject={fetchProject}
           activeTimeLogs={activeTimeLogs}
           timeLogsGrouped={timeLogsGrouped}
+          projects={projects}
         />
       ) : (
         <ProjectProject project={project} fetchProject={fetchProject} />
