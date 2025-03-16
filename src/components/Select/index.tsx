@@ -158,9 +158,11 @@ export function Select({
           </RadixSelect.Content>
         </RadixSelect.Portal>
       </RadixSelect.Root>
-      <Button onClick={() => setSearching(!searching)}>
-        <Icon icon={faMagnifyingGlass}></Icon>
-      </Button>
+      {searchable && (
+        <Button onClick={() => setSearching(!searching)}>
+          <Icon icon={faMagnifyingGlass}></Icon>
+        </Button>
+      )}
     </SideToSide>
   );
 }
