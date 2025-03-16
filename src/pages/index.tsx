@@ -1,21 +1,13 @@
 import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { useCallback, useEffect, useState } from "react";
-import {
-  Category,
-  Expense,
-  ExpenseStatusEnum,
-  PrintJob,
-  Project,
-  TimeLog,
-} from "@/lib/prisma";
+import { Expense, ExpenseStatusEnum, PrintJob, Project } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Loader } from "@/components/Loader";
 
 import styles from "./index.module.scss";
 import { useApp } from "@/contexts/App.context";
 import Link from "next/link";
-import { AvatarCard } from "@/components/AvatarCard";
 import { getProjectFullName } from "@/lib/project";
 import { findNewestTimeLog } from "@/lib/project/find-newest-time-log";
 import { useMobile } from "@/hooks/useMobile";
@@ -24,15 +16,14 @@ import { groupArrayBy, sortGroupedListBy } from "@/lib/array";
 import { capitalizeWords } from "@/lib/format/string";
 import { Icon } from "@/components/Icon";
 import { faRotateLeft } from "@fortawesome/free-solid-svg-icons";
+import { ActiveTimeLogs } from "@/components/ActiveTimeLogs";
 
 function Page() {
   const mobile = useMobile();
   const app = useApp();
   const [loadings, _setLoading] = useState<{ [key: string]: boolean }>({
-    timeLogs: false,
     projects: false,
     printJobs: false,
-    categories: false,
     expenses: false,
   });
   const setLoading = (key: string, value: boolean) => {
@@ -40,25 +31,9 @@ function Page() {
   };
   const loading = Object.values(loadings).some((loading) => loading);
 
-  const [timeLogs, setTimeLogs] = useState<TimeLog[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [printJobs, setPrintJobs] = useState<PrintJob[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
-
-  const fetchTimeLogs = useCallback(async () => {
-    setLoading("projects", true);
-    const timeLogData = await fetchApi<TimeLog[]>({
-      table: "time-log",
-      where: { endTime: null },
-      relations: {
-        project: true,
-      },
-    });
-
-    setTimeLogs(timeLogData ?? []);
-    setLoading("projects", false);
-  }, []);
 
   const fetchProjects = useCallback(async () => {
     setLoading("projects", true);
@@ -91,16 +66,6 @@ function Page() {
     setLoading("printJobs", false);
   }, []);
 
-  const fetchCategories = useCallback(async () => {
-    setLoading("categories", true);
-    const categoryData = await fetchApi<Category[]>({
-      table: "category",
-    });
-
-    setCategories(categoryData ?? []);
-    setLoading("categories", false);
-  }, []);
-
   const fetchExpenses = useCallback(async () => {
     setLoading("expenses", true);
     const expenseData = await fetchApi<Expense[]>({
@@ -124,10 +89,8 @@ function Page() {
       router.push("/mobile/task");
       return;
     }
-    void fetchTimeLogs();
     void fetchProjects();
     void fetchPrintJobs();
-    void fetchCategories();
     void fetchExpenses();
   }, []);
 
@@ -151,18 +114,6 @@ function Page() {
       "Approved",
     ]),
   );
-
-  const groupedTimeLogs = groupArrayBy(timeLogs, (timeLog) => {
-    const project = projects.find(
-      (project) => project.id === timeLog.projectId,
-    );
-    if (!project) return null;
-    const category = categories.find(
-      (category) => category.id === project.price.categoryId,
-    );
-    return category?.name ?? null;
-  });
-  const runningTimeLogs = Object.entries(groupedTimeLogs);
 
   const invoicesToCreateProjects = projects.filter((project) => {
     // Check if the project has time logs
@@ -258,46 +209,7 @@ function Page() {
           </section>
         )}
 
-      {runningTimeLogs?.length > 0 && (
-        <section>
-          <h2>Active Time Logs:</h2>
-          <p>Time logs currently running</p>
-          <ul className={styles.active_logs}>
-            {runningTimeLogs.map(([categoryName, timeLogs]) => (
-              <li key={categoryName} className={styles.active_logs__group}>
-                <h5>{capitalizeWords(categoryName)}</h5>
-                <ul className={styles.active_logs__group__projects}>
-                  {timeLogs.map((timeLog) => {
-                    const project = projects.find(
-                      (project) => project.id === timeLog.projectId,
-                    );
-                    return (
-                      <li
-                        key={timeLog.id}
-                        className={styles.active_logs__group__project}
-                        title={
-                          timeLog.user !== app.userId
-                            ? "This time log is not yours"
-                            : ""
-                        }
-                      >
-                        <Link href={`/project/${project.id}`}>
-                          <AvatarCard userId={timeLog.user}>
-                            <span className={styles.working_on}>
-                              Working on:{" "}
-                            </span>
-                            <span>{getProjectFullName(project, projects)}</span>
-                          </AvatarCard>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <ActiveTimeLogs projectIds={openProjects.map((p) => p.id)} />
 
       {app.isAdmin && openPrintJobs?.length > 0 && (
         <section>

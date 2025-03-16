@@ -82,3 +82,29 @@ export function getTotalFormattedHours(duration: number, exact = false) {
 export function getTotalFormattedTimeLogsHours(timeLogs: TimeLog[]) {
   return getTotalFormattedHours(getTotal(timeLogs));
 }
+
+export function getTimeSpent(startTime: Date) {
+  const startDate = new Date(startTime);
+  const currentDate = new Date();
+  const timeDifference = currentDate.getTime() - startDate.getTime();
+  return getTotalFormattedHours(timeDifference);
+}
+
+export function getTimeLogTimeSpent(timeLog: TimeLog) {
+  return getTimeSpent(new Date(timeLog.startTime));
+}
+
+export function getTimeLogsTimeSpent(timeLogs: TimeLog[]) {
+  let total = 0;
+
+  console.log("timeLogs", timeLogs);
+
+  timeLogs.forEach((timeLog) => {
+    total += timeLog.endTime
+      ? new Date(timeLog.endTime).getTime() -
+        new Date(timeLog.startTime).getTime()
+      : new Date().getTime() - new Date(timeLog.startTime).getTime();
+  });
+
+  return getTotalFormattedHours(total);
+}

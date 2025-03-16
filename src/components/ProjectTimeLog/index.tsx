@@ -8,6 +8,7 @@ import { Button, ButtonStyle } from "@/components/Button";
 import { Icon } from "@/components/Icon";
 import { faGaugeHigh, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
 import { SideToSide } from "@/components/SideToSide";
+import { getTimeLogTimeSpent } from "@/lib/price/get-price";
 
 export interface ProjectTimeLogProps {
   project: Project;
@@ -18,9 +19,6 @@ export function ProjectTimeLog({ project, reloadTimeLogs = (p) => p }) {
   const app = useApp();
   const [loading, setLoading] = useState<boolean>(false);
   const [timeLog, setTimeLog] = useState<TimeLog>(null);
-  const [timer, setTimer] = useState<string>("00:00");
-  const [lastTimePlayed, setLastTimePlayed] = useState<number>(0);
-  const [elapsed, setElapsed] = useState<number>(0);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const fetchEmptyTimeLog = useCallback(async () => {
@@ -69,40 +67,8 @@ export function ProjectTimeLog({ project, reloadTimeLogs = (p) => p }) {
   }, [timeLog, refreshData]);
 
   useEffect(() => {
-    if (project.id) refreshData();
+    if (project.id) void refreshData();
   }, [project, refreshData]);
-
-  useEffect(() => {
-    if (timeLog?.startTime) {
-      const updateTimer = () => {
-        const elaps = Math.floor(
-          (Date.now() - new Date(timeLog.startTime).getTime()) / 1000,
-        );
-        const hours = String(Math.floor(elaps / 3600)).padStart(2, "0");
-        const minutes = String(Math.floor((elaps % 3600) / 60)).padStart(
-          2,
-          "0",
-        );
-        setTimer(`${hours}:${minutes}`);
-        setElapsed(elaps);
-        setLastTimePlayed(new Date().getTime());
-      };
-      updateTimer();
-      const interval = setInterval(updateTimer, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [timeLog]);
-
-  useEffect(() => {
-    if (elapsed < 10) return;
-    if ([":00", ":15", ":30", ":45"].some((t) => timer.endsWith(t))) {
-      const now = Date.now();
-      if (lastTimePlayed && now - lastTimePlayed < 10000) return;
-      setLastTimePlayed(now);
-      const bell = new Audio("/bell.mp3");
-      void bell.play();
-    }
-  }, [timer]);
 
   const submitQuickTime = async (data: { date: string; time: string }) => {
     setDialogOpen(false);
@@ -145,7 +111,7 @@ export function ProjectTimeLog({ project, reloadTimeLogs = (p) => p }) {
             disabled={loading}
           >
             <Icon icon={faStop} />
-            End Time Log ({timer})
+            End Time Log ({getTimeLogTimeSpent(timeLog)})
           </Button>
         </>
       ) : (

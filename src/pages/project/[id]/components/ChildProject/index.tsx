@@ -16,6 +16,7 @@ import { Icon } from "@/components/Icon";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { fetchApi } from "@/lib/fetchApi";
 import { useApp } from "@/contexts/App.context";
+import { ActiveTimeLogs } from "@/components/ActiveTimeLogs";
 
 interface ChildProjectProps {
   project: Project;
@@ -92,6 +93,7 @@ export function ChildProject({
           />
           <KeyValue label="Active Time Logs" value={activeTimeLogs.length} />
         </article>
+        <ActiveTimeLogs projectIds={[project.id]} lessInfo />
       </section>
 
       <section>

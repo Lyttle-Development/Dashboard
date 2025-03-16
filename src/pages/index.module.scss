@@ -78,30 +78,3 @@
     background-color: #f5f5f5;
   }
 }
-
-.active_logs {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-
-  .active_logs__group {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1.5rem 0;
-
-    .active_logs__group__projects {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-
-      .other {
-        opacity: .5;
-      }
-    }
-  }
-
-  .working_on {
-    font-weight: 600;
-  }
-}
