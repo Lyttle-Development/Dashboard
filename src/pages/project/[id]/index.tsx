@@ -17,6 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ChildProject } from "@/pages/project/[id]/components/ChildProject";
 import { ProjectProject } from "@/pages/project/[id]/components/ProjectProject";
+import { LINKS } from "@/links";
 
 function getTotalTimePerDayAndPerUser(
   timeLogs: TimeLog[],
@@ -123,7 +124,7 @@ export function Page() {
         id: project.id,
         method: "DELETE",
       });
-      void router.push("/project");
+      void router.push(LINKS.project.root);
     }
   };
 
@@ -144,7 +145,7 @@ export function Page() {
               Open Parent Project
             </Button>
           )}
-          <Button href={`/invoice/create/project/${project.id}`}>
+          <Button href={LINKS.invoice.create.project(project.id)}>
             <Icon icon={faFileInvoiceDollar} />
             Create invoice
           </Button>

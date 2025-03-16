@@ -14,6 +14,7 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Project } from "@/lib/prisma";
 import { SideToSide } from "@/components/SideToSide";
 import { mapProjectsToOptions } from "@/lib/project";
+import { LINKS } from "@/links";
 
 export function Page() {
   const router = useRouter();
@@ -51,10 +52,12 @@ export function Page() {
           label="Select Project"
           icon={faMagnifyingGlass}
           options={mapProjectsToOptions(projects, true)}
-          onValueChange={(projectId) => router.push(`/project/${projectId}`)}
+          onValueChange={(projectId) =>
+            router.push(LINKS.project.detail(projectId))
+          }
           disabled={!(projects && projects.length)}
         />
-        <Button href="/project/create">
+        <Button href={LINKS.project.create}>
           <Icon icon={faDiagramProject}>Create Project</Icon>
         </Button>
       </SideToSide>

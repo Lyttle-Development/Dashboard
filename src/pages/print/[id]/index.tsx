@@ -13,6 +13,7 @@ import { PrintTimeLog } from "@/components/PrintTimeLog";
 import { Icon } from "@/components/Icon";
 import { faFileInvoiceDollar } from "@fortawesome/free-solid-svg-icons";
 import { safeParseInt } from "@/lib/parse";
+import { LINKS } from "@/links";
 
 export function Page() {
   const router = useRouter();
@@ -98,7 +99,7 @@ export function Page() {
         id: printJob.id,
         method: "DELETE",
       });
-      void router.push("/print");
+      void router.push(LINKS.print.root);
     }
   };
 
@@ -110,7 +111,7 @@ export function Page() {
       <h2 className={styles.title}>
         <span>Print Job: {printJob.name}</span>
         <article className={styles.actions}>
-          <Button href={`/invoice/create/print/${printJob.id}`}>
+          <Button href={LINKS.invoice.create.print(printJob.id)}>
             <Icon icon={faFileInvoiceDollar} />
             Create invoice
           </Button>

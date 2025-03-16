@@ -25,6 +25,7 @@ import { FormOptionType } from "@/components/Form";
 import { TAX_COST_PROCENT } from "@/constants";
 import { safeParseFloat } from "@/lib/parse";
 import { procentToNumber } from "@/lib/procent";
+import { LINKS } from "@/links";
 
 function Page() {
   const router = useRouter();
@@ -119,13 +120,13 @@ function Page() {
         <article className={styles.invoice_actions}>
           {project?.parentProjectId && (
             <Button
-              href={`/invoice/create/project/${project?.parentProjectId}`}
+              href={LINKS.invoice.create.project(project?.parentProjectId)}
             >
               <Icon icon={faPersonBreastfeeding} />
               Open Parent Project
             </Button>
           )}
-          <Button href={`/project/${project?.id}`}>
+          <Button href={LINKS.project.detail(project?.id)}>
             <Icon icon={faDiagramProject} />
             Open Project
           </Button>
@@ -142,7 +143,9 @@ function Page() {
             .filter((p) => p.priceId !== "133f319d-101f-4b0a-91ae-c3ebb0483714") // Filter out the project price, as it should not have time booked.
             .map((project) => (
               <li key={project.id} className={styles.project}>
-                <Button href={`/project/${project.id}`}>{project.name}</Button>
+                <Button href={LINKS.project.detail(project.id)}>
+                  {project.name}
+                </Button>
                 <article>
                   <KeyValue
                     label="Hours worked"

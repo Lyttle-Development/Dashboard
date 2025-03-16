@@ -10,6 +10,7 @@ import { Button } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
 import { Category } from "@/lib/prisma";
 import { SideToSide } from "@/components/SideToSide";
+import { LINKS } from "@/links";
 
 function mapPrintsToOptions(prints: any[]): SelectItemProps[] {
   // Sort projects by creation date
@@ -54,10 +55,12 @@ export function Page() {
           icon={faMagnifyingGlass}
           label="Select Price Category"
           options={mapPrintsToOptions(categories)}
-          onValueChange={(projectId) => router.push(`/price/${projectId}`)}
+          onValueChange={(projectId) =>
+            router.push(LINKS.price.detail(projectId))
+          }
           disabled={!(categories && categories.length)}
         />
-        <Button href="/price/create">
+        <Button href={LINKS.price.create}>
           <Icon icon={faTag}>Create Price</Icon>
         </Button>
       </SideToSide>

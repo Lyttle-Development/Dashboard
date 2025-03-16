@@ -22,6 +22,7 @@ import {
 import { safeParseFloat } from "@/lib/parse";
 import { procentToNumber } from "@/lib/procent";
 import { Markdown } from "@/components/Markdown";
+import { LINKS } from "@/links";
 
 function Page() {
   const router = useRouter();
@@ -159,7 +160,7 @@ function Page() {
       <h1 className={styles.invoice_title}>
         <span>Create Invoice</span>
         <article className={styles.invoice_actions}>
-          <Button href={`/print/${printJob?.id}`}>
+          <Button href={LINKS.print.detail(printJob?.id)}>
             <Icon icon={faDiagramProject} />
             Open Print Job
           </Button>

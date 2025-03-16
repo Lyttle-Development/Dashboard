@@ -17,6 +17,7 @@ import { capitalizeWords } from "@/lib/format/string";
 import { Icon } from "@/components/Icon";
 import { faRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import { ActiveTimeLogs } from "@/components/ActiveTimeLogs";
+import { LINKS } from "@/links";
 
 function Page() {
   const mobile = useMobile();
@@ -86,7 +87,7 @@ function Page() {
 
   useEffect(() => {
     if (mobile.onMobile) {
-      router.push("/mobile/task");
+      router.push(LINKS.mobile.task);
       return;
     }
     void fetchProjects();
@@ -174,7 +175,7 @@ function Page() {
               {invoicesToCreateProjects?.length > 0 &&
                 invoicesToCreateProjects.map((project) => (
                   <li key={project.id} className={styles.invoice}>
-                    <Link href={`/invoice/create/project/${project.id}`}>
+                    <Link href={LINKS.invoice.detail.project(project.id)}>
                       <h6>
                         <strong>Name: </strong>
                         {getProjectFullName(project, projects)}
@@ -191,7 +192,7 @@ function Page() {
               {invoicesToCreatePrintJobs?.length > 0 &&
                 invoicesToCreatePrintJobs?.map((printJob) => (
                   <li key={printJob.id} className={styles.invoice}>
-                    <Link href={`/invoice/create/print/${printJob.id}`}>
+                    <Link href={LINKS.invoice.create.print(printJob.id)}>
                       <h6>
                         <strong>Name: </strong>
                         {printJob.name}
@@ -218,7 +219,7 @@ function Page() {
           <ul className={styles.print_jobs}>
             {openPrintJobs.map((printJob) => (
               <li key={printJob.id} className={styles.print_job}>
-                <Link href={`/print/${printJob.id}`}>
+                <Link href={LINKS.print.detail(printJob.id)}>
                   <h6>
                     <strong>Title: </strong>
                     {printJob.name}
@@ -254,7 +255,7 @@ function Page() {
                       <ul className={styles.expenses_group}>
                         {expenses?.map((expense) => (
                           <li key={expense.id} className={styles.expense}>
-                            <Link href={`/expense/${expense.id}`}>
+                            <Link href={LINKS.expense.detail(expense.id)}>
                               <h6>
                                 <strong>Name: </strong>
                                 {expense.name}
@@ -287,7 +288,7 @@ function Page() {
           <ul className={styles.projects}>
             {openProjects.map((project) => (
               <li key={project.id} className={styles.project}>
-                <Link href={`/project/${project.id}`}>
+                <Link href={LINKS.project.detail(project.id)}>
                   <h6>
                     <strong>Name: </strong>
                     {getProjectFullName(project, projects)}

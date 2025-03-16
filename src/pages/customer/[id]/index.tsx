@@ -9,6 +9,7 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
 import { Button, ButtonStyle } from "@/components/Button";
+import { LINKS } from "@/links";
 
 export function Page() {
   const router = useRouter();
@@ -72,7 +73,7 @@ export function Page() {
         id: customer.id,
         method: "DELETE",
       });
-      void router.push("/customer");
+      void router.push(LINKS.customer.root);
     }
   };
 
@@ -153,7 +154,10 @@ export function Page() {
           .filter((p) => !p.invoiceId) // Only show projects that are not invoiced
           .map((project: Project) => (
             <li key={project.id}>
-              <a href={`/project/${project.id}`} className={styles.project}>
+              <a
+                href={LINKS.project.detail(project.id)}
+                className={styles.project}
+              >
                 {project.name}
               </a>
             </li>
@@ -167,7 +171,7 @@ export function Page() {
           .filter((p) => !p.invoiceId) // Only show print jobs that are not invoiced
           .map((printJob) => (
             <li key={printJob.id} className={styles.printJob}>
-              <a href={`/`}>{printJob.name}</a>
+              <a href={LINKS.homepage}>{printJob.name}</a>
             </li>
           ))}
         {customer.printJobs.length === 0 && <p>No print jobs found</p>}

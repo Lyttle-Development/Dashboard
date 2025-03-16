@@ -9,6 +9,7 @@ import { Button } from "@/components/Button";
 import { useRouter } from "next/router";
 import { Loader } from "@/components/Loader";
 import { safeParseFloat } from "@/lib/parse";
+import { LINKS } from "@/links";
 
 interface updatePrice {
   categoryId: string | null;
@@ -48,7 +49,7 @@ function Page() {
       body: price,
     });
     setLoading(false);
-    void router.push(`/price/${data.id}`);
+    void router.push(LINKS.price.detail(data.id));
   };
 
   useEffect(() => {

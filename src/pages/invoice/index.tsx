@@ -8,6 +8,7 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Invoice } from "@/lib/prisma";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { SideToSide } from "@/components/SideToSide";
+import { LINKS } from "@/links";
 
 export function Page() {
   const router = useRouter();
@@ -49,7 +50,9 @@ export function Page() {
             label: invoice.projects.map((project) => project.name).join(", "),
             value: invoice.id,
           }))}
-          onValueChange={(invoiceId) => router.push(`/invoice/${invoiceId}`)}
+          onValueChange={(invoiceId) =>
+            router.push(LINKS.invoice.detail.project(invoiceId))
+          }
           disabled={!(invoices && invoices.length)}
         />
       </SideToSide>

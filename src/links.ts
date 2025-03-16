@@ -33,8 +33,14 @@ export const LINKS = {
   },
   invoice: {
     root: "/invoice",
-    create: "/invoice/create",
-    detail: (id: string) => `/invoice/${id}`,
+    create: {
+      project: (id: string) => `/invoice/create/project/${id}`,
+      print: (id: string) => `/invoice/create/print/${id}`,
+    },
+    detail: {
+      project: (id: string) => `/invoice/project/${id}`,
+      print: (id: string) => `/invoice/print/${id}`,
+    },
   },
   expense: {
     root: "/expense",
@@ -42,4 +48,7 @@ export const LINKS = {
     detail: (id: string) => `/expense/${id}`,
   },
   fallback: "/fallback",
+  mobile: {
+    task: "/mobile/task",
+  },
 } as const;

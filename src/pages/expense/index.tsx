@@ -13,6 +13,7 @@ import { Button } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
 import { Expense } from "@/lib/prisma";
 import { SideToSide } from "@/components/SideToSide";
+import { LINKS } from "@/links";
 
 export function Page() {
   const router = useRouter();
@@ -55,10 +56,12 @@ export function Page() {
                 }))
               : []
           }
-          onValueChange={(expenseId) => router.push(`/expense/${expenseId}`)}
+          onValueChange={(expenseId) =>
+            router.push(LINKS.expense.detail(expenseId))
+          }
           disabled={!(expenses && expenses.length)}
         />
-        <Button href="/expense/create">
+        <Button href={LINKS.expense.create}>
           <Icon icon={faHandHoldingDollar}>Create Expense</Icon>
         </Button>
       </SideToSide>

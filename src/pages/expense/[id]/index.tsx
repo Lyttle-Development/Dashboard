@@ -17,6 +17,7 @@ import { Link, LinkTarget } from "@/components/Link";
 import { useApp } from "@/contexts/App.context";
 import { KeyValue } from "@/components/KeyValue";
 import { Switch } from "@/components/Switch";
+import { LINKS } from "@/links";
 
 export function Page() {
   const router = useRouter();
@@ -81,7 +82,7 @@ export function Page() {
         id: expense.id,
         method: "DELETE",
       });
-      void router.push("/expense");
+      void router.push(LINKS.expense.root);
     }
   };
 
@@ -153,7 +154,7 @@ export function Page() {
       },
     });
     await fetchExpense(expenseId as string);
-    if (closed) void router.push("/");
+    if (closed) void router.push(LINKS.homepage);
   };
 
   return (
@@ -166,7 +167,10 @@ export function Page() {
           )}
         </span>
         <article className={styles.actions}>
-          <Button onClick={() => router.push("/")} style={ButtonStyle.Primary}>
+          <Button
+            onClick={() => router.push(LINKS.homepage)}
+            style={ButtonStyle.Primary}
+          >
             Go Back
           </Button>
           <Button onClick={deleteExpense} style={ButtonStyle.Danger}>

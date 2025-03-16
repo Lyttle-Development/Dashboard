@@ -9,6 +9,7 @@ import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
 import { Customer } from "@/lib/prisma";
 import { Loader } from "@/components/Loader";
+import { LINKS } from "@/links";
 
 // Optional keys of Customer
 interface OptionalCustomer {
@@ -56,7 +57,7 @@ function Page() {
     });
     restart();
     setLoading(false);
-    void router.push(`/customer/${data.id}`);
+    void router.push(LINKS.customer.detail(data.id));
   };
 
   if (loading) {

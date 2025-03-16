@@ -13,6 +13,7 @@ import { Button } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
 import { PrintJob } from "@/lib/prisma";
 import { SideToSide } from "@/components/SideToSide";
+import { LINKS } from "@/links";
 
 function mapPrintsToOptions(prints: any[]): SelectItemProps[] {
   // Sort projects by name
@@ -57,11 +58,13 @@ export function Page() {
           label="Select Customer"
           icon={faMagnifyingGlass}
           options={mapPrintsToOptions(customer)}
-          onValueChange={(projectId) => router.push(`/customer/${projectId}`)}
+          onValueChange={(projectId) =>
+            router.push(LINKS.customer.detail(projectId))
+          }
           disabled={!(customer && customer.length)}
           searchable
         />
-        <Button href="/customer/create">
+        <Button href={LINKS.customer.create}>
           <Icon icon={faCircleUser}>Create Customer</Icon>
         </Button>
       </SideToSide>

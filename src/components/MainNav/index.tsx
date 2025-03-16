@@ -13,6 +13,7 @@ import {
   faTag,
 } from "@fortawesome/free-solid-svg-icons";
 import { useApp } from "@/contexts/App.context";
+import { LINKS } from "@/links";
 
 export interface MainNavProps {}
 
@@ -24,21 +25,21 @@ export function MainNav({}: MainNavProps) {
       <nav>
         <h5>Operations</h5>
         <ul>
-          <MainNavItem href={"/"}>
+          <MainNavItem href={LINKS.homepage}>
             <Icon icon={faHouseChimney} />
             Home
           </MainNavItem>
-          <MainNavItem href={"/project"}>
+          <MainNavItem href={LINKS.project.root}>
             <Icon icon={faDiagramProject} />
             Projects
           </MainNavItem>
           {app.isAdmin && (
-            <MainNavItem href={"/print"}>
+            <MainNavItem href={LINKS.print.root}>
               <Icon icon={faPrint} />
               Printing
             </MainNavItem>
           )}
-          <MainNavItem href={"/task"}>
+          <MainNavItem href={LINKS.task.root}>
             <Icon icon={faListCheck} />
             Tasks
           </MainNavItem>
@@ -47,21 +48,21 @@ export function MainNav({}: MainNavProps) {
       <nav>
         <h5>Administration</h5>
         <ul>
-          <MainNavItem href={"/customer"}>
+          <MainNavItem href={LINKS.customer.root}>
             <Icon icon={faCircleUser} />
             Customers
           </MainNavItem>
-          <MainNavItem href={"/price"}>
+          <MainNavItem href={LINKS.price.root}>
             <Icon icon={faTag} />
             Prices
           </MainNavItem>
           {app.isManager && (
             <>
-              <MainNavItem href={"/invoice"}>
+              <MainNavItem href={LINKS.invoice.root}>
                 <Icon icon={faFileInvoiceDollar} />
                 Invoices
               </MainNavItem>
-              <MainNavItem href={"/expense"}>
+              <MainNavItem href={LINKS.expense.root}>
                 <Icon icon={faHandHoldingDollar} />
                 Expenses
               </MainNavItem>
@@ -70,7 +71,7 @@ export function MainNav({}: MainNavProps) {
         </ul>
       </nav>
       <ul className={styles.sub_menu}>
-        <MainNavItem href={"/fallback"}>Fallback Dashboard</MainNavItem>
+        <MainNavItem href={LINKS.fallback}>Fallback Dashboard</MainNavItem>
       </ul>
     </aside>
   );

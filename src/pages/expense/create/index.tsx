@@ -11,6 +11,7 @@ import { Expense, ExpenseStatusEnum } from "@/lib/prisma";
 import { Loader } from "@/components/Loader";
 import { safeParseFloat, safeParseInt } from "@/lib/parse";
 import { Switch } from "@/components/Switch";
+import { LINKS } from "@/links";
 
 // Optional keys of Expense
 interface OptionalExpense {
@@ -63,7 +64,7 @@ function Page() {
     });
     restart();
     setLoading(false);
-    void router.push(`/expense/${data.id}`);
+    void router.push(LINKS.expense.detail(data.id));
   };
 
   if (loading) {

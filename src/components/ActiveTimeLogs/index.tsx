@@ -13,6 +13,7 @@ import {
   getTimeLogsTimeSpent,
   getTimeLogTimeSpent,
 } from "@/lib/price/get-price";
+import { LINKS } from "@/links";
 
 interface ActiveTimeLogsProps {
   projectIds?: string[];
@@ -136,7 +137,7 @@ export function ActiveTimeLogs({
                         : ""
                     }
                   >
-                    <Link href={`/project/${project.id}`}>
+                    <Link href={LINKS.project.detail(project.id)}>
                       <AvatarCard userId={timeLog.user}>
                         <KeyValue
                           label="Working On"

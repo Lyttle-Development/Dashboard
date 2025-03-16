@@ -1,6 +1,7 @@
 import styles from "./index.module.scss";
 import { Button } from "@/components/Button";
 import { Project } from "@/lib/prisma";
+import { LINKS } from "@/links";
 
 interface ProjectProjectProps {
   project: Project;
@@ -15,7 +16,7 @@ export function ProjectProject({ project, fetchProject }: ProjectProjectProps) {
         {project.childProjects.map((childProject) => (
           <li key={childProject.id}>
             <Button
-              href={`/project/${childProject.id}`}
+              href={LINKS.project.detail(childProject.id)}
               onClick={() => fetchProject(childProject.id)}
             >
               {childProject.name}

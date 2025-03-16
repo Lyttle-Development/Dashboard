@@ -11,6 +11,7 @@ import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
 import { Loader } from "@/components/Loader";
 import { mapProjectsToOptions } from "@/lib/project";
+import { LINKS } from "@/links";
 
 function Page() {
   const router = useRouter();
@@ -115,7 +116,7 @@ function Page() {
     });
     restart();
     updateLoading("global", false);
-    void router.push(`/project/${data.id}`);
+    void router.push(LINKS.project.detail(data.id));
   };
 
   if (loading) return <Loader />;
