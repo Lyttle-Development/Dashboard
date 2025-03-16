@@ -84,6 +84,7 @@ export function TaskItem({
         options={mapProjectsToOptions(projects)}
         onValueChange={setProjectId}
         value={projectId ?? ""}
+        searchable
       />
     </li>
   );

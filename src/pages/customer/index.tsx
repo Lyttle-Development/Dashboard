@@ -59,6 +59,7 @@ export function Page() {
           options={mapPrintsToOptions(customer)}
           onValueChange={(projectId) => router.push(`/customer/${projectId}`)}
           disabled={!(customer && customer.length)}
+          searchable
         />
         <Button href="/customer/create">
           <Icon icon={faCircleUser}>Create Customer</Icon>
