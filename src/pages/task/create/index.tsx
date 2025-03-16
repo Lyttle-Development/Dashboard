@@ -148,6 +148,7 @@ function Page() {
           alwaysShowLabel
           onValueChange={(c) => updateTask("categoryId", c)}
           value={task.categoryId ?? undefined}
+          searchable
         />
       )}
       {!task.categoryId && (
@@ -159,6 +160,7 @@ function Page() {
               options={mapProjectsToOptions(projects, true)}
               onValueChange={(s) => updateTask("projectId", s)}
               value={task.projectId ?? undefined}
+              searchable
             />
           </div>
           {task.projectId && !task.title && !task.description && (
