@@ -258,50 +258,6 @@ function Page() {
           </section>
         )}
 
-      {(app.isOperationsManager || app.isManager) &&
-        objectGroupedExpenses?.length > 0 && (
-          <section>
-            <h2>Open Expenses:</h2>
-            <p>
-              Expenses that are not closed should be reviewed and closed if
-              necessary.
-            </p>
-            <ul className={styles.expenses_grouped}>
-              {objectGroupedExpenses?.map(
-                ([group, expenses]) =>
-                  expenses?.length > 0 &&
-                  canSeeExpenseCategory(group) && (
-                    <>
-                      <h5>{capitalizeWords(group)}:</h5>
-                      <ul className={styles.expenses_group}>
-                        {expenses?.map((expense) => (
-                          <li key={expense.id} className={styles.expense}>
-                            <Link href={`/expense/${expense.id}`}>
-                              <h6>
-                                <strong>Name: </strong>
-                                {expense.name}
-                                {expense.recurring && (
-                                  <Icon
-                                    icon={faRotateLeft}
-                                    className={styles.recurring_icon}
-                                  />
-                                )}
-                              </h6>
-                              <p>
-                                <strong>Status: </strong>
-                                {capitalizeWords(expense.status.status)}
-                              </p>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  ),
-              )}
-            </ul>
-          </section>
-        )}
-
       {runningTimeLogs?.length > 0 && (
         <section>
           <h2>Active Time Logs:</h2>
@@ -367,6 +323,50 @@ function Page() {
           </ul>
         </section>
       )}
+
+      {(app.isOperationsManager || app.isManager) &&
+        objectGroupedExpenses?.length > 0 && (
+          <section>
+            <h2>Open Expenses:</h2>
+            <p>
+              Expenses that are not closed should be reviewed and closed if
+              necessary.
+            </p>
+            <ul className={styles.expenses_grouped}>
+              {objectGroupedExpenses?.map(
+                ([group, expenses]) =>
+                  expenses?.length > 0 &&
+                  canSeeExpenseCategory(group) && (
+                    <>
+                      <h5>{capitalizeWords(group)}:</h5>
+                      <ul className={styles.expenses_group}>
+                        {expenses?.map((expense) => (
+                          <li key={expense.id} className={styles.expense}>
+                            <Link href={`/expense/${expense.id}`}>
+                              <h6>
+                                <strong>Name: </strong>
+                                {expense.name}
+                                {expense.recurring && (
+                                  <Icon
+                                    icon={faRotateLeft}
+                                    className={styles.recurring_icon}
+                                  />
+                                )}
+                              </h6>
+                              <p>
+                                <strong>Status: </strong>
+                                {capitalizeWords(expense.status.status)}
+                              </p>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ),
+              )}
+            </ul>
+          </section>
+        )}
 
       {openProjects && (
         <section>
