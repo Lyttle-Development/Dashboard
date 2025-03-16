@@ -7,11 +7,10 @@ import styles from "./index.module.scss";
 import { FormOptionType } from "@/components/Form";
 import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
-import { Expense } from "@/lib/prisma";
+import { Expense, ExpenseStatusEnum } from "@/lib/prisma";
 import { Loader } from "@/components/Loader";
 import { safeParseFloat, safeParseInt } from "@/lib/parse";
 import { Switch } from "@/components/Switch";
-import { ExpenseStatus } from "@/pages/expense/[id]";
 
 // Optional keys of Expense
 interface OptionalExpense {
@@ -58,7 +57,7 @@ function Page() {
       body: {
         ...expense,
         neededAt: expense.neededAt ? new Date(expense.neededAt) : null,
-        statusId: ExpenseStatus.CREATED,
+        statusId: ExpenseStatusEnum.CREATED,
         customerId: "4618597a-b352-45b8-8e70-e38d45c78f0b", // Kilian
       },
     });

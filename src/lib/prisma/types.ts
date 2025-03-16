@@ -82,6 +82,15 @@ export interface Invoice {
   createdAt: Date;
 }
 
+export enum ExpenseStatusEnum {
+  CREATED = "d4865b11-2734-4dcf-ab35-154ccd193725",
+  REQUESTED = "a2f734b1-613b-4383-b742-a4d5067f0a0c",
+  APPROVED = "986a0ba6-96ce-431b-a3b7-d8f028afb2dd",
+  ORDERED = "9c3be7d7-b09c-4aec-a58a-8c8a52f800a1",
+  CLOSED = "2dee2fe0-e126-4ac4-b451-8e75c3316c7b",
+  REOPENED = "22a537e3-7588-4639-a774-d1762a2e1718",
+}
+
 export interface Expense {
   id: string;
   neededAt?: Date;
@@ -93,7 +102,7 @@ export interface Expense {
   recurring?: boolean;
   approvedAt?: Date;
   orderedAt?: Date;
-  statusId: string;
+  statusId: ExpenseStatusEnum;
   status: InvoiceStatus;
   customerId?: string;
   customer?: Customer;

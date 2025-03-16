@@ -1,3 +1,5 @@
+@use '../styles/variables.scss' as v;
+
 .container {
   gap: 3rem;
 }
@@ -36,6 +38,11 @@
       padding: .5rem 1rem;
       border-radius: 1rem;
       background-color: #f5f5f5;
+
+      .recurring_icon {
+        margin-left: 1rem;
+        color: v.$color-danger;
+      }
     }
   }
 }

@@ -1,7 +1,14 @@
 import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { useCallback, useEffect, useState } from "react";
-import { Category, Expense, PrintJob, Project, TimeLog } from "@/lib/prisma";
+import {
+  Category,
+  Expense,
+  ExpenseStatusEnum,
+  PrintJob,
+  Project,
+  TimeLog,
+} from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Loader } from "@/components/Loader";
 
@@ -13,9 +20,10 @@ import { getProjectFullName } from "@/lib/project";
 import { findNewestTimeLog } from "@/lib/project/find-newest-time-log";
 import { useMobile } from "@/hooks/useMobile";
 import { router } from "next/client";
-import { ExpenseStatus } from "@/pages/expense/[id]";
 import { groupArrayBy, sortGroupedListBy } from "@/lib/array";
 import { capitalizeWords } from "@/lib/format/string";
+import { Icon } from "@/components/Icon";
+import { faRotateLeft } from "@fortawesome/free-solid-svg-icons";
 
 function Page() {
   const mobile = useMobile();
@@ -99,7 +107,7 @@ function Page() {
       table: "expense",
       where: {
         statusId: {
-          not: ExpenseStatus.CLOSED,
+          not: ExpenseStatusEnum.CLOSED,
         },
       },
       relations: {
@@ -124,10 +132,15 @@ function Page() {
   }, []);
 
   const groupedExpenses = groupArrayBy(expenses, (expense) => {
-    if (expense.recurring) return "Recurring";
+    if (
+      expense.recurring &&
+      ![ExpenseStatusEnum.CREATED, ExpenseStatusEnum.REQUESTED].includes(
+        expense.statusId,
+      )
+    )
+      return "Recurring";
     if (expense.approved) return "Approved";
-    if ((expense.statusId as ExpenseStatus) == ExpenseStatus.CREATED)
-      return "Created";
+    if (expense.statusId == ExpenseStatusEnum.CREATED) return "Created";
     return "Requested";
   });
   const objectGroupedExpenses = Object.entries(
@@ -267,6 +280,12 @@ function Page() {
                               <h6>
                                 <strong>Name: </strong>
                                 {expense.name}
+                                {expense.recurring && (
+                                  <Icon
+                                    icon={faRotateLeft}
+                                    className={styles.recurring_icon}
+                                  />
+                                )}
                               </h6>
                               <p>
                                 <strong>Status: </strong>

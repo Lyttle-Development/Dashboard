@@ -4,7 +4,7 @@ import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
-import { Expense } from "@/lib/prisma";
+import { Expense, ExpenseStatusEnum } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Field } from "@/components/Field";
 import { FormOptionType, FormValueTypes } from "@/components/Form";
@@ -16,15 +16,6 @@ import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { Link, LinkTarget } from "@/components/Link";
 import { useApp } from "@/contexts/App.context";
 import { KeyValue } from "@/components/KeyValue";
-
-export enum ExpenseStatus {
-  CREATED = "d4865b11-2734-4dcf-ab35-154ccd193725",
-  REQUESTED = "a2f734b1-613b-4383-b742-a4d5067f0a0c",
-  APPROVED = "986a0ba6-96ce-431b-a3b7-d8f028afb2dd",
-  ORDERED = "9c3be7d7-b09c-4aec-a58a-8c8a52f800a1",
-  CLOSED = "2dee2fe0-e126-4ac4-b451-8e75c3316c7b",
-  REOPENED = "22a537e3-7588-4639-a774-d1762a2e1718",
-}
 
 export function Page() {
   const router = useRouter();
@@ -110,7 +101,9 @@ export function Page() {
       id: expense.id,
       method: "PUT",
       body: {
-        statusId: requested ? ExpenseStatus.REQUESTED : ExpenseStatus.CREATED,
+        statusId: requested
+          ? ExpenseStatusEnum.REQUESTED
+          : ExpenseStatusEnum.CREATED,
       },
     });
     await fetchExpense(expenseId as string);
@@ -123,7 +116,9 @@ export function Page() {
       method: "PUT",
       body: {
         approved,
-        statusId: approved ? ExpenseStatus.APPROVED : ExpenseStatus.REQUESTED,
+        statusId: approved
+          ? ExpenseStatusEnum.APPROVED
+          : ExpenseStatusEnum.REQUESTED,
       },
     });
     await fetchExpense(expenseId as string);
@@ -136,7 +131,9 @@ export function Page() {
       method: "PUT",
       body: {
         orderedAt: ordered ? new Date() : null,
-        statusId: ordered ? ExpenseStatus.ORDERED : ExpenseStatus.APPROVED,
+        statusId: ordered
+          ? ExpenseStatusEnum.ORDERED
+          : ExpenseStatusEnum.APPROVED,
       },
     });
     await fetchExpense(expenseId as string);
@@ -148,7 +145,9 @@ export function Page() {
       id: expense.id,
       method: "PUT",
       body: {
-        statusId: closed ? ExpenseStatus.CLOSED : ExpenseStatus.REOPENED,
+        statusId: closed
+          ? ExpenseStatusEnum.CLOSED
+          : ExpenseStatusEnum.REOPENED,
       },
     });
     await fetchExpense(expenseId as string);
@@ -218,27 +217,27 @@ export function Page() {
       </article>
       {hasChanges && <Button onClick={updateExpense}>Update Expense</Button>}
       {!canAction &&
-        [ExpenseStatus.CREATED, ExpenseStatus.REQUESTED].includes(
-          expense.statusId as ExpenseStatus,
+        [ExpenseStatusEnum.CREATED, ExpenseStatusEnum.REQUESTED].includes(
+          expense.statusId as ExpenseStatusEnum,
         ) && (
           <Button
             onClick={() =>
-              requestExpense(expense.statusId === ExpenseStatus.CREATED)
+              requestExpense(expense.statusId === ExpenseStatusEnum.CREATED)
             }
             style={
-              expense.statusId === ExpenseStatus.CREATED
+              expense.statusId === ExpenseStatusEnum.CREATED
                 ? ButtonStyle.Primary
                 : ButtonStyle.Danger
             }
           >
-            {expense.statusId === ExpenseStatus.CREATED
+            {expense.statusId === ExpenseStatusEnum.CREATED
               ? "Request Expense"
               : "Cancel Request"}
           </Button>
         )}
       {canAction && (
         <SideToSide>
-          {expense.statusId !== ExpenseStatus.CLOSED ? (
+          {expense.statusId !== ExpenseStatusEnum.CLOSED ? (
             <>
               {!expense.approved ? (
                 <>
