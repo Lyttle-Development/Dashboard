@@ -18,6 +18,7 @@ import { useApp } from "@/contexts/App.context";
 import { KeyValue } from "@/components/KeyValue";
 import { Switch } from "@/components/Switch";
 import { LINKS } from "@/links";
+import { Preview } from "@/components/Preview";
 
 export function Page() {
   const router = useRouter();
@@ -50,6 +51,11 @@ export function Page() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!expense) return;
+    void updateExpense();
+  }, [expense?.image]);
+
   const handleChange = (field: string, value: FormValueTypes) => {
     setExpense((prev) => ({
       ...prev,
@@ -66,6 +72,7 @@ export function Page() {
         neededAt: expense.neededAt ? new Date(expense.neededAt) : null,
         name: expense.name,
         link: expense.link,
+        image: expense.image,
         unitPrice: expense.unitPrice,
         quantity: expense.quantity,
         recurring: expense.recurring,
@@ -178,56 +185,65 @@ export function Page() {
           </Button>
         </article>
       </h2>
-      <article className={styles.information}>
-        <KeyValue label="Status" value={expense.status.status} />
-        <Switch
-          label="Recurring"
-          checked={expense.recurring}
-          onCheckedChange={(value) => handleChange("recurring", value)}
-        />
-        <Field
-          label="Name"
-          type={FormOptionType.TEXT}
-          required
-          onChange={(value) => handleChange("name", value)}
-          value={expense.name}
-        />
-        <Field
-          label={`Needed At${!expense.neededAt ? " (No date added)" : ""}`}
-          type={FormOptionType.DATE}
-          onChange={(value) => handleChange("neededAt", value)}
-          value={safeParseFieldDate(expense.neededAt)}
-        />
-        <SideToSide className={styles.side_to_side}>
-          <Field
-            label="Link"
-            type={FormOptionType.TEXT}
-            onChange={(value) => handleChange("link", value)}
-            value={expense.link}
-            className={styles.link}
+      <SideToSide className={styles.image_splitter}>
+        <article className={styles.information}>
+          <KeyValue label="Status" value={expense.status.status} />
+          <Switch
+            label="Recurring"
+            checked={expense.recurring}
+            onCheckedChange={(value) => handleChange("recurring", value)}
           />
-          <Link
-            href={expense.link}
-            target={LinkTarget.BLANK}
-            className={styles.linkButton}
-          >
-            <Icon icon={faLink} className={styles.icon} />
-            <span>Open Link</span>
-          </Link>
-        </SideToSide>
-        <Field
-          label="Unit Price"
-          type={FormOptionType.NUMBER}
-          onChange={(value) => handleChange("unitPrice", safeParseFloat(value))}
-          value={expense.unitPrice}
+          <Field
+            label="Name"
+            type={FormOptionType.TEXT}
+            required
+            onChange={(value) => handleChange("name", value)}
+            value={expense.name}
+          />
+          <Field
+            label={`Needed At${!expense.neededAt ? " (No date added)" : ""}`}
+            type={FormOptionType.DATE}
+            onChange={(value) => handleChange("neededAt", value)}
+            value={safeParseFieldDate(expense.neededAt)}
+          />
+          <SideToSide className={styles.side_to_side}>
+            <Field
+              label="Link"
+              type={FormOptionType.TEXT}
+              onChange={(value) => handleChange("link", value)}
+              value={expense.link}
+              className={styles.link}
+            />
+            <Link
+              href={expense.link}
+              target={LinkTarget.BLANK}
+              className={styles.linkButton}
+            >
+              <Icon icon={faLink} className={styles.icon} />
+              <span>Open Link</span>
+            </Link>
+          </SideToSide>
+          <Field
+            label="Unit Price"
+            type={FormOptionType.NUMBER}
+            onChange={(value) =>
+              handleChange("unitPrice", safeParseFloat(value))
+            }
+            value={expense.unitPrice}
+          />
+          <Field
+            label="Quantity"
+            type={FormOptionType.NUMBER}
+            onChange={(value) => handleChange("quantity", safeParseInt(value))}
+            value={expense.quantity}
+          />
+        </article>
+        <Preview
+          link={expense.link}
+          image={expense.image}
+          onImage={(image) => handleChange("image", image)}
         />
-        <Field
-          label="Quantity"
-          type={FormOptionType.NUMBER}
-          onChange={(value) => handleChange("quantity", safeParseInt(value))}
-          value={expense.quantity}
-        />
-      </article>
+      </SideToSide>
       {hasChanges && <Button onClick={updateExpense}>Update Expense</Button>}
       {!canAction &&
         [ExpenseStatusEnum.CREATED, ExpenseStatusEnum.REQUESTED].includes(

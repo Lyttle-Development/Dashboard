@@ -96,6 +96,7 @@ export interface Expense {
   neededAt?: Date;
   name?: string;
   link?: string;
+  image?: string;
   unitPrice?: number;
   quantity?: number;
   approved?: boolean;

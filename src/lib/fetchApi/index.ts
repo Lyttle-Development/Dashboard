@@ -68,3 +68,22 @@ export async function fetchApi<T>({
   }
   return null;
 }
+
+export async function fetchPreview(url: string) {
+  try {
+    // Create and set headers
+    const headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    // Create searchParams
+    const encodedUrl = encodeURIComponent(url);
+    const res = await fetch("/api/preview/?url=" + encodedUrl, { headers });
+
+    if (res.ok) {
+      return res.json();
+    }
+  } catch (e) {
+    console.log("Error in the fetchApi function:", e);
+  }
+  return null;
+}

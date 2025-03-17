@@ -97,6 +97,7 @@ model Expense {
   neededAt   DateTime?
   name       String?
   link       String?
+  image      String?
   unitPrice  Float?
   quantity   Int?
   approved   Boolean?      @default(false)
