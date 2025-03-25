@@ -1,5 +1,5 @@
 import remarkGfm from "remark-gfm";
-import { Link } from "../Link";
+import { Link, LinkTarget } from "../Link";
 import { MarkdownComponents } from "./";
 import { Components } from "react-markdown";
 
@@ -18,6 +18,7 @@ export const components: Components = {
     Link({
       href: props.href,
       children: props.children,
+      target: LinkTarget.BLANK,
     }),
   ol: ({ ...props }) =>
     MarkdownComponents.List({
