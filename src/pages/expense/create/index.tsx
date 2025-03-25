@@ -12,6 +12,7 @@ import { Loader } from "@/components/Loader";
 import { safeParseFloat, safeParseInt } from "@/lib/parse";
 import { Switch } from "@/components/Switch";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 // Optional keys of Expense
 interface OptionalExpense {
@@ -33,6 +34,7 @@ const emptyExpense: OptionalExpense = {
 };
 
 function Page() {
+  usePageTitle({ title: "Create Expense" });
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);

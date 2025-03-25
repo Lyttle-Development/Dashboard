@@ -18,6 +18,7 @@ import {
 import { ChildProject } from "@/pages/project/[id]/components/ChildProject";
 import { ProjectProject } from "@/pages/project/[id]/components/ProjectProject";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 function getTotalTimePerDayAndPerUser(
   timeLogs: TimeLog[],
@@ -46,6 +47,7 @@ function getTotalTimePerDayAndPerUser(
 }
 
 export function Page() {
+  usePageTitle({ title: "Project Details" });
   const router = useRouter();
 
   const [project, setProject] = useState<Project>(null);

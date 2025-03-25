@@ -23,8 +23,10 @@ import { safeParseFloat } from "@/lib/parse";
 import { procentToNumber } from "@/lib/procent";
 import { Markdown } from "@/components/Markdown";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 function Page() {
+  usePageTitle({ title: "Create Print Job Invoice" });
   const router = useRouter();
   const { id: printJobId } = router.query;
 

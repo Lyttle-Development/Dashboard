@@ -16,8 +16,10 @@ import styles from "./index.module.scss";
 import { useRouter } from "next/router";
 import { SideToSide } from "@/components/SideToSide";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 function Page() {
+  usePageTitle({ title: "Create Task(s)" });
   const app = useApp();
   const router = useRouter();
   const [loadings, setLoading] = useState({

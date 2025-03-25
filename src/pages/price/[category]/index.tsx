@@ -7,8 +7,10 @@ import { ServicePrice } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Prices } from "@/pages/price/[category]/components/prices";
 import { Button } from "@/components/Button";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export function Page() {
+  usePageTitle({ title: "Price Details" });
   const router = useRouter();
   const categoryId = router.query.category as string;
 

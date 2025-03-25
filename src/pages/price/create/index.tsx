@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { Loader } from "@/components/Loader";
 import { safeParseFloat } from "@/lib/parse";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 interface updatePrice {
   categoryId: string | null;
@@ -18,6 +19,7 @@ interface updatePrice {
 }
 
 function Page() {
+  usePageTitle({ title: "Create Price" });
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);

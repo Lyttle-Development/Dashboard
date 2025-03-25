@@ -10,8 +10,10 @@ import { Task } from "@/lib/prisma";
 import { SideToSide } from "@/components/SideToSide";
 import { useRouter } from "next/router";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export function Page() {
+  usePageTitle({ title: "Tasks" });
   // Redirect to create task page; as we don't have a list of tasks
   const router = useRouter();
   return router.push(LINKS.task.create);

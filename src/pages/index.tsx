@@ -18,8 +18,10 @@ import { Icon } from "@/components/Icon";
 import { faRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import { ActiveTimeLogs } from "@/components/ActiveTimeLogs";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 function Page() {
+  usePageTitle({ title: "Home" });
   const mobile = useMobile();
   const app = useApp();
   const [loadings, _setLoading] = useState<{ [key: string]: boolean }>({

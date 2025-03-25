@@ -19,8 +19,10 @@ import { KeyValue } from "@/components/KeyValue";
 import { Switch } from "@/components/Switch";
 import { LINKS } from "@/links";
 import { Preview } from "@/components/Preview";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export function Page() {
+  usePageTitle({ title: "Expense Details" });
   const router = useRouter();
   const { id: expenseId } = router.query;
   const app = useApp();

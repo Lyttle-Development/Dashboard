@@ -28,6 +28,7 @@
     "classnames": "^2.5.1",
     "next": "15.1.6",
     "next-auth": "^4.24.11",
+    "next-seo": "^6.6.0",
     "pg": "^8.13.1",
     "playwright-core": "^1.51.1",
     "prettier": "^3.5.0",

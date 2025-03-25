@@ -5,8 +5,10 @@ import { Field } from "@/components/Field";
 import styles from "./index.module.scss";
 import { FormOptionType } from "@/components/Form";
 import { safeParseFieldString } from "@/lib/parse";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export function Page() {
+  usePageTitle({ title: "Signature" });
   const [data, setData] = useState({
     firstName: "",
     lastName: "",

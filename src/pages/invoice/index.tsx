@@ -9,8 +9,10 @@ import { Invoice } from "@/lib/prisma";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { SideToSide } from "@/components/SideToSide";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export function Page() {
+  usePageTitle({ title: "Invoices" });
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]);

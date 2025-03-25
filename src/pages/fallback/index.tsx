@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Layout } from "@/layouts";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 // Mapping of tables with their labels and API endpoints.
 const tableConfigs: {
@@ -113,6 +114,7 @@ const formatDateTimeLocal = (val: any): string => {
 };
 
 export function Page() {
+  usePageTitle({ title: "Fallback Dashboard" });
   // Currently selected table. (Use keys as in tableConfigs.)
   const [selectedTable, setSelectedTable] =
     useState<keyof typeof tableConfigs>("category");

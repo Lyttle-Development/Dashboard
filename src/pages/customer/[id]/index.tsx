@@ -10,8 +10,10 @@ import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
 import { Button, ButtonStyle } from "@/components/Button";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export function Page() {
+  usePageTitle({ title: "Customer Details" });
   const router = useRouter();
 
   const [customer, setCustomer] = useState<Customer>(null);

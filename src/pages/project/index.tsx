@@ -15,8 +15,10 @@ import { Project } from "@/lib/prisma";
 import { SideToSide } from "@/components/SideToSide";
 import { mapProjectsToOptions } from "@/lib/project";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export function Page() {
+  usePageTitle({ title: "Projects" });
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);

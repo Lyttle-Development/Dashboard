@@ -14,8 +14,10 @@ import { fetchApi } from "@/lib/fetchApi";
 import { Expense } from "@/lib/prisma";
 import { SideToSide } from "@/components/SideToSide";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export function Page() {
+  usePageTitle({ title: "Expenses" });
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [expenses, setExpenses] = useState<Expense[]>([]);

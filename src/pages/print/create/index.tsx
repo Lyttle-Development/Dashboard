@@ -12,8 +12,10 @@ import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
 import { Loader } from "@/components/Loader";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 function Page() {
+  usePageTitle({ title: "Create Print Job" });
   const router = useRouter();
 
   const [loadings, setLoading] = useState<{ [key: string]: boolean }>({

@@ -11,8 +11,10 @@ import { Switch } from "@/components/Switch";
 import { useApp } from "@/contexts/App.context";
 import { mapProjectsToOptions } from "@/lib/project";
 import styles from "./index.module.scss";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 function Page() {
+  usePageTitle({ title: "Create Task" });
   const app = useApp();
   const [loadings, setLoading] = useState({
     projects: true,

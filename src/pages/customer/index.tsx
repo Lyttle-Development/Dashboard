@@ -14,6 +14,7 @@ import { fetchApi } from "@/lib/fetchApi";
 import { PrintJob } from "@/lib/prisma";
 import { SideToSide } from "@/components/SideToSide";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 function mapPrintsToOptions(prints: any[]): SelectItemProps[] {
   // Sort projects by name
@@ -30,6 +31,7 @@ function mapPrintsToOptions(prints: any[]): SelectItemProps[] {
 }
 
 export function Page() {
+  usePageTitle({ title: "Customers" });
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [customer, setCustomer] = useState<PrintJob[]>([]);

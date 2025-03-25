@@ -14,8 +14,10 @@ import { Icon } from "@/components/Icon";
 import { faFileInvoiceDollar } from "@fortawesome/free-solid-svg-icons";
 import { safeParseInt } from "@/lib/parse";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export function Page() {
+  usePageTitle({ title: "Print Job Details" });
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false);

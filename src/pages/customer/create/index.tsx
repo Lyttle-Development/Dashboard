@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { Customer } from "@/lib/prisma";
 import { Loader } from "@/components/Loader";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 // Optional keys of Customer
 interface OptionalCustomer {
@@ -27,6 +28,7 @@ const emptyCustomer: OptionalCustomer = {
 };
 
 function Page() {
+  usePageTitle({ title: "Create Customer" });
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);

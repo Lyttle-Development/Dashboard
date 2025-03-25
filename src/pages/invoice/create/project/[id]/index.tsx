@@ -26,8 +26,10 @@ import { TAX_COST_PROCENT } from "@/constants";
 import { safeParseFloat } from "@/lib/parse";
 import { procentToNumber } from "@/lib/procent";
 import { LINKS } from "@/links";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 function Page() {
+  usePageTitle({ title: "Create Project Invoice" });
   const router = useRouter();
   const { id: projectId } = router.query;
 
