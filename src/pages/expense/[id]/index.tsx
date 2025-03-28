@@ -4,7 +4,7 @@ import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
-import { Expense, ExpenseStatusEnum } from "@/lib/prisma";
+import { Expense, ExpenseStatusEnum, IntervalEnum } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Field } from "@/components/Field";
 import { FormOptionType, FormValueTypes } from "@/components/Form";
@@ -20,6 +20,7 @@ import { Switch } from "@/components/Switch";
 import { LINKS } from "@/links";
 import { Preview } from "@/components/Preview";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { Select } from "@/components/Select";
 
 export function Page() {
   usePageTitle({ title: "Expense Details" });
@@ -78,6 +79,7 @@ export function Page() {
         unitPrice: expense.unitPrice,
         quantity: expense.quantity,
         recurring: expense.recurring,
+        recurringInterval: expense.recurringInterval,
       },
     });
     setExpense(expense);
@@ -195,6 +197,25 @@ export function Page() {
             checked={expense.recurring}
             onCheckedChange={(value) => handleChange("recurring", value)}
           />
+          {expense.recurring && (
+            <Select
+              label="Select Interval"
+              options={(Object.values(IntervalEnum) as string[]).map(
+                (interval) => ({
+                  label: interval,
+                  value: interval,
+                }),
+              )}
+              onValueChange={(value) =>
+                handleChange(
+                  "recurringInterval",
+                  typeof value === "string" ? value : "",
+                )
+              }
+              value={expense.recurringInterval?.toString()}
+              searchable
+            />
+          )}
           <Field
             label="Name"
             type={FormOptionType.TEXT}

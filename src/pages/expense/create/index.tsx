@@ -7,12 +7,13 @@ import styles from "./index.module.scss";
 import { FormOptionType } from "@/components/Form";
 import { Field } from "@/components/Field";
 import { useRouter } from "next/router";
-import { Expense, ExpenseStatusEnum } from "@/lib/prisma";
+import { Expense, ExpenseStatusEnum, IntervalEnum } from "@/lib/prisma";
 import { Loader } from "@/components/Loader";
 import { safeParseFloat, safeParseInt } from "@/lib/parse";
 import { Switch } from "@/components/Switch";
 import { LINKS } from "@/links";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { Select } from "@/components/Select";
 
 // Optional keys of Expense
 interface OptionalExpense {
@@ -22,6 +23,7 @@ interface OptionalExpense {
   unitPrice: number;
   quantity: number;
   recurring: boolean;
+  recurringInterval?: IntervalEnum;
 }
 
 const emptyExpense: OptionalExpense = {
@@ -31,6 +33,7 @@ const emptyExpense: OptionalExpense = {
   unitPrice: 0,
   quantity: 1,
   recurring: false,
+  recurringInterval: null,
 };
 
 function Page() {
@@ -120,6 +123,25 @@ function Page() {
         onCheckedChange={(value) => handleChange("recurring", value)}
         checked={expense.recurring}
       />
+      {expense.recurring && (
+        <Select
+          label="Select Interval"
+          options={(Object.values(IntervalEnum) as string[]).map(
+            (interval) => ({
+              label: interval,
+              value: interval,
+            }),
+          )}
+          onValueChange={(value) =>
+            handleChange(
+              "recurringInterval",
+              typeof value === "string" ? value : "",
+            )
+          }
+          value={expense.recurringInterval?.toString()}
+          searchable
+        />
+      )}
 
       {expense &&
         !!expense.name &&
