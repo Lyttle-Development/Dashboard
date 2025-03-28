@@ -177,7 +177,7 @@ function Page() {
               {invoicesToCreateProjects?.length > 0 &&
                 invoicesToCreateProjects.map((project) => (
                   <li key={project.id} className={styles.invoice}>
-                    <Link href={LINKS.invoice.detail.project(project.id)}>
+                    <Link href={LINKS.invoice.create.project(project.id)}>
                       <h6>
                         <strong>Name: </strong>
                         {getProjectFullName(project, projects)}
