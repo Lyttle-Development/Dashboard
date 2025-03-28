@@ -10,6 +10,7 @@ import {
   faHouseChimney,
   faListCheck,
   faPrint,
+  faRepeat,
   faTag,
 } from "@fortawesome/free-solid-svg-icons";
 import { useApp } from "@/contexts/App.context";
@@ -61,6 +62,10 @@ export function MainNav({}: MainNavProps) {
               <MainNavItem href={LINKS.invoice.root}>
                 <Icon icon={faFileInvoiceDollar} />
                 Invoices
+              </MainNavItem>
+              <MainNavItem href={LINKS.subscription.root}>
+                <Icon icon={faRepeat} />
+                Subscriptions
               </MainNavItem>
               <MainNavItem href={LINKS.expense.root}>
                 <Icon icon={faHandHoldingDollar} />

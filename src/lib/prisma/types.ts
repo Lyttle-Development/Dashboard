@@ -90,6 +90,20 @@ export interface Invoice {
   createdAt: Date;
 }
 
+export enum SubscriptionStatusEnum {
+  CREATED = "74af779f-7d33-406c-bd78-af37df162a4b",
+  REQUESTED = "91487c6c-31b7-42b5-9ef7-e4ec53115d6c",
+  CLOSED = "55dafc7c-57d5-47e1-ade0-5b58c5e96b55",
+  REOPENED = "06ff9974-2207-4d65-b3cb-a2ee4b08f003",
+}
+
+export enum IntervalEnum {
+  DAY = "DAY",
+  WEEK = "WEEK",
+  MONTH = "MONTH",
+  YEAR = "YEAR",
+}
+
 export interface Subscription {
   id: string;
   name?: string;
@@ -97,7 +111,7 @@ export interface Subscription {
   image?: string;
   unitPrice?: number;
   quantity?: number;
-  interval?: string;
+  interval?: IntervalEnum;
   customerId?: string;
   customer?: Customer;
   statusId: string;
@@ -125,7 +139,7 @@ export interface Expense {
   quantity?: number;
   approved?: boolean;
   recurring?: boolean;
-  recurringInterval?: string;
+  recurringInterval?: IntervalEnum;
   approvedAt?: Date;
   orderedAt?: Date;
   statusId: ExpenseStatusEnum;

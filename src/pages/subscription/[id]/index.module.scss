@@ -1,0 +1,49 @@
+@use '../../../styles/variables.scss' as v;
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.information {
+  width: 100%;
+  max-width: 30rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.recurring_icon {
+  margin-left: 1rem;
+  color: v.$color-danger;
+}
+
+.side_to_side {
+  align-items: flex-end;
+  position: relative;
+  gap: 0 !important;
+
+  .link {
+    width: 100%;
+  }
+
+  .linkButton {
+    position: absolute;
+    right: -8rem;
+    top: 2.8rem;
+    display: flex;
+    gap: 1rem;
+  }
+}
+
+.image_splitter {
+  gap: 10rem !important;
+}

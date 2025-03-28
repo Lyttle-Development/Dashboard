@@ -44,6 +44,11 @@ export const LINKS = {
       print: (id: string) => `/invoice/print/${id}`,
     },
   },
+  subscription: {
+    root: "/subscription",
+    create: "/subscription/create",
+    detail: (id: string) => `/subscription/${id}`,
+  },
   expense: {
     root: "/expense",
     create: "/expense/create",
