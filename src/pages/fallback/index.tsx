@@ -24,7 +24,8 @@ const getInputType = (key: string, value?: any): string => {
     lower.includes("quantity") ||
     lower.includes("weight") ||
     lower.includes("rate") ||
-    lower.includes("printtime")
+    lower.includes("printtime") ||
+    lower.includes("unitprice")
   ) {
     return "number";
   }
