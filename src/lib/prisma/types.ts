@@ -19,7 +19,14 @@ export interface InvoiceStatus {
   id: string;
   status: string;
   invoices: Invoice[];
-  Expense: Expense[];
+  updatedAt: Date;
+  createdAt: Date;
+}
+
+export interface SubscriptionStatus {
+  id: string;
+  status: string;
+  subscriptions: Subscription[];
   updatedAt: Date;
   createdAt: Date;
 }
@@ -34,7 +41,8 @@ export interface Customer {
   invoices: Invoice[];
   projects: Project[];
   printJobs: PrintJob[];
-  Expense: Expense[];
+  expenses: Expense[];
+  subscriptions: Subscription[];
   updatedAt: Date;
   createdAt: Date;
 }
@@ -82,6 +90,22 @@ export interface Invoice {
   createdAt: Date;
 }
 
+export interface Subscription {
+  id: string;
+  name?: string;
+  link?: string;
+  image?: string;
+  unitPrice?: number;
+  quantity?: number;
+  interval?: string;
+  customerId?: string;
+  customer?: Customer;
+  statusId: string;
+  status: SubscriptionStatus;
+  updatedAt: Date;
+  createdAt: Date;
+}
+
 export enum ExpenseStatusEnum {
   CREATED = "d4865b11-2734-4dcf-ab35-154ccd193725",
   REQUESTED = "a2f734b1-613b-4383-b742-a4d5067f0a0c",
@@ -101,14 +125,13 @@ export interface Expense {
   quantity?: number;
   approved?: boolean;
   recurring?: boolean;
+  recurringInterval?: string;
   approvedAt?: Date;
   orderedAt?: Date;
   statusId: ExpenseStatusEnum;
-  status: InvoiceStatus;
+  status: ExpenseStatus;
   customerId?: string;
   customer?: Customer;
-  expenseStatusId?: string;
-  expenseStatus?: ExpenseStatus;
   updatedAt: Date;
   createdAt: Date;
 }

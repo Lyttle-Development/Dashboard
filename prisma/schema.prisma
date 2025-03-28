@@ -25,6 +25,14 @@ model ExpenseStatus {
   createdAt DateTime  @default(now())
 }
 
+model SubscriptionStatus {
+  id            String         @id @default(uuid())
+  status        String         @unique
+  subscriptions Subscription[]
+  updatedAt     DateTime       @default(now()) @updatedAt
+  createdAt     DateTime       @default(now())
+}
+
 model InvoiceStatus {
   id        String    @id @default(uuid())
   status    String    @unique
@@ -35,18 +43,19 @@ model InvoiceStatus {
 
 // 2. Core models referenced by many others
 model Customer {
-  id        String     @id @default(uuid())
-  lastname  String?
-  firstname String?
-  email     String     @unique
-  phone     String?
-  addresses Address[]
-  invoices  Invoice[]
-  projects  Project[]
-  printJobs PrintJob[]
-  Expense   Expense[]
-  updatedAt DateTime   @default(now()) @updatedAt
-  createdAt DateTime   @default(now())
+  id            String         @id @default(uuid())
+  lastname      String?
+  firstname     String?
+  email         String         @unique
+  phone         String?
+  addresses     Address[]
+  invoices      Invoice[]
+  projects      Project[]
+  printJobs     PrintJob[]
+  expenses      Expense[]
+  subscriptions Subscription[]
+  updatedAt     DateTime       @default(now()) @updatedAt
+  createdAt     DateTime       @default(now())
 }
 
 model Address {
@@ -92,24 +101,41 @@ model Invoice {
   createdAt   DateTime      @default(now())
 }
 
-model Expense {
-  id         String        @id @default(uuid())
-  neededAt   DateTime?
+model Subscription {
+  id         String             @id @default(uuid())
   name       String?
   link       String?
   image      String?
   unitPrice  Float?
   quantity   Int?
-  approved   Boolean?      @default(false)
-  recurring  Boolean?      @default(false)
-  approvedAt DateTime?
-  orderedAt  DateTime?
+  interval   String?
   customerId String?
-  customer   Customer?     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer   Customer?          @relation(fields: [customerId], references: [id], onDelete: Cascade)
   statusId   String
-  status     ExpenseStatus @relation(fields: [statusId], references: [id])
-  updatedAt  DateTime      @default(now()) @updatedAt
-  createdAt  DateTime      @default(now())
+  status     SubscriptionStatus @relation(fields: [statusId], references: [id])
+  updatedAt  DateTime           @default(now()) @updatedAt
+  createdAt  DateTime           @default(now())
+}
+
+model Expense {
+  id                String        @id @default(uuid())
+  neededAt          DateTime?
+  name              String?
+  link              String?
+  image             String?
+  unitPrice         Float?
+  quantity          Int?
+  approved          Boolean?      @default(false)
+  recurring         Boolean?      @default(false)
+  recurringInterval String?
+  approvedAt        DateTime?
+  orderedAt         DateTime?
+  customerId        String?
+  customer          Customer?     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  statusId          String
+  status            ExpenseStatus @relation(fields: [statusId], references: [id])
+  updatedAt         DateTime      @default(now()) @updatedAt
+  createdAt         DateTime      @default(now())
 }
 
 model PrintMaterial {
