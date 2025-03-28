@@ -87,12 +87,12 @@ a, button {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: v.$scrollbar-background-light;
+  background: v.$scrollbar-thumb;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: v.$scrollbar-background-dark;
+  background: v.$scrollbar-thumb-hover;
 }
 
 input:focus,
