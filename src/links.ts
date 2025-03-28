@@ -19,6 +19,8 @@ export const LINKS = {
   task: {
     root: "/task",
     create: "/task/create",
+    create_project: (id: string) => `/task/create/project/${id}`,
+    create_category: (id: string) => `/task/create/category/${id}`,
     detail: (id: string) => `/task/${id}`,
   },
   customer: {

@@ -133,7 +133,9 @@ export function ChildProject({
               ]}
             />
           </Dialog>
-          <Button href={LINKS.task.create}>Bulk Create Task</Button>
+          <Button href={LINKS.task.create_project(project.id)}>
+            Bulk Create Task
+          </Button>
         </SideToSide>
         <Field
           label="Search Tasks"

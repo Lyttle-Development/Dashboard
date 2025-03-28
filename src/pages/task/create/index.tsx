@@ -16,12 +16,16 @@ import styles from "./index.module.scss";
 import { useRouter } from "next/router";
 import { SideToSide } from "@/components/SideToSide";
 import { LINKS } from "@/links";
-import { usePageTitle } from "@/hooks/usePageTitle";
 
 function Page() {
-  usePageTitle({ title: "Create Task(s)" });
+  // usePageTitle({ title: "Create Task(s)" });
   const app = useApp();
   const router = useRouter();
+
+  const { type, id } = router.query as { type: string; id: string };
+  const queryCreateCategory = type === "category" && id ? id : null;
+  const queryCreateProject = type === "project" && id ? id : null;
+
   const [loadings, setLoading] = useState({
     categories: true,
     projects: true,
@@ -46,8 +50,8 @@ function Page() {
   }>({
     title: "",
     description: "",
-    categoryId: null,
-    projectId: null,
+    categoryId: queryCreateCategory,
+    projectId: queryCreateProject,
   });
 
   const updateTask = (key: string, value: string | number) => {
