@@ -47,14 +47,18 @@ export function Page() {
     setData((prev) => ({ ...prev, [key]: value }));
   };
 
+  const isValid = () => {
+    return (
+      data.firstName &&
+      data.lastName &&
+      data.position &&
+      data.telephone &&
+      data.addressLine1
+    );
+  };
+
   const selectSignature = () => {
-    if (
-      !data.firstName ||
-      !data.lastName ||
-      !data.position ||
-      !data.telephone ||
-      !data.addressLine1
-    ) {
+    if (!isValid()) {
       window.alert(
         "Please fill in all required fields before copying the signature.",
       );
@@ -116,7 +120,6 @@ export function Page() {
     }
     return telephone;
   };
-
   const getBinary = (files: FileList) => {
     const file = files[0];
     if (!file) return;
@@ -125,35 +128,46 @@ export function Page() {
     reader.onloadend = () => {
       const dataUrl = reader.result as string;
 
-      // Create an Image element to load the file data
       const imgElement = new Image();
       imgElement.onload = () => {
-        // Set desired canvas dimensions
-        const canvasWidth = 92;
-        const canvasHeight = 110;
+        const canvasSize = 121;
         const canvas = document.createElement("canvas");
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
+        canvas.width = canvasSize;
+        canvas.height = canvasSize;
         const ctx = canvas.getContext("2d");
 
         if (ctx) {
-          // Use canvas filter to convert the image to greyscale
+          ctx.clearRect(0, 0, canvasSize, canvasSize);
+
+          // Create a circular clipping mask
+          ctx.beginPath();
+          ctx.arc(
+            canvasSize / 2,
+            canvasSize / 2,
+            canvasSize / 2,
+            0,
+            Math.PI * 2,
+          );
+          ctx.closePath();
+          ctx.clip();
+
+          // Apply grayscale filter
           ctx.filter = "grayscale(100%)";
 
           // Calculate scale for "object-fit: cover"
           const scale = Math.max(
-            canvasWidth / imgElement.width,
-            canvasHeight / imgElement.height,
+            canvasSize / imgElement.width,
+            canvasSize / imgElement.height,
           );
           const newWidth = imgElement.width * scale;
           const newHeight = imgElement.height * scale;
-          const offsetX = (canvasWidth - newWidth) / 2;
-          const offsetY = (canvasHeight - newHeight) / 2;
+          const offsetX = (canvasSize - newWidth) / 2;
+          const offsetY = (canvasSize - newHeight) / 2;
 
-          // Draw the image with computed dimensions and offsets
+          // Draw the image within the circular area
           ctx.drawImage(imgElement, offsetX, offsetY, newWidth, newHeight);
 
-          // Convert the canvas back to a data URL
+          // Convert the canvas to a data URL
           canvas.toBlob((blob) => {
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -216,178 +230,174 @@ export function Page() {
         onClick={selectSignature}
         ref={signatureContainerRef}
       >
-        <div ref={signatureRef}>
-          <p
-            style={{
-              color: "#0C0C0C",
-              fontFamily: "Arial",
-              fontSize: "12px",
-              fontStyle: "normal",
-              fontWeight: "400",
-              lineHeight: "130%",
-            }}
-          >
-            Beste
-            <br />
-            <br />
-            Text
-            <br />
-            <br />
-            Alvast bedankt.
-            <br />
-            <br />
-            Met vriendelijke groeten / Kind regards
-          </p>
-          <table
-            style={{
-              paddingTop: "28px",
-            }}
-          >
-            <tbody>
-              <tr>
-                <td
-                  style={{
-                    paddingRight: "11px",
-                    width: "160px",
-                    borderRight: "1px solid #E5E4E4",
-                    verticalAlign: "top",
-                  }}
-                >
-                  <div
+        {" "}
+        {isValid() ? (
+          <div ref={signatureRef}>
+            <p
+              style={{
+                color: "#0C0C0C",
+                fontFamily: "Arial",
+                fontSize: "12px",
+                fontStyle: "normal",
+                fontWeight: "400",
+                lineHeight: "130%",
+              }}
+            >
+              Beste
+              <br />
+              <br />
+              Text
+              <br />
+              <br />
+              Alvast bedankt.
+              <br />
+              <br />
+              Met vriendelijke groeten / Kind regards
+              <br />
+              <br />
+            </p>
+            <table>
+              <tbody>
+                <tr>
+                  <td
                     style={{
-                      paddingBottom: "24px",
+                      paddingRight: "11px",
+                      width: "160px",
+                      borderRight: "1px solid #E5E4E4",
+                      verticalAlign: "top",
                     }}
                   >
-                    <img
-                      src={data.image}
-                      alt="Profile Picture"
+                    <div
                       style={{
-                        width: "92px",
-                        height: "110px",
+                        paddingBottom: "24px",
                       }}
-                    />
-                  </div>
-                  <div>
-                    <img
-                      src={data.logo}
-                      alt="LyttleDevelopment Logo"
+                    >
+                      <img
+                        src={data.image}
+                        alt="Profile Picture"
+                        style={{
+                          width: "122px",
+                          height: "122px",
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <img
+                        src={data.logo}
+                        alt="LyttleDevelopment Logo"
+                        style={{
+                          width: "120px",
+                          height: "43px",
+                        }}
+                      />
+                    </div>
+                  </td>
+                  <td
+                    style={{
+                      paddingLeft: "45px",
+                      verticalAlign: "top",
+                    }}
+                  >
+                    <p
                       style={{
-                        width: "120px",
-                        height: "43px",
+                        color: "#100429",
+                        fontFamily: "Arial",
+                        fontSize: "13px",
+                        fontStyle: "normal",
+                        fontWeight: "400",
+                        lineHeight: "18px",
                       }}
-                    />
-                  </div>
-                </td>
-                <td
-                  style={{
-                    paddingLeft: "45px",
-                    verticalAlign: "top",
-                  }}
-                >
-                  <p
-                    style={{
-                      color: "#100429",
-                      fontFamily: "Arial",
-                      fontSize: "13px",
-                      fontStyle: "normal",
-                      fontWeight: "700",
-                      lineHeight: "18px",
-                    }}
-                  >
-                    {data.firstName || "John"} {data.lastName || "Doe"}
-                  </p>
-                  <p
-                    style={{
-                      color: "#100429",
-                      fontFamily: "Arial",
-                      fontSize: "13px",
-                      fontStyle: "normal",
-                      fontWeight: "400",
-                      lineHeight: "18px",
-                    }}
-                  >
-                    {data.position || "Placeholder"}
-                  </p>
-                  <p
-                    style={{
-                      paddingTop: "20px",
-                      color: "#100429",
-                      fontFamily: "Arial",
-                      fontSize: "11px",
-                      fontStyle: "normal",
-                      fontWeight: "400",
-                      lineHeight: "16px",
-                    }}
-                  >
-                    T {formatTelephone(data.telephone)}
-                  </p>
-                  <p
-                    style={{
-                      paddingTop: "20px",
-                      color: "#100429",
-                      fontFamily: "Arial",
-                      fontSize: "11px",
-                      fontStyle: "normal",
-                      fontWeight: "400",
-                      lineHeight: "16px",
-                    }}
-                  >
-                    {data.addressLine1}
-                    <br />
-                    {data.addressLine2}
-                  </p>
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <p
+                    >
+                      <span
+                        style={{
+                          color: "#100429",
+                          fontFamily: "Arial",
+                          fontSize: "13px",
+                          fontStyle: "normal",
+                          fontWeight: "700",
+                          lineHeight: "18px",
+                        }}
+                      >
+                        {data.firstName || "John"} {data.lastName || "Doe"}
+                      </span>
+                      <br />
+                      {data.position || "Placeholder"}T <br />
+                      <br />
+                      {formatTelephone(data.telephone)}
+                      <br />
+                      <br />
+                      {data.addressLine1}
+                      <br />
+                      {data.addressLine2}
+                      <br />
+                    </p>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <p
+                              style={{
+                                color: "#100429",
+                                fontFamily: "Arial",
+                                fontSize: "11px",
+                                fontStyle: "normal",
+                                fontWeight: "400",
+                                lineHeight: "16px",
+                              }}
+                            >
+                              Ontdek de succesverhalen
+                              <br />
+                              via{" "}
+                              <a href="https://www.lyttledevelopment.com/?ref=email-signature">
+                                lyttledevelopment.com
+                              </a>
+                            </p>
+                          </td>
+                          <td
                             style={{
-                              paddingTop: "20px",
-                              color: "#100429",
-                              fontFamily: "Arial",
-                              fontSize: "11px",
-                              fontStyle: "normal",
-                              fontWeight: "400",
-                              lineHeight: "16px",
+                              paddingLeft: "65px",
                             }}
                           >
-                            Ontdek de succesverhalen
-                            <br />
-                            via{" "}
-                            <a href="https://www.lyttledevelopment.com/?ref=email-signature">
-                              lyttledevelopment.com
-                            </a>
-                          </p>
-                        </td>
-                        <td
-                          style={{
-                            paddingLeft: "65px",
-                          }}
-                        >
-                          <p
-                            style={{
-                              paddingTop: "20px",
-                              color: "#100429",
-                              fontFamily: "Arial",
-                              fontSize: "11px",
-                              fontStyle: "normal",
-                              fontWeight: "700",
-                              lineHeight: "18px",
-                            }}
-                          >
-                            Let’s make the Lyttle details,
-                            <br />
-                            become a lasting impression!
-                          </p>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                            <p
+                              style={{
+                                paddingTop: "20px",
+                                color: "#100429",
+                                fontFamily: "Arial",
+                                fontSize: "11px",
+                                fontStyle: "normal",
+                                fontWeight: "700",
+                                lineHeight: "18px",
+                              }}
+                            >
+                              Let’s make the Lyttle details,
+                              <br />
+                              become a lasting impression!
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <>
+            <p
+              style={{
+                color: "#0C0C0C",
+                fontFamily: "Arial",
+                fontSize: "12px",
+                fontStyle: "normal",
+                fontWeight: "400",
+                lineHeight: "130%",
+              }}
+            >
+              Please fill in all required fields before copying the signature.
+            </p>
+          </>
+        )}
       </article>
     </Container>
   );
