@@ -239,6 +239,31 @@ function Page() {
         </section>
       )}
 
+      {!app.isOperationsManager && openProjects && (
+        <section>
+          <h2>Open Projects:</h2>
+          <p>Projects with open tasks</p>
+          <ul className={styles.projects}>
+            {openProjects.map((project) => (
+              <li key={project.id} className={styles.project}>
+                <Link href={LINKS.project.detail(project.id)}>
+                  <h6>
+                    <strong>Name: </strong>
+                    {getProjectFullName(project, projects)}
+                  </h6>
+                  <p>
+                    <strong>Open Task(s): </strong>
+                    {project.tasks.filter((t) => !t.done).length}
+                  </p>
+                </Link>
+              </li>
+            ))}
+            {projects.filter((project) => project.tasks.length === 0).length ===
+              0 && <li>No open projects</li>}
+          </ul>
+        </section>
+      )}
+
       {(app.isOperationsManager || app.isManager) &&
         objectGroupedExpenses?.length > 0 && (
           <section>
@@ -282,31 +307,6 @@ function Page() {
             </ul>
           </section>
         )}
-
-      {openProjects && (
-        <section>
-          <h2>Open Projects:</h2>
-          <p>Projects with open tasks</p>
-          <ul className={styles.projects}>
-            {openProjects.map((project) => (
-              <li key={project.id} className={styles.project}>
-                <Link href={LINKS.project.detail(project.id)}>
-                  <h6>
-                    <strong>Name: </strong>
-                    {getProjectFullName(project, projects)}
-                  </h6>
-                  <p>
-                    <strong>Open Task(s): </strong>
-                    {project.tasks.filter((t) => !t.done).length}
-                  </p>
-                </Link>
-              </li>
-            ))}
-            {projects.filter((project) => project.tasks.length === 0).length ===
-              0 && <li>No open projects</li>}
-          </ul>
-        </section>
-      )}
     </Container>
   );
 }
