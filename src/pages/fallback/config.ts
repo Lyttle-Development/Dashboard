@@ -95,3 +95,5 @@ export const fallbackKeys: Record<string, string[]> = {
     "statusId",
   ],
 };
+
+export default () => null;
