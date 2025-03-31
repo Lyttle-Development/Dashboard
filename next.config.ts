@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  devIndicators: false, // Disable the "Next.js is running in development mode" message
 };
 
 export default nextConfig;
