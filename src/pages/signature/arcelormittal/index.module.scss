@@ -1,0 +1,38 @@
+.signature_container {
+  padding: 1rem;
+  border: 1px solid #000;
+  cursor: pointer;
+  position: relative;
+
+  &::after, &::before {
+    display: none;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 15rem;
+    font-weight: bold;
+    color: #fff;
+  }
+
+  &:not(.coping) {
+    &:hover {
+      background-color: rgba(121, 121, 121, 0.8);
+
+      &::after, &::before {
+        display: block;
+      }
+    }
+  }
+
+  &::after {
+    top: calc(50% - .6rem);
+    content: 'Click to select';
+  }
+
+  &::before {
+    top: calc(50% + .6rem);
+    content: 'and copy to clipboard';
+  }
+}
