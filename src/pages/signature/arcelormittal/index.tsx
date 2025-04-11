@@ -21,14 +21,13 @@ export function Page() {
     gradient: "",
   });
 
-  // Fetch the logo data URL when the component mounts
+  // Fetch the logo and gradient data URLs when the component mounts.
   useEffect(() => {
     fetch("/logo/arcelormittal/logo.svg")
       .then((response) => response.blob())
       .then((blob) => {
         const reader = new FileReader();
         reader.onloadend = () => {
-          // Once converted, store the logo data URL in state
           setData((prev) => ({
             ...prev,
             logo: reader.result as string,
@@ -39,12 +38,12 @@ export function Page() {
       .catch((error) => {
         console.error("Error fetching the logo:", error);
       });
+
     fetch("/logo/arcelormittal/gradient.svg")
       .then((response) => response.blob())
       .then((blob) => {
         const reader = new FileReader();
         reader.onloadend = () => {
-          // Once converted, store the logo data URL in state
           setData((prev) => ({
             ...prev,
             gradient: reader.result as string,
@@ -73,56 +72,58 @@ export function Page() {
       data.addressLine1
     );
   };
+
+  // Build the signature HTML with one combined image.
   const buildCleanSignatureHtml = () => {
     return `
-    <p style="color:#0C0C0C;font-family:Arial;font-size:12px;line-height:130%">
-      Beste<br><br>
-      Text<br><br>
-      Alvast bedankt.<br><br>
-      Met vriendelijke groeten / Kind regards<br>
-    </p>
-    <table style="position:relative">
-      <tbody>
-        <tr>
-          <td style="width:${10 * 16 + "px"};vertical-align:top">
-            <img src="${data.gradient}" alt="" style="position:absolute;bottom:0;left:0;width:139px;height:175px;" />
-            <img src="${data.image}" alt="Profile" style="position:absolute;bottom:0;left:13px;width:142px;height:148px;z-index:1;" />
-          </td>
-          <td style="vertical-align:top;padding-left:8px">
-            <table style="width: ${32 * 16 + "px"};margin-top: 16px;">
-              <tr>
-                <td>
-                  <span style="font-family:Arial;font-size:16px;color:#000;">
-                    ${data.firstName} ${data.lastName}
-                  </span>
-                  <br>
-                  <span style="font-family:Arial;font-size:11px;color:#333;">
+      <p style="color:#0C0C0C;font-family:Arial;font-size:12px;line-height:130%">
+        Beste<br><br>
+        Text<br><br>
+        Alvast bedankt.<br><br>
+        Met vriendelijke groeten / Kind regards<br>
+      </p>
+      <table style="position:relative">
+        <tbody>
+          <tr>
+            <td style="width:${10 * 16 + "px"};vertical-align:bottom;">
+              <img src="${data.image}" alt="Profile with Background" style="width:160px;height:175px;" />
+            </td>
+            <td style="vertical-align:bottom;padding-left:8px">
+              <table style="width: ${32 * 16 + "px"};margin-top: 16px;">
+                <tr>
+                  <td>
+                    <span style="font-family:Arial;font-size:16px;color:#000;">
+                      ${data.firstName} ${data.lastName}
+                    </span>
+                    <br>
+                    <span style="font-family:Arial;font-size:11px;color:#333;">
                       ${data.position}
-                  </span>
-                </td>
-                <td style="margin-left:auto;width: ${5 * 16 + "px"}">
-                  <img src="${data.logo}" alt="Logo" style="width:120px;height:43px;" />
-                </td>
-              </tr>
-            </table>
-            <div style="font-family:Arial;font-size:11px;color:#333;width: ${32 * 16 + "px"};margin-bottom:-8px;">
-              <strong style="color:#F25900;">T ${formatTelephone(data.telephone)}</strong><br>
-              Of <a href="?" style="color:#F25900;text-decoration:underline;">chat in Teams</a><br><br>
-              ${data.addressLine1}<br>
-              ${data.addressLine2}<br><br>
-              <span style="font-size:10px;">
-                PS: Gelieve uw IBO gerichte vragen voor Human Resources naar
-                <a href="mailto:hrdigitalisation@arcelormittal.com">hrdigitalisation@arcelormittal.com</a>
-                te sturen & voor IBO vragen voor Progress Academy naar
-                <a href="mailto:gen-pac-ibo@arcelormittal.com">gen-pac-ibo@arcelormittal.com</a> te sturen.
-              </span>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  `;
+                    </span>
+                  </td>
+                  <td style="margin-left:auto;width: ${5 * 16 + "px"}">
+                    <img src="${data.logo}" alt="Logo" style="width:120px;height:43px;" />
+                  </td>
+                </tr>
+              </table>
+              <div style="font-family:Arial;font-size:11px;color:#333;width: ${32 * 16 + "px"}">
+                <strong style="color:#F25900;">T ${formatTelephone(data.telephone)}</strong><br>
+                Of <a href="?" style="color:#F25900;text-decoration:underline;">chat in Teams</a><br><br>
+                ${data.addressLine1}<br>
+                ${data.addressLine2}<br><br>
+                <span style="font-size:10px;">
+                  PS: Gelieve uw IBO gerichte vragen voor Human Resources naar
+                  <a href="mailto:hrdigitalisation@arcelormittal.com">hrdigitalisation@arcelormittal.com</a>
+                  te sturen & voor IBO vragen voor Progress Academy naar
+                  <a href="mailto:gen-pac-ibo@arcelormittal.com">gen-pac-ibo@arcelormittal.com</a> te sturen.
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    `;
   };
+
   const selectSignature = () => {
     if (!isValid()) {
       window.alert(
@@ -130,14 +131,11 @@ export function Page() {
       );
       return;
     }
-
     if (!data.image) {
       window.alert("Please upload an image before copying the signature.");
       return;
     }
-
     const html = buildCleanSignatureHtml();
-
     navigator.clipboard
       .write([
         new ClipboardItem({
@@ -155,10 +153,10 @@ export function Page() {
   };
 
   const formatTelephone = (telephone: string): string => {
-    // Verwijder spaties of speciale tekens voor een zuivere invoer
+    // Remove non-digit characters for a clean number.
     const cleanNumber = telephone.replace(/\D/g, "");
 
-    // Belgisch mobiel nummer: 04XX XX XX XX of +32 4XX XX XX XX
+    // Belgian mobile number: 04XX XX XX XX or +32 4XX XX XX XX
     if (/^04\d{8}$/.test(cleanNumber)) {
       return `${cleanNumber.slice(0, 4)} ${cleanNumber.slice(4, 6)} ${cleanNumber.slice(6, 8)} ${cleanNumber.slice(8, 10)}`;
     }
@@ -166,13 +164,11 @@ export function Page() {
       return `+32 ${cleanNumber.slice(2, 5)} ${cleanNumber.slice(5, 7)} ${cleanNumber.slice(7, 9)} ${cleanNumber.slice(9, 11)}`;
     }
 
-    // Belgisch vast nummer: 02 X XX XX XX, 03 XXX XX XX, 09 XXX XX XX, enz.
+    // Belgian landline numbers
     if (/^0[1-9]\d{7,8}$/.test(cleanNumber)) {
       if (cleanNumber.startsWith("02")) {
-        // Brussel: 02 X XX XX XX
         return `${cleanNumber.slice(0, 2)} ${cleanNumber.slice(2, 3)} ${cleanNumber.slice(3, 5)} ${cleanNumber.slice(5, 7)} ${cleanNumber.slice(7)}`;
       } else {
-        // Andere regio's: 03 XXX XX XX, 09 XXX XX XX, enz.
         return `${cleanNumber.slice(0, 3)} ${cleanNumber.slice(3, 6)} ${cleanNumber.slice(6, 8)} ${cleanNumber.slice(8)}`;
       }
     }
@@ -185,6 +181,89 @@ export function Page() {
     }
     return telephone;
   };
+
+  // Helper function: loads an image from a data URL.
+  const loadImage = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve(img);
+      img.onerror = (err) => reject(err);
+      img.src = src;
+    });
+  };
+
+  // Combine the gradient and profile image into one composite image.
+  const combineImages = async (
+    gradientUrl: string,
+    profileUrl: string,
+    setCombined: (dataUrl: string) => void,
+  ) => {
+    try {
+      const [gradientImg, profileImg] = await Promise.all([
+        loadImage(gradientUrl),
+        loadImage(profileUrl),
+      ]);
+
+      // Define the canvas dimensions.
+      // In your original HTML, the gradient image has width 139px and height 175px,
+      // and the profile picture is 142x148 and offset 13px from the left.
+      const canvasWidth = 160;
+      const canvasHeight = 175;
+      const canvas = document.createElement("canvas");
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      // Draw the gradient image (positioned at the bottom-left).
+      ctx.drawImage(gradientImg, 0, canvasHeight - 175, 139, 175);
+
+      // Prepare the profile image to mimic object-fit: cover.
+      const targetWidth = 142;
+      const targetHeight = 148;
+      const profileCanvas = document.createElement("canvas");
+      profileCanvas.width = targetWidth;
+      profileCanvas.height = targetHeight;
+      const pCtx = profileCanvas.getContext("2d");
+      if (!pCtx) return;
+
+      // Calculate scaling for "cover"
+      const scale = Math.max(
+        targetWidth / profileImg.width,
+        targetHeight / profileImg.height,
+      );
+      const newWidth = profileImg.width * scale;
+      const newHeight = profileImg.height * scale;
+      const offsetX = (targetWidth - newWidth) / 2;
+      const offsetY = (targetHeight - newHeight) / 2;
+      pCtx.drawImage(profileImg, offsetX, offsetY, newWidth, newHeight);
+
+      // Draw the processed profile image onto the final canvas.
+      // The image is drawn with an offset of 13px from the left and bottom-aligned.
+      ctx.drawImage(
+        profileCanvas,
+        13,
+        canvasHeight - targetHeight,
+        targetWidth,
+        targetHeight,
+      );
+
+      // Convert the canvas to a data URL.
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setCombined(reader.result as string);
+        };
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error("Error combining images:", error);
+    }
+  };
+
+  // Updated getBinary function to use the combineImages function.
   const getBinary = (files: FileList) => {
     const file = files[0];
     if (!file) return;
@@ -192,44 +271,16 @@ export function Page() {
     const reader = new FileReader();
     reader.onloadend = () => {
       const dataUrl = reader.result as string;
-
-      const imgElement = new Image();
-      imgElement.onload = () => {
-        const canvasSizeX = 8.875 * 16;
-        const canvasSizeY = 9.25 * 16;
-        const canvas = document.createElement("canvas");
-        canvas.width = canvasSizeX;
-        canvas.height = canvasSizeY;
-        const ctx = canvas.getContext("2d");
-
-        if (ctx) {
-          // Calculate scale for "object-fit: cover"
-          const scale = Math.max(
-            canvasSizeX / imgElement.width,
-            canvasSizeY / imgElement.height,
-          );
-          const newWidth = imgElement.width * scale;
-          const newHeight = imgElement.height * scale;
-          const offsetX = (canvasSizeX - newWidth) / 2;
-          const offsetY = (canvasSizeY - newHeight) / 2;
-
-          // Draw the image within the circular area
-          ctx.drawImage(imgElement, offsetX, offsetY, newWidth, newHeight);
-
-          // Convert the canvas to a data URL
-          canvas.toBlob((blob) => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              set("image", reader.result as string);
-            };
-            reader.readAsDataURL(blob);
-          });
-        }
-      };
-
-      imgElement.src = dataUrl;
+      if (!data.gradient) {
+        window.alert(
+          "Gradient image is not loaded yet. Please try again later.",
+        );
+        return;
+      }
+      combineImages(data.gradient, dataUrl, (combinedUrl: string) => {
+        set("image", combinedUrl);
+      });
     };
-
     reader.readAsDataURL(file);
   };
 
@@ -279,27 +330,22 @@ export function Page() {
         onClick={selectSignature}
         ref={signatureContainerRef}
       >
-        {" "}
         {isValid() ? (
           <div
             ref={signatureRef}
             dangerouslySetInnerHTML={{ __html: buildCleanSignatureHtml() }}
           />
         ) : (
-          <>
-            <p
-              style={{
-                color: "#0C0C0C",
-                fontFamily: "Arial",
-                fontSize: "12px",
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "130%",
-              }}
-            >
-              Please fill in all required fields before copying the signature.
-            </p>
-          </>
+          <p
+            style={{
+              color: "#0C0C0C",
+              fontFamily: "Arial",
+              fontSize: "12px",
+              lineHeight: "130%",
+            }}
+          >
+            Please fill in all required fields before copying the signature.
+          </p>
         )}
       </article>
     </Container>
