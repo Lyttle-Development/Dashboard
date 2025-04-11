@@ -73,7 +73,56 @@ export function Page() {
       data.addressLine1
     );
   };
-
+  const buildCleanSignatureHtml = () => {
+    return `
+    <p style="color:#0C0C0C;font-family:Arial;font-size:12px;line-height:130%">
+      Beste<br><br>
+      Text<br><br>
+      Alvast bedankt.<br><br>
+      Met vriendelijke groeten / Kind regards<br>
+    </p>
+    <table style="position:relative">
+      <tbody>
+        <tr>
+          <td style="width:${10 * 16 + "px"};vertical-align:top">
+            <img src="${data.gradient}" alt="" style="position:absolute;bottom:0;left:0;width:139px;height:175px;" />
+            <img src="${data.image}" alt="Profile" style="position:absolute;bottom:0;left:13px;width:142px;height:148px;z-index:1;" />
+          </td>
+          <td style="vertical-align:top;padding-left:8px">
+            <table style="width: ${32 * 16 + "px"};margin-top: 16px;">
+              <tr>
+                <td>
+                  <span style="font-family:Arial;font-size:16px;color:#000;">
+                    ${data.firstName} ${data.lastName}
+                  </span>
+                  <br>
+                  <span style="font-family:Arial;font-size:11px;color:#333;">
+                      ${data.position}
+                  </span>
+                </td>
+                <td style="margin-left:auto;width: ${5 * 16 + "px"}">
+                  <img src="${data.logo}" alt="Logo" style="width:120px;height:43px;" />
+                </td>
+              </tr>
+            </table>
+            <div style="font-family:Arial;font-size:11px;color:#333;width: ${32 * 16 + "px"};margin-bottom:-8px;">
+              <strong style="color:#F25900;">T ${formatTelephone(data.telephone)}</strong><br>
+              Of <a href="?" style="color:#F25900;text-decoration:underline;">chat in Teams</a><br><br>
+              ${data.addressLine1}<br>
+              ${data.addressLine2}<br><br>
+              <span style="font-size:10px;">
+                PS: Gelieve uw IBO gerichte vragen voor Human Resources naar
+                <a href="mailto:hrdigitalisation@arcelormittal.com">hrdigitalisation@arcelormittal.com</a>
+                te sturen & voor IBO vragen voor Progress Academy naar
+                <a href="mailto:gen-pac-ibo@arcelormittal.com">gen-pac-ibo@arcelormittal.com</a> te sturen.
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+  };
   const selectSignature = () => {
     if (!isValid()) {
       window.alert(
@@ -87,20 +136,13 @@ export function Page() {
       return;
     }
 
-    const container = signatureRef.current;
-    if (!container) return;
+    const html = buildCleanSignatureHtml();
 
-    const html = container.innerHTML;
-
-    // Add "coping" class
-    signatureContainerRef.current.classList.add(styles.coping);
-
-    // Use Clipboard API
     navigator.clipboard
       .write([
         new ClipboardItem({
           "text/html": new Blob([html], { type: "text/html" }),
-          "text/plain": new Blob([""], { type: "text/plain" }), // disable plain text fallback
+          "text/plain": new Blob([""], { type: "text/plain" }),
         }),
       ])
       .then(() => {
@@ -109,10 +151,6 @@ export function Page() {
       .catch((err) => {
         console.error("Clipboard write failed", err);
         window.alert("Failed to copy the signature.");
-      })
-      .finally(() => {
-        // Remove "coping" class
-        signatureContainerRef.current.classList.remove(styles.coping);
       });
   };
 
@@ -243,211 +281,10 @@ export function Page() {
       >
         {" "}
         {isValid() ? (
-          <div ref={signatureRef}>
-            <p
-              style={{
-                color: "#0C0C0C",
-                fontFamily: "Arial",
-                fontSize: "12px",
-                fontStyle: "normal",
-                fontWeight: "400",
-                lineHeight: "130%",
-              }}
-            >
-              Beste
-              <br />
-              <br />
-              Text
-              <br />
-              <br />
-              Alvast bedankt.
-              <br />
-              <br />
-              Met vriendelijke groeten / Kind regards
-              <br />
-              <br />
-            </p>
-            <table
-              style={{
-                position: "relative",
-              }}
-            >
-              <tbody>
-                <tr>
-                  <td
-                    style={{
-                      width: 11 * 16 + "px",
-                      verticalAlign: "top",
-                    }}
-                  >
-                    <div
-                      style={{
-                        paddingBottom: "24px",
-                      }}
-                    >
-                      <img
-                        src={data.image}
-                        alt="Profile Picture"
-                        style={{
-                          width: 8.875 * 16 + "px",
-                          height: 9.25 * 16 + "px",
-                          position: "absolute",
-                          bottom: "0",
-                          left: 0.8 * 16 + "px",
-                          zIndex: 1,
-                        }}
-                      />
-                      <img
-                        src={data.gradient}
-                        alt="ArcelorMittal Gradient"
-                        style={{
-                          width: 8.6875 * 16 + "px",
-                          height: 10.9375 * 16 + "px",
-                          position: "absolute",
-                          bottom: "0",
-                          left: "0",
-                        }}
-                      />
-                    </div>
-                  </td>
-                  <td
-                    style={{
-                      verticalAlign: "top",
-                    }}
-                  >
-                    <table
-                      style={{
-                        width: 32 * 16 + "px",
-                      }}
-                    >
-                      <tbody>
-                        <tr>
-                          <td>
-                            <span
-                              style={{
-                                color: "#000",
-                                textAlign: "center",
-                                fontFamily: "Arial",
-                                fontSize: 16 + "px",
-                                fontStyle: "normal",
-                                fontWeight: 400,
-                                lineHeight: 1.25 * 16 + "px",
-                              }}
-                            >
-                              {data.firstName || "John"}{" "}
-                              {data.lastName || "Doe"}
-                            </span>
-                          </td>
-                          <td
-                            style={{
-                              marginLeft: "auto",
-                              width: 5 * 16 + "px",
-                            }}
-                          >
-                            <div>
-                              <img
-                                src={data.logo}
-                                alt="ArcelorMittal Logo"
-                                style={{
-                                  width: "120px",
-                                  height: "43px",
-                                }}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <p
-                      style={{
-                        color: "#333",
-                        fontFamily: "Arial",
-                        fontSize: 0.6875 * 16 + "px",
-                        fontStyle: "normal",
-                        fontWeight: "400",
-                        lineHeight: "130%",
-                      }}
-                    >
-                      <br />
-                      {data.position || "Placeholder"}
-                      <br />
-                      <br />
-                      <span
-                        style={{
-                          color: "#F25900",
-                          fontFamily: "Arial",
-                          fontSize: 0.6875 * 16 + "px",
-                          fontStyle: "normal",
-                          fontWeight: "700",
-                          lineHeight: "130%",
-                        }}
-                      >
-                        T {formatTelephone(data.telephone)}
-                      </span>
-                      <br />
-                      <span
-                        style={{
-                          color: "#000",
-                          fontFamily: "Arial",
-                          fontSize: 0.6875 * 16 + "px",
-                          fontStyle: "normal",
-                          fontWeight: "400",
-                          lineHeight: "130%",
-                        }}
-                      >
-                        Of{" "}
-                        <a
-                          href="?"
-                          style={{
-                            color: "#F25900",
-                            fontFamily: "Arial",
-                            fontSize: 0.6875 * 16 + "px",
-                            fontStyle: "normal",
-                            fontWeight: "400",
-                            lineHeight: "130%",
-                            textDecorationLine: "underline",
-                          }}
-                        >
-                          chat in Teams
-                        </a>
-                      </span>
-                      <br />
-                      <br />
-                      {data.addressLine1}
-                      <br />
-                      {data.addressLine2}
-                      <br />
-                      <br />
-                      <span
-                        style={{
-                          display: "block",
-                          width: 32 * 16 + "px",
-
-                          color: "#333",
-                          fontFamily: "Arial",
-                          fontSize: 0.625 * 16 + "px",
-                          fontStyle: "normal",
-                          fontWeight: "400",
-                          lineHeight: "130%",
-                        }}
-                      >
-                        PS: Gelieve uw IBO gerichte vragen voor Human Resources
-                        naar{" "}
-                        <a href="mailto:hrdigitalisation@arcelormittal.com">
-                          hrdigitalisation@arcelormittal.com
-                        </a>{" "}
-                        te sturen & voor IBO vragen voor Progress Academy naar{" "}
-                        <a href="mailto:gen-pac-ibo@arcelormittal.com">
-                          gen-pac-ibo@arcelormittal.com
-                        </a>{" "}
-                        te sturen.
-                      </span>
-                    </p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <div
+            ref={signatureRef}
+            dangerouslySetInnerHTML={{ __html: buildCleanSignatureHtml() }}
+          />
         ) : (
           <>
             <p
