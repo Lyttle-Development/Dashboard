@@ -162,6 +162,8 @@ export function Page() {
         statusId: closed
           ? ExpenseStatusEnum.CLOSED
           : ExpenseStatusEnum.REOPENED,
+        neededAt: expense.recurring ? new Date() : expense.neededAt,
+        orderedAt: expense.recurring ? new Date() : expense.orderedAt,
       },
     });
     await fetchExpense(expenseId as string);
