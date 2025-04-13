@@ -21,6 +21,17 @@ export default function Document() {
         {/* <!-- For Android devices (recommended) --> */}
         <meta name="theme-color" content="#ffffff" />
 
+        {
+          // Add Umami (only if the environment variable is set)
+          process.env.UMAMI_WEBSITE_ID && (
+            <script
+              defer
+              src="https://umami.app.lyttle.dev/script.js"
+              data-website-id={process.env.UMAMI_WEBSITE_ID}
+            />
+          )
+        }
+
         {/* <!-- Basic styles --> */}
         <style>
           {`
