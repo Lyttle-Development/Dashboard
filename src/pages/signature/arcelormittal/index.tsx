@@ -75,8 +75,7 @@ export function Page() {
 
   // Build the signature HTML with one combined image.
   const buildCleanSignatureHtml = () => {
-    return `
-      <p style="color:#0C0C0C;font-family:Arial;font-size:12px;line-height:130%">
+    return `<p style="color:#0C0C0C;font-family:Arial;font-size:12px;line-height:130%">
         Beste<br><br>
         Text<br><br>
         Alvast bedankt.<br><br>
@@ -100,28 +99,31 @@ export function Page() {
                       ${data.position}
                     </span>
                   </td>
-                  <td style="margin-left:auto;width: ${5 * 16 + "px"}">
-                    <img src="${data.logo}" alt="Logo" style="width:120px;height:43px;" />
+                  <td style="margin-left:auto;width:80px;">
+                    <img src="${data.logo}" alt="Logo" style="width:80px;height:36px;" />
                   </td>
                 </tr>
               </table>
-              <div style="font-family:Arial;font-size:11px;color:#333;width: ${32 * 16 + "px"}">
-                <strong style="color:#F25900;">T ${formatTelephone(data.telephone)}</strong><br>
-                Of <a href="?" style="color:#F25900;text-decoration:underline;">chat in Teams</a><br><br>
-                ${data.addressLine1}<br>
-                ${data.addressLine2}<br><br>
-                <span style="font-size:10px;">
-                  PS: Gelieve uw IBO gerichte vragen voor Human Resources naar
-                  <a href="mailto:hrdigitalisation@arcelormittal.com">hrdigitalisation@arcelormittal.com</a>
-                  te sturen & voor IBO vragen voor Progress Academy naar
-                  <a href="mailto:gen-pac-ibo@arcelormittal.com">gen-pac-ibo@arcelormittal.com</a> te sturen.
-                </span>
-              </div>
+              <table style="width: ${32 * 16 + "px"};margin-top: 16px;">
+                <tr>
+                  <td style="font-family:Arial;font-size:11px;color:#333;width: ${32 * 16 + "px"}">
+                    <strong style="color:#F25900;">T ${formatTelephone(data.telephone)}</strong><br>
+                    Of <a href="?" style="color:#F25900;text-decoration:underline;">chat in Teams</a><br><br>
+                    ${data.addressLine1}<br>
+                    ${data.addressLine2}<br><br>
+                    <span style="font-size:10px;">
+                      PS: Gelieve uw IBO gerichte vragen voor Human Resources naar
+                      <a href="mailto:hrdigitalisation@arcelormittal.com">hrdigitalisation@arcelormittal.com</a>
+                      te sturen & voor IBO vragen voor Progress Academy naar
+                      <a href="mailto:gen-pac-ibo@arcelormittal.com">gen-pac-ibo@arcelormittal.com</a> te sturen.
+                    </span>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
         </tbody>
-      </table>
-    `;
+      </table>`;
   };
 
   const selectSignature = () => {
