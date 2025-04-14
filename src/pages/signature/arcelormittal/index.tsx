@@ -23,7 +23,7 @@ export function Page() {
 
   // Fetch the logo and gradient data URLs when the component mounts.
   useEffect(() => {
-    fetch("/logo/arcelormittal/logo.svg")
+    fetch("/logo/arcelormittal/logo.png")
       .then((response) => response.blob())
       .then((blob) => {
         const reader = new FileReader();
