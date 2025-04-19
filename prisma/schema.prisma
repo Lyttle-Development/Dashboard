@@ -73,16 +73,21 @@ model Address {
 }
 
 model ServicePrice {
-  id         String     @id @default(uuid())
+  id         String    @id @default(uuid())
   service    String?
   price      Float?
   categoryId String?
-  category   Category?  @relation(fields: [categoryId], references: [id])
-  projects   Project[]
-  printJobs  PrintJob[]
-  Invoice    Invoice[]
-  updatedAt  DateTime   @default(now()) @updatedAt
-  createdAt  DateTime   @default(now())
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  description String?
+  notes       String?
+  interval    String?
+
+  projects  Project[]
+  printJobs PrintJob[]
+  Invoice   Invoice[]
+  updatedAt DateTime   @default(now()) @updatedAt
+  createdAt DateTime   @default(now())
 }
 
 model Invoice {

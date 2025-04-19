@@ -15,18 +15,18 @@ export interface ExpenseStatus {
   createdAt: Date;
 }
 
-export interface InvoiceStatus {
-  id: string;
-  status: string;
-  invoices: Invoice[];
-  updatedAt: Date;
-  createdAt: Date;
-}
-
 export interface SubscriptionStatus {
   id: string;
   status: string;
   subscriptions: Subscription[];
+  updatedAt: Date;
+  createdAt: Date;
+}
+
+export interface InvoiceStatus {
+  id: string;
+  status: string;
+  invoices: Invoice[];
   updatedAt: Date;
   createdAt: Date;
 }
@@ -65,6 +65,9 @@ export interface ServicePrice {
   id: string;
   service?: string;
   price?: number;
+  description?: string;
+  notes?: string;
+  interval?: string;
   categoryId?: string;
   category?: Category;
   projects: Project[];
