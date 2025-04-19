@@ -2,7 +2,7 @@ import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Field } from "@/components/Field";
 import { Select } from "@/components/Select";
-import { Category, ServicePrice } from "@/lib/prisma";
+import { Category, IntervalEnum, ServicePrice } from "@/lib/prisma";
 import { useEffect, useState } from "react";
 import { fetchApi } from "@/lib/fetchApi";
 import { Button } from "@/components/Button";
@@ -11,12 +11,12 @@ import { Loader } from "@/components/Loader";
 import { safeParseFloat } from "@/lib/parse";
 import { LINKS } from "@/links";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { FormOptionType } from "@/components/Form";
 
-interface updatePrice {
-  categoryId: string | null;
-  service: string | null;
-  price: number | null;
-}
+type updatePrice = Omit<
+  ServicePrice,
+  "id" | "projects" | "printJobs" | "Invoice" | "updatedAt" | "createdAt"
+>;
 
 function Page() {
   usePageTitle({ title: "Create Price" });
@@ -28,6 +28,9 @@ function Page() {
     categoryId: null,
     service: null,
     price: null,
+    description: null,
+    notes: null,
+    interval: null,
   });
 
   const updatePrice = (key: keyof ServicePrice, value: string | number) => {
@@ -51,7 +54,7 @@ function Page() {
       body: price,
     });
     setLoading(false);
-    void router.push(LINKS.price.detail(data.id));
+    void router.push(LINKS.price.detail(data.categoryId));
   };
 
   useEffect(() => {
@@ -84,9 +87,37 @@ function Page() {
         }
       />
       <Field
+        label="Description"
+        required
+        onChange={(value) =>
+          updatePrice("description", typeof value === "string" ? value : "")
+        }
+        type={FormOptionType.TEXTAREA}
+      />
+      <Field
         label="Price"
         required
         onChange={(p) => updatePrice("price", safeParseFloat(p) || 0)}
+      />
+      <Field
+        label="Notes"
+        required
+        onChange={(value) =>
+          updatePrice("notes", typeof value === "string" ? value : "")
+        }
+        type={FormOptionType.TEXTAREA}
+      />
+      <Select
+        label="Select Interval"
+        options={(Object.values(IntervalEnum) as string[]).map((interval) => ({
+          label: interval,
+          value: interval,
+        }))}
+        onValueChange={(value) =>
+          updatePrice("interval", typeof value === "string" ? value : "")
+        }
+        value={price.interval?.toString()}
+        searchable
       />
       {validPrice && <Button onClick={createPrice}>Create Price</Button>}
     </Container>

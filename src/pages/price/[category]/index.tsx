@@ -27,6 +27,13 @@ export function Page() {
       relations: { category: true },
     });
 
+    // Sort by service name
+    pricesData.sort((a, b) => {
+      if (a.service < b.service) return -1;
+      if (a.service > b.service) return 1;
+      return 0;
+    });
+
     setPrices(pricesData);
     setOriginalPrices(pricesData);
     setLoading(false);
@@ -40,7 +47,10 @@ export function Page() {
 
   const changedPrices = prices.filter((price) => {
     const originalPrice = originalPrices.find((p) => p.id === price.id);
-    return originalPrice?.price !== price.price;
+    // Check all keys
+    return !Object.keys(price).every((key) => {
+      return originalPrice[key] === price[key];
+    });
   });
 
   const changed = changedPrices.length > 0;

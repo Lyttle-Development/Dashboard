@@ -1,10 +1,11 @@
-import { ServicePrice } from "@/lib/prisma";
+import { IntervalEnum, ServicePrice } from "@/lib/prisma";
 import styles from "./index.module.scss";
 import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
 import { Button } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
 import { useState } from "react";
+import { Select } from "@/components/Select";
 
 export interface PriceProps {
   price: ServicePrice;
@@ -66,6 +67,34 @@ export function Price({
         value={priceString || "0"}
         label="Price"
         type={FormOptionType.TEXT}
+      />
+      <Select
+        label="Interval"
+        options={(Object.values(IntervalEnum) as string[]).map((interval) => ({
+          label: interval,
+          value: interval,
+        }))}
+        onValueChange={(value) =>
+          setPrice("interval", typeof value === "string" ? value : "")
+        }
+        value={price.interval?.toString()}
+        searchable
+      />
+      <Field
+        onChange={(value) =>
+          setPrice("description", typeof value === "string" ? value : "")
+        }
+        value={price.description || ""}
+        label="Description"
+        type={FormOptionType.TEXTAREA}
+      />
+      <Field
+        onChange={(value) =>
+          setPrice("notes", typeof value === "string" ? value : "")
+        }
+        value={price.notes || ""}
+        label="Notes"
+        type={FormOptionType.TEXTAREA}
       />
       <Button onClick={deletePrice}>Delete</Button>
     </article>
