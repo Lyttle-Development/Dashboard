@@ -49,6 +49,44 @@ function Page() {
       },
     });
 
+    // Sort by newest task and then time log
+    projectData?.sort((a, b) => {
+      const hasTasksOrLogs = (item: any) =>
+        item.tasks.length > 0 || item.timeLogs.length > 0;
+
+      // If one has data and the other doesn't, push the one with no data to the end
+      if (hasTasksOrLogs(a) && !hasTasksOrLogs(b)) return -1;
+      if (!hasTasksOrLogs(a) && hasTasksOrLogs(b)) return 1;
+      if (!hasTasksOrLogs(a) && !hasTasksOrLogs(b)) return 0; // both have no data
+
+      const aNewestTask = a.tasks.reduce((prev, curr) => {
+        return prev.updatedAt > curr.updatedAt ? prev : curr;
+      }, a.tasks[0]);
+
+      const bNewestTask = b.tasks.reduce((prev, curr) => {
+        return prev.updatedAt > curr.updatedAt ? prev : curr;
+      }, b.tasks[0]);
+
+      const aNewestTimeLog = findNewestTimeLog(a.timeLogs);
+      const bNewestTimeLog = findNewestTimeLog(b.timeLogs);
+
+      const aTime = new Date(
+        aNewestTask?.updatedAt ?? aNewestTask?.createdAt,
+      ).getTime();
+      const bTime = new Date(
+        bNewestTask?.updatedAt ?? bNewestTask?.createdAt,
+      ).getTime();
+
+      if (aTime !== bTime) {
+        return bTime - aTime;
+      }
+
+      return (
+        new Date(bNewestTimeLog?.startTime).getTime() -
+        new Date(aNewestTimeLog?.startTime).getTime()
+      );
+    });
+
     setProjects(projectData ?? []);
     setLoading("projects", false);
   }, []);
