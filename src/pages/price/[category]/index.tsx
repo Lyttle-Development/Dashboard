@@ -64,6 +64,9 @@ export function Page() {
         body: {
           service: price.service,
           price: price.price,
+          interval: price.interval,
+          description: price.description,
+          notes: price.notes,
         },
       });
     });
