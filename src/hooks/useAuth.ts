@@ -6,7 +6,7 @@ import {isAllowedUser} from '@/lib/auth';
  * Custom hook to handle authentication logic
  */
 export function useAuth(skipAuth = false) {
-    if (!skipAuth) {
+    if (skipAuth) {
         return {
             session: null,
             isLoading: false,
