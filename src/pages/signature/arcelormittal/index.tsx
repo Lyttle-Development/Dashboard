@@ -354,6 +354,6 @@ export function Page() {
   );
 }
 
-Page.getLayout = Layout.getDefault;
+Page.skipAuth = true
 
 export default Page;

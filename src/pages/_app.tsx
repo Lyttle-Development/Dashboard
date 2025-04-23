@@ -20,10 +20,11 @@ type AppPropsWithLayout = AppProps & {
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
+  const skipAuth = Component.skipAuth ?? false
 
   return (
     <SessionProvider>
-      <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
+      <AppProvider skipAuth={skipAuth}>{getLayout(<Component {...pageProps} />)}</AppProvider>
     </SessionProvider>
   );
 }
