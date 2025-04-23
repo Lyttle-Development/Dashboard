@@ -9,12 +9,13 @@ import {SessionProvider} from 'next-auth/react';
 import {AppProvider} from '@/contexts/App.provider';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+export type CustomNextPage<P = {}, IP = P> = NextPage<P, IP> & {
     getLayout?: (page: ReactElement) => ReactNode;
+    skipAuth?: boolean;
 };
 
 type AppPropsWithLayout = AppProps & {
-    Component: NextPageWithLayout;
+    Component: CustomNextPage;
 };
 
 export default function App({Component, pageProps}: AppPropsWithLayout) {
