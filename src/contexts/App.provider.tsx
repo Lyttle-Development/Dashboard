@@ -32,8 +32,8 @@ export function AppProvider({children, skipAuth = false}: AppContextProps) {
     return (
         <AppContext.Provider
             value={{
-                userId: session?.user?.id ?? null,
-                userEmail: session?.user?.email ?? null,
+                userId: session ? session!.user.id : null,
+                userEmail: session ? session!.user.email : null,
                 isAdmin: session ? isAdmin(session) : false,
                 isManager: session ? isManager(session) : false,
                 isOperationsManager: session ? isOperationsManager(session) : false,
