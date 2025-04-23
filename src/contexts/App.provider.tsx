@@ -10,35 +10,33 @@ export interface AppContextProps {
 }
 
 export function AppProvider({children, skipAuth = false}: AppContextProps) {
-    const {session, isLoading, isAuthenticated, isAllowed} = useAuth();
+    const {session, isLoading, isAuthenticated, isAllowed} = useAuth(skipAuth);
 
     if (isLoading) {
         return <Loader/>;
     }
 
-    if (!skipAuth) {
-        if (!isAuthenticated) {
-            return null;
-        }
+    if (!isAuthenticated) {
+        return null;
+    }
 
-        if (!isAllowed) {
-            return (
-                <div>
-                    <h1>Forbidden</h1>
-                    <p>You don't have permission to access this page.</p>
-                </div>
-            );
-        }
+    if (!isAllowed) {
+        return (
+            <div>
+                <h1>Forbidden</h1>
+                <p>You don't have permission to access this page.</p>
+            </div>
+        );
     }
 
     return (
         <AppContext.Provider
             value={{
-                userId: session!.user.id,
-                userEmail: session!.user.email,
-                isAdmin: isAdmin(session),
-                isManager: isManager(session),
-                isOperationsManager: isOperationsManager(session),
+                userId: session?.user?.id ?? null,
+                userEmail: session?.user?.email ?? null,
+                isAdmin: session ? isAdmin(session) : false,
+                isManager: session ? isManager(session) : false,
+                isOperationsManager: session ? isOperationsManager(session) : false,
             }}
         >
             {children}
