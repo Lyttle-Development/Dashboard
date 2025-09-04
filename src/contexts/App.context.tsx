@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 
 export interface AppContextInterface {
-  userId: string;
+  userId: string | null;
   userEmail?: string | null;
   isAdmin: boolean;
   isManager: boolean;

@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {Layout} from '@/layouts';
 import {usePageTitle} from '@/hooks/usePageTitle';
-import {fallbackKeys, tableConfigs} from '@/pages/fallback/config';
+import {fallbackKeys, tableConfigs} from '@/lib/fallback-config';
 
 /**
  * Returns an appropriate input type based on the field name and/or its current value.
@@ -51,11 +51,11 @@ export function Page() {
   const [selectedTable, setSelectedTable] =
     useState<keyof typeof tableConfigs>("category");
   // Data for the selected table.
-  let [data, setData] = useState<Array<Record<string, any>>>([]);
+  const [rawData, setRawData] = useState<Array<Record<string, any>>>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   // Remove createdAt and updatedAt fields from the data.
-  data = data.map((record) => {
+  const data = rawData.map((record) => {
     const { createdAt, updatedAt, ...rest } = record;
     return rest;
   });
@@ -81,10 +81,10 @@ export function Page() {
       const res = await fetch(url.href);
       if (!res.ok) console.log("Failed to fetch data");
       const json = await res.json();
-      setData(json || []);
+      setRawData(json || []);
     } catch (err) {
       console.error("Error fetching data", err);
-      setData([]);
+      setRawData([]);
     }
     setLoading(false);
   }, [config.endpoint]);

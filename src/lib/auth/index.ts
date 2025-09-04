@@ -1,6 +1,9 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {getServerSession} from 'next-auth/next';
-import {authOptions} from '@/pages/api/auth/[...nextauth]';
+import {authOptions} from '@/lib/auth/config';
+
+// For App Router compatibility
+import {NextRequest} from 'next/server';
 
 /**
  * Helper function to get the authenticated session in API routes.
@@ -26,6 +29,33 @@ export async function requireAuth(req: NextApiRequest, res: NextApiResponse) {
     return session;
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
+    return null;
+  }
+}
+
+/**
+ * Helper function for App Router authentication
+ */
+export async function requireAuthApp(request: NextRequest) {
+  try {
+    // For App Router, we need to get session differently
+    const session = await getServerSession(authOptions);
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.split(" ")[1];
+    
+    if (!session && !token) {
+      return null;
+    }
+
+    // Check user is allowed
+    const isAllowed =
+      isAllowedUser(session) || token === process.env.AUTH_TOKEN;
+    if (!isAllowed) {
+      return null;
+    }
+
+    return session;
+  } catch (error) {
     return null;
   }
 }

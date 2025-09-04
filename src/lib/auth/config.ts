@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions, Session } from "next-auth";
+import { NextAuthOptions, Session } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 
 export const authOptions: NextAuthOptions = {
@@ -18,5 +18,3 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
-
-export default NextAuth(authOptions);

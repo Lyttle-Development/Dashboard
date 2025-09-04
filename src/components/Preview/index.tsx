@@ -25,7 +25,7 @@ export function Preview({
       setLoading(false);
     };
     void fetch();
-  }, [link]);
+  }, [link, onImage]);
 
   if (loading && !preview && !image) return null;
 

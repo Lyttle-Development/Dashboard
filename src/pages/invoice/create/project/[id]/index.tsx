@@ -36,7 +36,7 @@ function Page() {
   const [loading, setLoading] = useState(false);
   const [loadingTask, setLoadingTask] = useState("Initializing");
   const [projects, setProjects] = useState<Project[]>([]);
-  const [project, setProject] = useState<Project>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const [invoice, setInvoice] = useState({});
   const [discount, setDiscount] = useState(0);
 
@@ -52,9 +52,11 @@ function Page() {
 
   const fetchProjects = async (ids: string[], child = 0) => {
     setLoading(true);
-    child
-      ? setLoadingTask("Fetching child projects at level #" + child)
-      : setLoadingTask("Fetching projects");
+    if (child) {
+      setLoadingTask("Fetching child projects at level #" + child);
+    } else {
+      setLoadingTask("Fetching projects");
+    }
     const projectsData = await fetchApi<Project[]>({
       table: "project",
       where: {
