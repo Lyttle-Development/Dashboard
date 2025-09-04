@@ -14,7 +14,7 @@ function toCamelCase(str: string): string {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { table: string } }
+  { params }: { params: Promise<{ table: string }> }
 ) {
   const session = await requireAuthApp(request);
   if (!session) {
@@ -23,7 +23,7 @@ export async function GET(
 
   await debugBuffer();
 
-  const { table } = params;
+  const { table } = await params;
   const { searchParams } = new URL(request.url);
 
   // Validate that "table" is provided and is a string.
@@ -66,7 +66,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { table: string } }
+  { params }: { params: Promise<{ table: string }> }
 ) {
   const session = await requireAuthApp(request);
   if (!session) {
@@ -75,7 +75,7 @@ export async function POST(
 
   await debugBuffer();
 
-  const { table } = params;
+  const { table } = await params;
 
   // Validate that "table" is provided and is a string.
   if (!table) {

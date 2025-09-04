@@ -29,7 +29,7 @@ function convertDates(payload: Record<string, any>): Record<string, any> {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { table: string; id: string } }
+  { params }: { params: Promise<{ table: string; id: string }> }
 ) {
   const session = await requireAuthApp(request);
   if (!session) {
@@ -38,7 +38,7 @@ export async function GET(
 
   await debugBuffer();
 
-  const { table, id } = params;
+  const { table, id } = await params;
   const { searchParams } = new URL(request.url);
 
   // Validate table parameter.
@@ -90,7 +90,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { table: string; id: string } }
+  { params }: { params: Promise<{ table: string; id: string }> }
 ) {
   const session = await requireAuthApp(request);
   if (!session) {
@@ -99,7 +99,7 @@ export async function PUT(
 
   await debugBuffer();
 
-  const { table, id } = params;
+  const { table, id } = await params;
 
   // Validate table parameter.
   if (!table) {
@@ -156,7 +156,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { table: string; id: string } }
+  { params }: { params: Promise<{ table: string; id: string }> }
 ) {
   const session = await requireAuthApp(request);
   if (!session) {
@@ -169,7 +169,7 @@ export async function DELETE(
 
   await debugBuffer();
 
-  const { table, id } = params;
+  const { table, id } = await params;
 
   // Validate table parameter.
   if (!table) {

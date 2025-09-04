@@ -52,9 +52,11 @@ function Page() {
 
   const fetchProjects = async (ids: string[], child = 0) => {
     setLoading(true);
-    child
-      ? setLoadingTask("Fetching child projects at level #" + child)
-      : setLoadingTask("Fetching projects");
+    if (child) {
+      setLoadingTask("Fetching child projects at level #" + child);
+    } else {
+      setLoadingTask("Fetching projects");
+    }
     const projectsData = await fetchApi<Project[]>({
       table: "project",
       where: {

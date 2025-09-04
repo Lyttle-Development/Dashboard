@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {Layout} from '@/layouts';
 import {usePageTitle} from '@/hooks/usePageTitle';
-import {fallbackKeys, tableConfigs} from '@/pages/fallback/config';
+import {fallbackKeys, tableConfigs} from '@/lib/fallback-config';
 
 /**
  * Returns an appropriate input type based on the field name and/or its current value.
