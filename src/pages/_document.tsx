@@ -1,13 +1,10 @@
 import { Head, Html, Main, NextScript } from "next/document";
-import { SITE_NAME } from "@/constants";
 
 export default function Document() {
   return (
     <Html lang="en">
       <Head>
         <meta charSet="utf-8" />
-        <title>{SITE_NAME}</title>
-
         {/* <!-- Favicon for browsers that support SVG format --> */}
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         {/* <!-- Favicon for browsers that support PNG format --> */}

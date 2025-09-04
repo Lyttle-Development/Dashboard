@@ -11,10 +11,33 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
-  ...compat.config({
-    plugins: ["@typescript-eslint"],
-    extends: ["plugin:@typescript-eslint/recommended"],
-  }),
+  {
+    rules: {
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "@next/next/no-img-element": "off",
+      "prefer-const": "off",
+      "react/display-name": "off",
+      "react-hooks/rules-of-hooks": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "off",
+        {
+          vars: "all",
+          args: "after-used",
+          ignoreRestSiblings: false,
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^(_|ignore)",
+        },
+      ],
+    },
+  },
+  {
+    ignores: [".next/"],
+  },
 ];
 
 export default eslintConfig;

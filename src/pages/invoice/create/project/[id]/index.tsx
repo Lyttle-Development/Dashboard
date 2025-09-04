@@ -36,7 +36,7 @@ function Page() {
   const [loading, setLoading] = useState(false);
   const [loadingTask, setLoadingTask] = useState("Initializing");
   const [projects, setProjects] = useState<Project[]>([]);
-  const [project, setProject] = useState<Project>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const [invoice, setInvoice] = useState({});
   const [discount, setDiscount] = useState(0);
 

@@ -226,7 +226,7 @@ export function Page() {
           onValueChange={(value) =>
             handleChange("interval", typeof value === "string" ? value : "")
           }
-          value={subscription.interval.toString()}
+          value={subscription?.interval?.toString()}
           searchable
         />
       </article>

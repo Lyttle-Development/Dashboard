@@ -54,7 +54,7 @@ export function ChildProject({
       table: "task",
       body: {
         title: data.title,
-        userId: app.userId,
+        userId: app?.userId,
         projectId: project.id,
         description: data.description,
         categoryId: null,
@@ -75,13 +75,19 @@ export function ChildProject({
         <article>
           <KeyValue
             label="Customer"
-            value={`${project.customer.firstname} ${project.customer.lastname}`}
+            value={`${project?.customer?.firstname} ${project?.customer?.lastname}`}
           />
-          <KeyValue label="Category" value={project.price.category.name} />
-          <KeyValue label="Service" value={project.price.service} />
+          <KeyValue
+            label="Category"
+            value={project?.price?.category?.name ?? "Unknown"}
+          />
+          <KeyValue
+            label="Service"
+            value={project?.price?.service ?? "Unknown"}
+          />
           <KeyValue
             label="Calculated Price"
-            value={getPrice(project.timeLogs, project.price.price)}
+            value={getPrice(project?.timeLogs, project?.price?.price ?? 0)}
           />
         </article>
       </section>
@@ -158,8 +164,9 @@ export function ChildProject({
                 new Date(a.createdAt).getTime() -
                 new Date(b.createdAt).getTime(),
             )
-            ?.map((task) => (
+            ?.map((task, i) => (
               <TaskItem
+                key={i}
                 project={project}
                 task={task}
                 fetchProject={fetchProject}
