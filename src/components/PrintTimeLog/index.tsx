@@ -31,7 +31,7 @@ export function PrintTimeLog({ printJobId }: PrintTimeLogProps) {
     });
     setTimeLog(timeLogData?.length ? timeLogData[0] : null);
     setLoading(false);
-  }, [app.userId]);
+  }, [app.userId, printJobId]);
 
   const refreshData = useCallback(async () => {
     await fetchEmptyTimeLog();
@@ -98,7 +98,7 @@ export function PrintTimeLog({ printJobId }: PrintTimeLogProps) {
       const bell = new Audio("/bell.mp3");
       void bell.play();
     }
-  }, [timer]);
+  }, [timer, elapsed, lastTimePlayed]);
 
   const submitQuickTime = async (data: { date: string; time: string }) => {
     setDialogOpen(false);

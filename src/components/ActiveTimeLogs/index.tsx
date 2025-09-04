@@ -55,7 +55,7 @@ export function ActiveTimeLogs({
 
     setTimeLogs(timeLogData ?? []);
     setLoading("projects", false);
-  }, []);
+  }, [projectIds]);
 
   const fetchProjects = useCallback(async () => {
     setLoading("projects", true);
@@ -75,7 +75,7 @@ export function ActiveTimeLogs({
 
     setProjects(projectData ?? []);
     setLoading("projects", false);
-  }, []);
+  }, [projectIds]);
 
   const fetchCategories = useCallback(async () => {
     setLoading("categories", true);
@@ -91,7 +91,7 @@ export function ActiveTimeLogs({
     void fetchTimeLogs();
     void fetchProjects();
     void fetchCategories();
-  }, []);
+  }, [fetchTimeLogs, fetchProjects, fetchCategories]);
 
   const groupedTimeLogs = groupArrayBy(
     timeLogs.filter((timeLog) => !timeLog.endTime),

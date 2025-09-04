@@ -6,6 +6,14 @@ import {isAllowedUser} from '@/lib/auth';
  * Custom hook to handle authentication logic
  */
 export function useAuth(skipAuth = false) {
+    const {data: session, status} = useSession();
+
+    useEffect(() => {
+        if (!skipAuth && status === 'unauthenticated') {
+            void signIn('discord'); // Redirect to Discord login
+        }
+    }, [status, skipAuth]);
+
     if (skipAuth) {
         return {
             session: null,
@@ -14,13 +22,6 @@ export function useAuth(skipAuth = false) {
             isAllowed: true,
         };
     }
-    const {data: session, status} = useSession();
-
-    useEffect(() => {
-        if (status === 'unauthenticated') {
-            void signIn('discord'); // Redirect to Discord login
-        }
-    }, [status]);
 
     const isLoading = status === 'loading';
     const isAuthenticated = !!session?.user;
