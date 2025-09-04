@@ -50,7 +50,7 @@ export function ProjectTimeLog({ project, reloadTimeLogs = (p) => p }) {
     setLoading(false);
     // await refreshData();
     void reloadTimeLogs(project.id);
-  }, [refreshData, app.userId, project.id, reloadTimeLogs]);
+  }, [app.userId, project.id, reloadTimeLogs]);
 
   const endTimeLog = useCallback(async () => {
     setLoading(true);
@@ -64,7 +64,7 @@ export function ProjectTimeLog({ project, reloadTimeLogs = (p) => p }) {
     // await refreshData();
     void reloadTimeLogs(project.id);
     setLoading(false);
-  }, [timeLog, refreshData, project.id, reloadTimeLogs]);
+  }, [timeLog, project.id, reloadTimeLogs]);
 
   useEffect(() => {
     if (project.id) void refreshData();
