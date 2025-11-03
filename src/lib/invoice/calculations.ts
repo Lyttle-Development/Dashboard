@@ -1,4 +1,4 @@
-import { TimeLog, Project, PrintJob, ServicePrice } from "@/lib/prisma";
+import { Project, PrintJob } from "@/lib/prisma";
 import { getTotalHours } from "@/lib/price/get-price";
 import {
   TAX_COST_PROCENT,
