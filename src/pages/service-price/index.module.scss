@@ -98,6 +98,33 @@
   justify-content: flex-end;
 }
 
+.selectWithAdd {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+
+  select {
+    flex: 1;
+  }
+
+  button {
+    flex-shrink: 0;
+    padding: 0.75rem 1rem;
+  }
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
 .pricesList {
   display: flex;
   flex-direction: column;

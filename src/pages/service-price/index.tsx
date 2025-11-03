@@ -12,10 +12,12 @@ import {
   faTrash,
   faCheck,
   faTimes,
+  faFolder,
 } from "@fortawesome/free-solid-svg-icons";
 import { Button, ButtonStyle } from "@/components/Button";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { formatCurrency } from "@/lib/invoice";
+import { Modal } from "@/components/Modal";
 
 import styles from "./index.module.scss";
 
@@ -32,6 +34,8 @@ export function Page() {
     price: 0,
     categoryId: "",
   });
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -124,6 +128,34 @@ export function Page() {
     }
   };
 
+  const handleCreateCategory = async () => {
+    if (!newCategoryName.trim()) {
+      alert("Please enter a category name");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/category", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newCategoryName }),
+      });
+
+      if (res.ok) {
+        const newCategory = await res.json();
+        setCategories([...categories, newCategory]);
+        setNewData({ ...newData, categoryId: newCategory.id });
+        setNewCategoryName("");
+        setShowCategoryModal(false);
+      } else {
+        alert("Error creating category");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error creating category");
+    }
+  };
+
   if (loading) return <Loader />;
 
   return (
@@ -172,19 +204,27 @@ export function Page() {
             </div>
             <div className={styles.formField}>
               <label>Category</label>
-              <select
-                value={newData.categoryId || ""}
-                onChange={(e) =>
-                  setNewData({ ...newData, categoryId: e.target.value })
-                }
-              >
-                <option value="">Select a category</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
+              <div className={styles.selectWithAdd}>
+                <select
+                  value={newData.categoryId || ""}
+                  onChange={(e) =>
+                    setNewData({ ...newData, categoryId: e.target.value })
+                  }
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  onClick={() => setShowCategoryModal(true)}
+                  title="Create new category"
+                >
+                  <Icon icon={faPlus} />
+                </Button>
+              </div>
             </div>
           </div>
           <div className={styles.formActions}>
@@ -310,6 +350,53 @@ export function Page() {
           <p>Create your first service price to get started</p>
         </div>
       )}
+
+      {/* Quick Add Category Modal */}
+      <Modal
+        isOpen={showCategoryModal}
+        onClose={() => {
+          setShowCategoryModal(false);
+          setNewCategoryName("");
+        }}
+        title="Create New Category"
+        size="small"
+      >
+        <div className={styles.modalContent}>
+          <div className={styles.formField}>
+            <label>Category Name</label>
+            <input
+              type="text"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              placeholder="e.g., Development, Design"
+              autoFocus
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleCreateCategory();
+                }
+              }}
+            />
+          </div>
+          <div className={styles.modalActions}>
+            <Button
+              onClick={handleCreateCategory}
+              style={ButtonStyle.Primary}
+            >
+              <Icon icon={faCheck} />
+              Create Category
+            </Button>
+            <Button
+              onClick={() => {
+                setShowCategoryModal(false);
+                setNewCategoryName("");
+              }}
+            >
+              <Icon icon={faTimes} />
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </Container>
   );
 }
