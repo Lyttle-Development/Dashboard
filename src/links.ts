@@ -54,6 +54,15 @@ export const LINKS = {
     create: "/expense/create",
     detail: (id: string) => `/expense/${id}`,
   },
+  servicePrice: {
+    root: "/service-price",
+  },
+  printMaterial: {
+    root: "/print-material",
+  },
+  category: {
+    root: "/category",
+  },
   fallback: "/fallback",
   mobile: {
     task: "/mobile/task",

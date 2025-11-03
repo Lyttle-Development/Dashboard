@@ -12,6 +12,9 @@ import {
   faPrint,
   faRepeat,
   faTag,
+  faCoins,
+  faCube,
+  faFolder,
 } from "@fortawesome/free-solid-svg-icons";
 import { useApp } from "@/contexts/App.context";
 import { LINKS } from "@/links";
@@ -57,6 +60,10 @@ export function MainNav({}: MainNavProps) {
             <Icon icon={faTag} />
             Prices
           </MainNavItem>
+          <MainNavItem href={LINKS.category.root}>
+            <Icon icon={faFolder} />
+            Categories
+          </MainNavItem>
           {app.isManager && (
             <>
               <MainNavItem href={LINKS.invoice.root}>
@@ -75,6 +82,21 @@ export function MainNav({}: MainNavProps) {
           )}
         </ul>
       </nav>
+      {app.isAdmin && (
+        <nav>
+          <h5>Resources</h5>
+          <ul>
+            <MainNavItem href={LINKS.servicePrice.root}>
+              <Icon icon={faCoins} />
+              Service Prices
+            </MainNavItem>
+            <MainNavItem href={LINKS.printMaterial.root}>
+              <Icon icon={faCube} />
+              Print Materials
+            </MainNavItem>
+          </ul>
+        </nav>
+      )}
       <ul className={styles.sub_menu}>
         <MainNavItem href={LINKS.fallback}>Fallback Dashboard</MainNavItem>
       </ul>
