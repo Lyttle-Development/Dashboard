@@ -1,3 +1,226 @@
-.main {
-  padding: 1rem;
+@use '../../styles/variables.scss' as v;
+
+.container {
+  gap: 2rem;
+  padding-bottom: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: v.$color-primary;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+  }
+}
+
+.searchBar {
+  background: white;
+  border-radius: v.$border-radius;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  svg {
+    color: #666;
+    font-size: 1.25rem;
+  }
+
+  .searchInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: v.$color-text;
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+}
+
+.statsRow {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  .statItem {
+    background: white;
+    border-radius: v.$border-radius;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    svg {
+      font-size: 2rem;
+      color: v.$color-primary;
+    }
+
+    .statValue {
+      font-size: 2rem;
+      font-weight: 700;
+      color: v.$color-text;
+    }
+
+    .statLabel {
+      font-size: 0.9rem;
+      color: #666;
+      margin-left: auto;
+    }
+  }
+}
+
+.invoicesList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.invoiceCard {
+  background: white;
+  border-radius: v.$border-radius;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    border-color: v.$color-primary;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .invoiceHeader {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex: 1;
+
+    .invoiceIcon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, v.$color-primary, rgba(v.$color-primary, 0.7));
+      border-radius: v.$border-radius;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .invoiceInfo {
+      flex: 1;
+      min-width: 0;
+
+      .invoiceTitle {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: v.$color-text;
+        margin: 0 0 0.5rem 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .invoiceMeta {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.9rem;
+        color: #666;
+
+        .customer {
+          font-weight: 500;
+        }
+
+        .status {
+          color: v.$color-primary;
+        }
+
+        .date {
+          color: #999;
+        }
+      }
+    }
+  }
+
+  .invoiceActions {
+    flex-shrink: 0;
+  }
+}
+
+.emptyState {
+  background: white;
+  border-radius: v.$border-radius;
+  padding: 4rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  text-align: center;
+
+  svg {
+    font-size: 4rem;
+    color: v.$background-light-500;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: v.$color-text;
+    margin: 0 0 0.5rem 0;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #666;
+    margin: 0;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .invoiceCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    .invoiceHeader {
+      width: 100%;
+    }
+
+    .invoiceActions {
+      width: 100%;
+
+      a {
+        display: block;
+        width: 100%;
+      }
+    }
+  }
+
+  .statsRow {
+    flex-direction: column;
+  }
 }
