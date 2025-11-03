@@ -98,8 +98,9 @@ export function calculateProjectInvoice(
   const discountAmount = roundCurrency(subtotal * (discountPercent / 100));
   const subtotalAfterDiscount = roundCurrency(subtotal - discountAmount);
 
-  // Calculate tax
-  const taxAmount = roundCurrency(subtotalAfterDiscount * (TAX_COST_PROCENT - 1));
+  // Calculate tax (TAX_COST_PROCENT is 1.21 for 21% tax, so (1.21 - 1) = 0.21 = 21%)
+  const taxRate = TAX_COST_PROCENT - 1;
+  const taxAmount = roundCurrency(subtotalAfterDiscount * taxRate);
   const total = roundCurrency(subtotalAfterDiscount + taxAmount);
 
   return {
@@ -110,7 +111,7 @@ export function calculateProjectInvoice(
     discount: discountPercent,
     discountAmount,
     subtotalAfterDiscount,
-    tax: (TAX_COST_PROCENT - 1) * 100,
+    tax: taxRate * 100, // Convert to percentage for display
     taxAmount,
     total,
   };
@@ -148,18 +149,18 @@ export function calculatePrintJobInvoice(
     electricityCost + materialCost + labourCost
   );
 
-  // Apply margin
-  const marginCost = roundCurrency(
-    subtotalBeforeMargin * (PRINT_MARGIN_PROCENT - 1)
-  );
+  // Apply margin (PRINT_MARGIN_PROCENT is 1.65 for 65% margin, so (1.65 - 1) = 0.65 = 65%)
+  const marginRate = PRINT_MARGIN_PROCENT - 1;
+  const marginCost = roundCurrency(subtotalBeforeMargin * marginRate);
   const subtotal = roundCurrency(subtotalBeforeMargin + marginCost);
 
   // Apply discount
   const discountAmount = roundCurrency(subtotal * (discountPercent / 100));
   const subtotalAfterDiscount = roundCurrency(subtotal - discountAmount);
 
-  // Calculate tax
-  const taxAmount = roundCurrency(subtotalAfterDiscount * (TAX_COST_PROCENT - 1));
+  // Calculate tax (TAX_COST_PROCENT is 1.21 for 21% tax, so (1.21 - 1) = 0.21 = 21%)
+  const taxRate = TAX_COST_PROCENT - 1;
+  const taxAmount = roundCurrency(subtotalAfterDiscount * taxRate);
   const total = roundCurrency(subtotalAfterDiscount + taxAmount);
 
   return {
@@ -180,14 +181,14 @@ export function calculatePrintJobInvoice(
       cost: labourCost,
     },
     margin: {
-      rate: (PRINT_MARGIN_PROCENT - 1) * 100,
+      rate: marginRate * 100, // Convert to percentage for display
       cost: marginCost,
     },
     subtotal,
     discount: discountPercent,
     discountAmount,
     subtotalAfterDiscount,
-    tax: (TAX_COST_PROCENT - 1) * 100,
+    tax: taxRate * 100, // Convert to percentage for display
     taxAmount,
     total,
   };

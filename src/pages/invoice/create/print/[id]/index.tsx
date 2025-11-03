@@ -102,8 +102,8 @@ function Page() {
       {
         description: `3D Print Job: ${printJob.name}`,
         quantity: printJob.quantity,
-        unitPrice: calculation.total / printJob.quantity,
-        amount: calculation.total,
+        unitPrice: calculation.subtotalAfterDiscount / printJob.quantity,
+        amount: calculation.subtotalAfterDiscount,
         details: `${printJob.quantity} units at ${printJob.weight}g each`,
       },
     ],
