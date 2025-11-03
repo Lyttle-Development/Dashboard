@@ -17,30 +17,31 @@ body {
   font-family: Helvetica, Arial, sans-serif;
   letter-spacing: .04rem;
   overflow-y: scroll;
+  font-size: 14px; /* Base font size reduced */
 }
 
 h1 {
-  font-size: 3.052rem
+  font-size: 2.5rem; /* Reduced from 3.052rem */
 }
 
 h2 {
-  font-size: 2.441rem
+  font-size: 2rem; /* Reduced from 2.441rem */
 }
 
 h3 {
-  font-size: 1.953rem
+  font-size: 1.6rem; /* Reduced from 1.953rem */
 }
 
 h4 {
-  font-size: 1.563rem
+  font-size: 1.3rem; /* Reduced from 1.563rem */
 }
 
 h5 {
-  font-size: 1.563rem
+  font-size: 1.1rem; /* Reduced from 1.563rem */
 }
 
 p {
-  font-size: 1rem;
+  font-size: 0.9rem; /* Reduced from 1rem */
   line-height: 1.5;
 }
 
