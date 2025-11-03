@@ -1,3 +1,5 @@
+@use '../../../styles/variables.scss' as v;
+
 .title {
   display: flex;
   justify-content: space-between;
@@ -10,4 +12,72 @@
   align-items: center;
   gap: 1rem;
   width: 100%;
+}
+
+.selectWithAdd {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  width: 100%;
+
+  > div:first-child {
+    flex: 1;
+  }
+
+  button {
+    flex-shrink: 0;
+  }
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: v.$color-text;
+  }
+
+  input {
+    padding: 0.75rem 1rem;
+    border: 2px solid v.$background-light-500;
+    border-radius: v.$border-radius;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    background: white;
+
+    &:hover:not(:disabled) {
+      border-color: v.$color-primary;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-primary;
+      box-shadow: 0 0 0 3px rgba(110, 0, 255, 0.1);
+    }
+  }
+
+  input[type="number"] {
+    font-family: monospace;
+  }
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
 }
