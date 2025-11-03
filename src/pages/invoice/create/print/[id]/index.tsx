@@ -66,7 +66,74 @@ function Page() {
     updateLoading("prices", false);
   };
 
-  const createInvoice = async () => {};
+  const createInvoice = async () => {
+    if (!printJob?.customer) {
+      alert("Please assign a customer to this print job first");
+      return;
+    }
+
+    try {
+      setLoading({ printJob: true, prices: true });
+      setLoadingTask("Creating invoice...");
+
+      // Get or create invoice status "Open"
+      const statuses = await fetchApi<any[]>({
+        table: "invoiceStatus",
+        where: { status: "Open" },
+      });
+
+      let statusId = statuses?.[0]?.id;
+      if (!statusId) {
+        // Create "Open" status if it doesn't exist
+        const newStatus = await fetch("/api/invoiceStatus", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "Open" }),
+        }).then((res) => res.json());
+        statusId = newStatus.id;
+      }
+
+      // Create the invoice
+      const invoiceData = {
+        invoiceDate: new Date().toISOString(),
+        amount: calculation.total,
+        statusId,
+        customerId: printJob.customer.id,
+        priceId: printJob.priceId,
+      };
+
+      const response = await fetch("/api/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(invoiceData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create invoice");
+      }
+
+      const newInvoice = await response.json();
+
+      // Link print job to this invoice
+      setLoadingTask("Linking print job to invoice...");
+      await fetch(`/api/printJob/${printJob.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ invoiceId: newInvoice.id }),
+      });
+
+      setLoadingTask("Done!");
+      alert("Invoice created successfully!");
+      
+      // Redirect to invoice listing
+      router.push(LINKS.invoice.root);
+    } catch (error) {
+      console.error("Error creating invoice:", error);
+      alert("Failed to create invoice. Please try again.");
+    } finally {
+      setLoading({ printJob: false, prices: false });
+    }
+  };
 
   useEffect(() => {
     void fetchPrintJob(printJobId as string);

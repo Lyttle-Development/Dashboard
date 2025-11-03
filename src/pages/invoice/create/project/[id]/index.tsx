@@ -94,7 +94,81 @@ function Page() {
     setLoading(false);
   };
 
-  const createInvoice = async () => {};
+  const createInvoice = async () => {
+    if (!project?.customer) {
+      alert("Please assign a customer to this project first");
+      return;
+    }
+
+    if (calculation.projects.length === 0) {
+      alert("No projects with time logs found");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setLoadingTask("Creating invoice...");
+
+      // Get or create invoice status "Open"
+      const statuses = await fetchApi<any[]>({
+        table: "invoiceStatus",
+        where: { status: "Open" },
+      });
+
+      let statusId = statuses?.[0]?.id;
+      if (!statusId) {
+        // Create "Open" status if it doesn't exist
+        const newStatus = await fetch("/api/invoiceStatus", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "Open" }),
+        }).then((res) => res.json());
+        statusId = newStatus.id;
+      }
+
+      // Create the invoice
+      const invoiceData = {
+        invoiceDate: new Date().toISOString(),
+        amount: calculation.total,
+        statusId,
+        customerId: project.customer.id,
+        priceId: project.priceId,
+      };
+
+      const response = await fetch("/api/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(invoiceData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create invoice");
+      }
+
+      const newInvoice = await response.json();
+
+      // Link all projects to this invoice
+      setLoadingTask("Linking projects to invoice...");
+      for (const proj of calculation.projects) {
+        await fetch(`/api/project/${proj.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ invoiceId: newInvoice.id }),
+        });
+      }
+
+      setLoadingTask("Done!");
+      alert("Invoice created successfully!");
+      
+      // Redirect to invoice listing or detail page
+      router.push(LINKS.invoice.root);
+    } catch (error) {
+      console.error("Error creating invoice:", error);
+      alert("Failed to create invoice. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     void fetchProjects([projectId as string]);
