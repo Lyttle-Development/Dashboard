@@ -1,3 +1,135 @@
-.main {
+@use '../../styles/variables.scss' as v;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: v.$color-text;
+  margin: 0;
+}
+
+.subtitle {
+  color: v.$color-text-secondary;
+  margin: 0.5rem 0 0 0;
+  font-size: 1rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: v.$background-primary;
+  border-radius: v.$border-radius-lg;
+  border: 2px dashed v.$border-light;
+  margin-top: 2rem;
+
+  h3 {
+    margin: 1rem 0 0.5rem 0;
+    color: v.$color-text;
+  }
+
+  p {
+    color: v.$color-text-secondary;
+    margin: 0 0 1.5rem 0;
+  }
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  color: v.$color-text-light;
+}
+
+.projectGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.projectCard {
+  background: v.$background-primary;
+  border-radius: v.$border-radius-lg;
+  border: 2px solid v.$border-light;
+  padding: 1.5rem;
+  transition: all v.$transition-base;
+  box-shadow: v.$shadow-sm;
+
+  &:hover {
+    border-color: v.$color-primary-light;
+    box-shadow: v.$shadow-lg;
+    transform: translateY(-2px);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.projectName {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: v.$color-text;
+  margin: 0;
+  flex: 1;
+}
+
+.badge {
+  padding: 0.25rem 0.75rem;
+  background: v.$color-accent-light;
+  color: white;
+  border-radius: v.$border-radius-full;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.projectStats {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
   padding: 1rem;
+  background: v.$background-secondary;
+  border-radius: v.$border-radius;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: v.$color-text-secondary;
+  font-size: 0.875rem;
+
+  svg {
+    color: v.$color-primary;
+    font-size: 1rem;
+  }
+
+  span {
+    font-weight: 500;
+  }
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
 }
