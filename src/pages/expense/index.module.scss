@@ -1,3 +1,207 @@
-.main {
+@use '../../styles/variables.scss' as v;
+
+.header {
+  margin-bottom: 2rem;
+  min-height: 180px;
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.titleSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  h1 {
+    margin: 0;
+    color: v.$color-text;
+  }
+}
+
+.icon {
+  font-size: 2rem;
+  color: v.$color-primary;
+}
+
+.searchBar {
+  position: relative;
+  margin-bottom: 1.5rem;
+  max-width: 500px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: v.$color-text-tertiary;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  background: v.$color-background-elevated;
+  border: 1px solid v.$border-medium;
+  border-radius: v.$border-radius;
+  color: v.$color-text;
+  font-size: 0.9rem;
+  transition: all v.$transition-base;
+
+  &:focus {
+    outline: none;
+    border-color: v.$color-primary;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+  }
+
+  &::placeholder {
+    color: v.$color-text-tertiary;
+  }
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stat {
+  background: v.$color-background-accent;
   padding: 1rem;
+  border-radius: v.$border-radius;
+  text-align: center;
+  border: 1px solid v.$border-light;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: v.$color-primary;
+  margin-bottom: 0.25rem;
+}
+
+.statLabel {
+  font-size: 0.85rem;
+  color: v.$color-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  min-height: 300px;
+}
+
+.card {
+  background: v.$color-background-accent;
+  border: 1px solid v.$border-light;
+  border-radius: v.$border-radius;
+  padding: 1.5rem;
+  transition: all v.$transition-base;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    background: v.$color-background-elevated;
+    border-color: v.$color-primary;
+    box-shadow: 0 0 20px rgba(108, 99, 255, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  color: v.$color-text;
+  flex: 1;
+}
+
+.amount {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: v.$color-primary;
+}
+
+.cardDescription {
+  color: v.$color-text-secondary;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: v.$color-background-elevated;
+  border: 1px solid v.$border-medium;
+  border-radius: v.$border-radius-sm;
+  font-size: 0.75rem;
+  color: v.$color-text-secondary;
+}
+
+.cardActions {
+  margin-top: auto;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: v.$color-text-secondary;
+
+  h3 {
+    color: v.$color-text;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  color: v.$color-text-tertiary;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .headerTop {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
