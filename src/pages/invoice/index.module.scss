@@ -1,89 +1,114 @@
 @use '../../styles/variables.scss' as v;
 
-.container {
-  gap: 2rem;
-  padding-bottom: 2rem;
-}
-
 .header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 2rem;
+  gap: 1rem;
 
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: v.$color-primary;
-    margin: 0 0 0.5rem 0;
-  }
-
-  .subtitle {
-    font-size: 1.1rem;
-    color: #666;
-    margin: 0;
+  @media (max-width: 768px) {
+    flex-direction: column;
   }
 }
 
-.searchBar {
-  background: white;
-  border-radius: v.$border-radius;
-  padding: 1rem 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: v.$color-text;
+  margin: 0;
+}
+
+.subtitle {
+  color: v.$color-text-secondary;
+  margin: 0.5rem 0 0 0;
+  font-size: 1rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: v.$background-primary;
+  border-radius: v.$border-radius-lg;
+  border: 2px dashed v.$border-light;
+  margin-top: 2rem;
+
+  h3 {
+    margin: 1rem 0 0.5rem 0;
+    color: v.$color-text;
+  }
+
+  p {
+    color: v.$color-text-secondary;
+    margin: 0 0 1.5rem 0;
+  }
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  color: v.$color-text-light;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.statCard {
+  background: v.$background-primary;
+  border-radius: v.$border-radius-lg;
+  border: 2px solid v.$border-light;
+  padding: 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 2rem;
+  transition: all v.$transition-base;
 
-  svg {
-    color: #666;
-    font-size: 1.25rem;
-  }
-
-  .searchInput {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    color: v.$color-text;
-
-    &::placeholder {
-      color: #999;
-    }
+  &:hover {
+    border-color: v.$color-primary-light;
+    box-shadow: v.$shadow-md;
   }
 }
 
-.statsRow {
+.statIcon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: v.$border-radius;
+  background: v.$color-primary-bg;
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 
-  .statItem {
-    background: white;
-    border-radius: v.$border-radius;
-    padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-
-    svg {
-      font-size: 2rem;
-      color: v.$color-primary;
-    }
-
-    .statValue {
-      font-size: 2rem;
-      font-weight: 700;
-      color: v.$color-text;
-    }
-
-    .statLabel {
-      font-size: 0.9rem;
-      color: #666;
-      margin-left: auto;
-    }
+  svg {
+    color: v.$color-primary;
+    font-size: 1.5rem;
   }
+}
+
+.statContent {
+  flex: 1;
+}
+
+.statValue {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: v.$color-text;
+  display: block;
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: v.$color-text-secondary;
+  margin-top: 0.25rem;
+  display: block;
 }
 
 .invoicesList {
@@ -93,134 +118,84 @@
 }
 
 .invoiceCard {
-  background: white;
-  border-radius: v.$border-radius;
+  background: v.$background-primary;
+  border-radius: v.$border-radius-lg;
+  border: 2px solid v.$border-light;
   padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: all v.$transition-base;
+
+  &:hover {
+    border-color: v.$color-primary-light;
+    box-shadow: v.$shadow-lg;
+    transform: translateY(-2px);
+  }
+}
+
+.cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all 0.2s ease;
-  border: 2px solid transparent;
-
-  &:hover {
-    border-color: v.$color-primary;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-  }
-
-  .invoiceHeader {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    flex: 1;
-
-    .invoiceIcon {
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(135deg, v.$color-primary, rgba(v.$color-primary, 0.7));
-      border-radius: v.$border-radius;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-    }
-
-    .invoiceInfo {
-      flex: 1;
-      min-width: 0;
-
-      .invoiceTitle {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: v.$color-text;
-        margin: 0 0 0.5rem 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .invoiceMeta {
-        display: flex;
-        gap: 1.5rem;
-        font-size: 0.9rem;
-        color: #666;
-
-        .customer {
-          font-weight: 500;
-        }
-
-        .status {
-          color: v.$color-primary;
-        }
-
-        .date {
-          color: #999;
-        }
-      }
-    }
-  }
-
-  .invoiceActions {
-    flex-shrink: 0;
-  }
+  margin-bottom: 1rem;
+  gap: 1rem;
 }
 
-.emptyState {
-  background: white;
-  border-radius: v.$border-radius;
-  padding: 4rem 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  text-align: center;
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: v.$color-text;
 
   svg {
-    font-size: 4rem;
-    color: v.$background-light-500;
-    margin-bottom: 1rem;
-  }
-
-  h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: v.$color-text;
-    margin: 0 0 0.5rem 0;
-  }
-
-  p {
-    font-size: 1rem;
-    color: #666;
-    margin: 0;
+    color: v.$color-primary;
+    font-size: 1.25rem;
   }
 }
 
-// Responsive adjustments
-@media (max-width: 768px) {
-  .header h1 {
-    font-size: 2rem;
+.statusBadge {
+  padding: 0.375rem 0.875rem;
+  border-radius: v.$border-radius-full;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statusOpen {
+  background: v.$color-warning;
+  color: white;
+}
+
+.statusPaid {
+  background: v.$color-success;
+  color: white;
+}
+
+.cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1rem;
+  background: v.$background-secondary;
+  border-radius: v.$border-radius;
+  margin-bottom: 1rem;
+}
+
+.metaItem {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  color: v.$color-text-secondary;
+
+  strong {
+    color: v.$color-text;
+    font-weight: 600;
   }
+}
 
-  .invoiceCard {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-
-    .invoiceHeader {
-      width: 100%;
-    }
-
-    .invoiceActions {
-      width: 100%;
-
-      a {
-        display: block;
-        width: 100%;
-      }
-    }
-  }
-
-  .statsRow {
-    flex-direction: column;
-  }
+.cardActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
 }

@@ -4,13 +4,14 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Loader } from "@/components/Loader";
 import { fetchApi } from "@/lib/fetchApi";
-import { Invoice } from "@/lib/prisma";
-import { faFileInvoice, faEye, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { Customer, Invoice, Project } from "@/lib/prisma";
+import { faFileInvoice, faEye, faPlus, faEuroSign } from "@fortawesome/free-solid-svg-icons";
 import { LINKS } from "@/links";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { Icon } from "@/components/Icon";
 import { Button, ButtonStyle } from "@/components/Button";
 import Link from "next/link";
+import { HierarchicalFilter } from "@/components/HierarchicalFilter";
 
 import styles from "./index.module.scss";
 
@@ -19,134 +20,191 @@ export function Page() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const fetchInvoices = useCallback(async () => {
     setLoading(true);
-    const invoicesData = await fetchApi<Invoice[]>({
-      table: "invoice",
-      relations: {
-        projects: true,
-        customer: true,
-        status: true,
-      },
-      where: {
-        statusId: {
-          not: "3f5c10b6-1301-4c0b-8da9-e2515865339e", // PAID
+    try {
+      const invoicesData = await fetchApi<Invoice[]>({
+        table: "invoice",
+        relations: {
+          projects: true,
+          printJobs: true,
+          customer: true,
+          status: true,
         },
-      },
-    });
-    setInvoices(invoicesData ?? []);
-    setLoading(false);
+      });
+      setInvoices(invoicesData ?? []);
+    } catch (error) {
+      console.error("Error fetching invoices:", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
     void fetchInvoices();
   }, [fetchInvoices]);
 
-  if (loading) return <Loader />;
-
-  // Filter invoices based on search term
+  // Filter invoices based on selected customer and project
   const filteredInvoices = invoices.filter((invoice) => {
-    const projectNames = invoice.projects
-      .map((p) => p.name)
-      .join(" ")
-      .toLowerCase();
-    const customerName = invoice.customer
-      ? `${invoice.customer.firstname} ${invoice.customer.lastname}`.toLowerCase()
-      : "";
-    const searchLower = searchTerm.toLowerCase();
-
-    return (
-      projectNames.includes(searchLower) || customerName.includes(searchLower)
-    );
+    if (!selectedCustomer) return false;
+    if (invoice.customerId !== selectedCustomer.id) return false;
+    if (selectedProject) {
+      // Check if invoice has this project
+      const hasProject = invoice.projects?.some((p) => p.id === selectedProject.id);
+      if (!hasProject) return false;
+    }
+    return true;
   });
 
+  // Calculate total amount for filtered invoices
+  const totalAmount = filteredInvoices.reduce((sum, inv) => sum + (inv.amount || 0), 0);
+  const openInvoices = filteredInvoices.filter(
+    (inv) => inv.status?.status !== "Paid"
+  );
+
+  if (loading) return <Loader />;
+
   return (
-    <Container className={styles.container}>
+    <Container>
       <div className={styles.header}>
         <div>
-          <h1>Invoices</h1>
+          <h1 className={styles.title}>Invoices</h1>
           <p className={styles.subtitle}>
-            Manage and view all open invoices in your dashboard
+            Select customer and optionally a project to view invoices
           </p>
         </div>
+        <Button
+          href={LINKS.invoice.root}
+          style={ButtonStyle.Primary}
+        >
+          <Icon icon={faPlus} />
+          Create Invoice
+        </Button>
       </div>
 
-      {/* Search Bar */}
-      <div className={styles.searchBar}>
-        <Icon icon={faSearch} />
-        <input
-          type="text"
-          placeholder="Search invoices by project or customer name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className={styles.searchInput}
-        />
-      </div>
+      <HierarchicalFilter
+        onCustomerChange={(customer) => {
+          setSelectedCustomer(customer);
+          setSelectedProject(null);
+        }}
+        onProjectChange={(project) => setSelectedProject(project)}
+        showProjectFilter={true}
+      />
 
-      {/* Statistics */}
-      <div className={styles.statsRow}>
-        <div className={styles.statItem}>
-          <Icon icon={faFileInvoice} />
-          <span className={styles.statValue}>{invoices.length}</span>
-          <span className={styles.statLabel}>Open Invoices</span>
-        </div>
-      </div>
-
-      {/* Invoices List */}
-      {filteredInvoices.length === 0 ? (
+      {!selectedCustomer && (
         <div className={styles.emptyState}>
-          <Icon icon={faFileInvoice} />
-          <h3>No invoices found</h3>
+          <Icon icon={faFileInvoice} className={styles.emptyIcon} />
+          <h3>Select a Customer</h3>
+          <p>Choose a customer above to view their invoices</p>
+        </div>
+      )}
+
+      {selectedCustomer && filteredInvoices.length === 0 && (
+        <div className={styles.emptyState}>
+          <Icon icon={faFileInvoice} className={styles.emptyIcon} />
+          <h3>No Invoices Found</h3>
           <p>
-            {searchTerm
-              ? "Try adjusting your search terms"
-              : "All invoices have been paid or there are no open invoices"}
+            {selectedProject
+              ? "This project doesn't have any invoices yet"
+              : "This customer doesn't have any invoices yet"}
           </p>
         </div>
-      ) : (
-        <div className={styles.invoicesList}>
-          {filteredInvoices.map((invoice) => (
-            <div key={invoice.id} className={styles.invoiceCard}>
-              <div className={styles.invoiceHeader}>
-                <div className={styles.invoiceIcon}>
-                  <Icon icon={faFileInvoice} />
-                </div>
-                <div className={styles.invoiceInfo}>
-                  <h3 className={styles.invoiceTitle}>
-                    {invoice.projects.map((p) => p.name).join(", ") ||
-                      "Untitled Invoice"}
-                  </h3>
-                  <div className={styles.invoiceMeta}>
-                    {invoice.customer && (
-                      <span className={styles.customer}>
-                        {invoice.customer.firstname} {invoice.customer.lastname}
-                      </span>
-                    )}
-                    {invoice.status && (
-                      <span className={styles.status}>
-                        Status: {invoice.status.status}
-                      </span>
-                    )}
-                    {invoice.invoiceDate && (
-                      <span className={styles.date}>
-                        {new Date(invoice.invoiceDate).toLocaleDateString()}
-                      </span>
-                    )}
-                  </div>
-                </div>
+      )}
+
+      {selectedCustomer && filteredInvoices.length > 0 && (
+        <>
+          {/* Statistics */}
+          <div className={styles.statsGrid}>
+            <div className={styles.statCard}>
+              <div className={styles.statIcon}>
+                <Icon icon={faFileInvoice} />
               </div>
-              <div className={styles.invoiceActions}>
-                <Link href={LINKS.invoice.detail.project(invoice.id)}>
-                  <Button style={ButtonStyle.Primary}>
-                    <Icon icon={faEye} />
-                    View Invoice
-                  </Button>
-                </Link>
+              <div className={styles.statContent}>
+                <div className={styles.statValue}>{filteredInvoices.length}</div>
+                <div className={styles.statLabel}>Total Invoices</div>
               </div>
             </div>
-          ))}
+            <div className={styles.statCard}>
+              <div className={styles.statIcon}>
+                <Icon icon={faFileInvoice} />
+              </div>
+              <div className={styles.statContent}>
+                <div className={styles.statValue}>{openInvoices.length}</div>
+                <div className={styles.statLabel}>Open Invoices</div>
+              </div>
+            </div>
+            <div className={styles.statCard}>
+              <div className={styles.statIcon}>
+                <Icon icon={faEuroSign} />
+              </div>
+              <div className={styles.statContent}>
+                <div className={styles.statValue}>€{totalAmount.toFixed(2)}</div>
+                <div className={styles.statLabel}>Total Amount</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Invoices List */}
+          <div className={styles.invoicesList}>
+            {filteredInvoices.map((invoice) => {
+              const isPaid = invoice.status?.status === "Paid";
+              return (
+                <div key={invoice.id} className={styles.invoiceCard}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.cardTitle}>
+                      <Icon icon={faFileInvoice} />
+                      <span>
+                        {invoice.projects?.map((p) => p.name).join(", ") ||
+                          invoice.printJobs?.map((pj) => pj.name).join(", ") ||
+                          "Invoice"}
+                      </span>
+                    </div>
+                    <span
+                      className={`${styles.statusBadge} ${
+                        isPaid ? styles.statusPaid : styles.statusOpen
+                      }`}
+                    >
+                      {invoice.status?.status || "Unknown"}
+                    </span>
+                  </div>
+
+                  <div className={styles.cardMeta}>
+                    <div className={styles.metaItem}>
+                      <strong>Customer:</strong>
+                      {invoice.customer?.firstname} {invoice.customer?.lastname}
+                    </div>
+                    <div className={styles.metaItem}>
+                      <strong>Date:</strong>
+                      {invoice.invoiceDate
+                        ? new Date(invoice.invoiceDate).toLocaleDateString()
+                        : "N/A"}
+                    </div>
+                    <div className={styles.metaItem}>
+                      <strong>Amount:</strong>
+                      €{(invoice.amount || 0).toFixed(2)}
+                    </div>
+                  </div>
+
+                  <div className={styles.cardActions}>
+                    <Link href={LINKS.invoice.detail.project(invoice.id)}>
+                      <Button style={ButtonStyle.Primary}>
+                        <Icon icon={faEye} />
+                        View Details
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </Container>
+  );
+}
         </div>
       )}
     </Container>
