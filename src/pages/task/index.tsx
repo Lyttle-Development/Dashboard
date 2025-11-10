@@ -14,7 +14,7 @@ import styles from "./index.module.scss";
 
 export function Page() {
   usePageTitle({ title: "Tasks" });
-  
+
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -35,7 +35,7 @@ export function Page() {
     void fetchData();
   }, [fetchData]);
 
-  const toggleTaskDone = async (taskId: number, currentStatus: boolean) => {
+  const toggleTaskDone = async (taskId: string, currentStatus: boolean) => {
     await fetchApi({
       table: "task",
       method: "PUT",
@@ -47,14 +47,16 @@ export function Page() {
 
   const filteredTasks = tasks.filter(
     (task) =>
-      task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task?.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (task.description?.toLowerCase() || "").includes(searchQuery.toLowerCase())
   );
 
   const completedCount = tasks.filter((t) => t.done).length;
 
-  const getCategoryName = (categoryId: number) => {
-    return categories.find((c) => c.id === categoryId)?.name || "Uncategorized";
+  const getCategoryName = (categoryId: string) => {
+    return categories.find((c) => {
+        return categoryId === c?.id;
+    })?.name || "Uncategorized";
   };
 
   const getPriorityColor = (priority?: string) => {
@@ -143,7 +145,7 @@ export function Page() {
                   {task.done && <Icon icon={faCheck} />}
                 </button>
               </div>
-              
+
               {task.description && (
                 <p className={styles.cardDescription}>{task.description}</p>
               )}
@@ -152,15 +154,10 @@ export function Page() {
                 <span className={styles.badge}>
                   {getCategoryName(task.categoryId)}
                 </span>
-                {task.priority && (
-                  <span className={`${styles.badge} ${styles[getPriorityColor(task.priority)]}`}>
-                    {task.priority}
-                  </span>
-                )}
               </div>
 
               <div className={styles.cardActions}>
-                <Button href={`${LINKS.task.index}/${task.id}`} variant="secondary" size="small">
+                <Button href={`${LINKS.task.root}/${task.id}`}>
                   View Details
                 </Button>
               </div>
