@@ -1,0 +1,28 @@
+@use '../../styles/variables' as v;
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    v.$color-background-accent 0%,
+    v.$color-background-elevated 50%,
+    v.$color-background-accent 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: v.$border-radius-sm;
+  margin-bottom: 0.5rem;
+  
+  &.circle {
+    border-radius: 50%;
+  }
+}

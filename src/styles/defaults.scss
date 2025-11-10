@@ -10,16 +10,21 @@ Lyttle Defaults - Modern Design System
   padding: 0;
 }
 
-body {
-  line-height: 1.6;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  letter-spacing: 0.01em;
-  overflow-y: scroll;
-  font-size: 15px;
+html, body {
+  background-color: v.$color-background;
   color: v.$color-text;
-  background-color: v.$background-secondary;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background: v.$gradient-background;
+  overflow-y: scroll;
+  letter-spacing: 0.01em;
 }
 
 h1 {
