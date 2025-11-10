@@ -291,11 +291,7 @@ function Page() {
             </div>
             <div className={styles.cardGrid}>
               {invoicesToCreateProjects?.map((project) => (
-                <Link
-                  key={project.id}
-                  href={LINKS.invoice.create.project(project.id)}
-                  className={styles.card}
-                >
+                <div key={project.id} className={styles.card}>
                   <div className={styles.cardIcon}>
                     <Icon icon={faDiagramProject} />
                   </div>
@@ -314,16 +310,14 @@ function Page() {
                     </div>
                   </div>
                   <div className={styles.cardAction}>
-                    <Button style={ButtonStyle.Primary}>Create Invoice</Button>
+                    <Link href={LINKS.invoice.create.project(project.id)}>
+                      <Button variant="primary">Create Invoice</Button>
+                    </Link>
                   </div>
-                </Link>
+                </div>
               ))}
               {invoicesToCreatePrintJobs?.map((printJob) => (
-                <Link
-                  key={printJob.id}
-                  href={LINKS.invoice.create.print(printJob.id)}
-                  className={styles.card}
-                >
+                <div key={printJob.id} className={styles.card}>
                   <div className={styles.cardIcon}>
                     <Icon icon={faPrint} />
                   </div>
@@ -340,9 +334,11 @@ function Page() {
                     </div>
                   </div>
                   <div className={styles.cardAction}>
-                    <Button style={ButtonStyle.Primary}>Create Invoice</Button>
+                    <Link href={LINKS.invoice.create.print(printJob.id)}>
+                      <Button variant="primary">Create Invoice</Button>
+                    </Link>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           </section>

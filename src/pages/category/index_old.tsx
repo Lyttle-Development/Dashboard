@@ -13,9 +13,8 @@ import {
   faCheck,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import { Button } from "@/components/Button";
+import { Button, ButtonStyle } from "@/components/Button";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import { Modal } from "@/components/Modal";
 
 import styles from "./index.module.scss";
 
@@ -25,7 +24,7 @@ export function Page() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<Category>>({});
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [newData, setNewData] = useState<Partial<Category>>({ name: "" });
 
   const fetchData = useCallback(async () => {
@@ -54,7 +53,7 @@ export function Page() {
 
       if (res.ok) {
         setNewData({ name: "" });
-        setShowCreateModal(false);
+        setCreating(false);
         await fetchData();
       } else {
         alert("Error creating category");
@@ -123,59 +122,49 @@ export function Page() {
             Organize tasks, prices, and other items by category
           </p>
         </div>
-        <Button onClick={() => setShowCreateModal(true)} variant="primary">
-          <Icon icon={faPlus} />
-          Add Category
-        </Button>
+        {!creating && (
+          <Button onClick={() => setCreating(true)} style={ButtonStyle.Primary}>
+            <Icon icon={faPlus} />
+            Add Category
+          </Button>
+        )}
       </div>
 
-      {/* Create Modal */}
-      <Modal
-        isOpen={showCreateModal}
-        onClose={() => {
-          setShowCreateModal(false);
-          setNewData({ name: "" });
-        }}
-        title="Create New Category"
-        size="small"
-      >
-        <div className={styles.modalForm}>
-          <div className={styles.formField}>
-            <label>Category Name</label>
-            <input
-              type="text"
-              value={newData.name || ""}
-              onChange={(e) =>
-                setNewData({ ...newData, name: e.target.value })
-              }
-              placeholder="e.g., Development, Design, Support"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleCreate();
+      {/* Create Form */}
+      {creating && (
+        <div className={styles.createForm}>
+          <h2>Create New Category</h2>
+          <div className={styles.formRow}>
+            <div className={styles.formField}>
+              <label>Category Name</label>
+              <input
+                type="text"
+                value={newData.name || ""}
+                onChange={(e) =>
+                  setNewData({ ...newData, name: e.target.value })
                 }
-              }}
-            />
-          </div>
-          <div className={styles.modalActions}>
-            <Button onClick={handleCreate} variant="primary">
-              <Icon icon={faCheck} />
-              Create
-            </Button>
-            <Button
-              onClick={() => {
-                setShowCreateModal(false);
-                setNewData({ name: "" });
-              }}
-              variant="secondary"
-            >
-              <Icon icon={faTimes} />
-              Cancel
-            </Button>
+                placeholder="e.g., Development, Design, Support"
+                autoFocus
+              />
+            </div>
+            <div className={styles.formActions}>
+              <Button onClick={handleCreate} style={ButtonStyle.Primary}>
+                <Icon icon={faCheck} />
+                Create
+              </Button>
+              <Button
+                onClick={() => {
+                  setCreating(false);
+                  setNewData({ name: "" });
+                }}
+              >
+                <Icon icon={faTimes} />
+                Cancel
+              </Button>
+            </div>
           </div>
         </div>
-      </Modal>
+      )}
 
       {/* Categories Grid */}
       <div className={styles.categoriesGrid}>
@@ -192,7 +181,7 @@ export function Page() {
                   autoFocus
                 />
                 <div className={styles.cardActions}>
-                  <Button onClick={handleSaveEdit} variant="primary">
+                  <Button onClick={handleSaveEdit} style={ButtonStyle.Primary}>
                     <Icon icon={faCheck} />
                   </Button>
                   <Button
@@ -200,7 +189,6 @@ export function Page() {
                       setEditingId(null);
                       setEditData({});
                     }}
-                    variant="secondary"
                   >
                     <Icon icon={faTimes} />
                   </Button>
@@ -212,13 +200,16 @@ export function Page() {
                   <Icon icon={faFolder} />
                 </div>
                 <div className={styles.cardContent}>
-                  <h3 className={styles.cardTitle}>{category.name}</h3>
+                  <h3>{category.name}</h3>
                 </div>
                 <div className={styles.cardActions}>
-                  <Button onClick={() => handleEdit(category)} variant="secondary">
+                  <Button onClick={() => handleEdit(category)}>
                     <Icon icon={faEdit} />
                   </Button>
-                  <Button onClick={() => handleDelete(category.id)} variant="danger">
+                  <Button
+                    onClick={() => handleDelete(category.id)}
+                    style={ButtonStyle.Danger}
+                  >
                     <Icon icon={faTrash} />
                   </Button>
                 </div>
@@ -227,6 +218,14 @@ export function Page() {
           </div>
         ))}
       </div>
+
+      {categories.length === 0 && !creating && (
+        <div className={styles.emptyState}>
+          <Icon icon={faFolder} />
+          <h3>No categories yet</h3>
+          <p>Create your first category to get started</p>
+        </div>
+      )}
     </Container>
   );
 }

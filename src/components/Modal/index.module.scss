@@ -16,9 +16,9 @@
 }
 
 .modal {
-  background: white;
+  background: v.$color-background-accent;
   border-radius: v.$border-radius;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(108, 99, 255, 0.2);
   max-height: 90vh;
   overflow: hidden;
   display: flex;
@@ -57,12 +57,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 2px solid v.$background-light-500;
+  border-bottom: 1px solid v.$border-medium;
 
   h2 {
     font-size: 1.3rem;
     font-weight: 600;
-    color: v.$color-text;
+    color: v.$color-text-primary;
     margin: 0;
   }
 
@@ -75,12 +75,12 @@
     align-items: center;
     justify-content: center;
     border-radius: 4px;
-    color: #666;
+    color: v.$color-text-secondary;
     transition: all 0.2s ease;
 
     &:hover {
-      background: v.$background-light-200;
-      color: v.$color-text;
+      background: v.$color-background-elevated;
+      color: v.$color-text-primary;
     }
 
     &:active {
@@ -106,12 +106,12 @@
   }
   
   &::-webkit-scrollbar-thumb {
-    background: v.$background-light-500;
+    background: v.$color-background-elevated;
     border-radius: 3px;
   }
   
   &::-webkit-scrollbar-thumb:hover {
-    background: v.$scrollbar-thumb-hover;
+    background: v.$color-primary;
   }
 }
 

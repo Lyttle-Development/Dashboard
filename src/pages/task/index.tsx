@@ -47,7 +47,7 @@ export function Page() {
 
   const filteredTasks = tasks.filter(
     (task) =>
-      task?.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (task.description?.toLowerCase() || "").includes(searchQuery.toLowerCase())
   );
 
@@ -136,7 +136,7 @@ export function Page() {
           {filteredTasks.map((task) => (
             <div key={task.id} className={styles.card}>
               <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle}>{task.name}</h3>
+                <h3 className={styles.cardTitle}>{task.title}</h3>
                 <button
                   className={`${styles.checkbox} ${task.done ? styles.checked : ""}`}
                   onClick={() => toggleTaskDone(task.id, task.done)}

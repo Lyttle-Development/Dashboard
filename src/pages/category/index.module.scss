@@ -20,9 +20,63 @@
 
   .subtitle {
     font-size: 1.1rem;
-    color: #666;
+    color: v.$color-text-secondary;
     margin: 0;
   }
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: v.$color-text-primary;
+  }
+
+  input, select, textarea {
+    padding: 0.75rem 1rem;
+    border: 1px solid v.$border-medium;
+    border-radius: v.$border-radius;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    background: v.$color-background-elevated;
+    color: v.$color-text-primary;
+
+    &:hover:not(:disabled) {
+      border-color: v.$color-primary;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-primary;
+      box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+    }
+
+    &::placeholder {
+      color: v.$color-text-tertiary;
+    }
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
 }
 
 .createForm {
