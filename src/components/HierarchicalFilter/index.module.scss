@@ -5,10 +5,11 @@
   flex-direction: column;
   gap: 1.5rem;
   padding: 1.5rem;
-  background: v.$background-primary;
+  background: v.$color-background-accent;
   border-radius: v.$border-radius-lg;
   box-shadow: v.$shadow-md;
-  border: 1px solid v.$border-light;
+  border: 1px solid v.$border-medium;
+  margin-bottom: 2rem;
 }
 
 .filterGroup {
@@ -21,15 +22,15 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: v.$color-text;
+  color: v.$color-text-tertiary;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 
   svg {
     color: v.$color-primary;
-    font-size: 1rem;
+    font-size: 0.875rem;
   }
 }
 
@@ -42,79 +43,85 @@
 .searchIcon {
   position: absolute;
   left: 1rem;
-  color: v.$color-text-secondary;
+  color: v.$color-text-tertiary;
   font-size: 0.875rem;
   pointer-events: none;
+  z-index: 1;
 }
 
 .searchInput {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.75rem;
-  font-size: 0.9375rem;
-  border: 2px solid v.$border-light;
-  border-radius: v.$border-radius;
-  background: v.$background-primary;
+  font-size: 0.875rem;
+  border: 1px solid v.$border-medium;
+  border-radius: v.$border-radius-sm;
+  background: v.$color-background-elevated;
   color: v.$color-text;
   transition: all v.$transition-base;
 
   &::placeholder {
-    color: v.$color-text-light;
+    color: v.$color-text-tertiary;
   }
 
   &:hover:not(:disabled) {
-    border-color: v.$color-primary-light;
+    border-color: v.$color-primary;
+    background: v.$color-background-hover;
   }
 
   &:focus {
     outline: none;
     border-color: v.$color-primary;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    background: v.$color-background-hover;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
   }
 
   &:disabled {
-    background: v.$background-tertiary;
+    background: v.$color-background-accent;
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.5;
+    color: v.$color-text-muted;
   }
 }
 
 .select {
   width: 100%;
-  padding: 0.875rem 2.5rem 0.875rem 1rem;
-  font-size: 0.9375rem;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  border: 2px solid v.$border-light;
-  border-radius: v.$border-radius;
-  background: v.$background-primary;
+  border: 1px solid v.$border-medium;
+  border-radius: v.$border-radius-sm;
+  background: v.$color-background-elevated;
   color: v.$color-text;
   cursor: pointer;
   transition: all v.$transition-base;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23B8B8C7' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   background-size: 12px;
 
   &:hover:not(:disabled) {
-    border-color: v.$color-primary-light;
-    background-color: v.$background-secondary;
+    border-color: v.$color-primary;
+    background-color: v.$color-background-hover;
   }
 
   &:focus {
     outline: none;
     border-color: v.$color-primary;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    background: v.$color-background-hover;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
   }
 
   &:disabled {
-    background: v.$background-tertiary;
+    background: v.$color-background-accent;
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.5;
+    color: v.$color-text-muted;
   }
 
   option {
     padding: 0.5rem;
-    background: v.$background-primary;
+    background: v.$color-background-elevated;
     color: v.$color-text;
   }
 }
@@ -123,9 +130,9 @@
   padding: 1rem;
   text-align: center;
   color: v.$color-text-secondary;
-  background: v.$background-secondary;
-  border-radius: v.$border-radius;
-  font-size: 0.875rem;
+  background: v.$color-background-elevated;
+  border-radius: v.$border-radius-sm;
+  font-size: 0.8125rem;
   font-style: italic;
   border: 1px dashed v.$border-medium;
 }
