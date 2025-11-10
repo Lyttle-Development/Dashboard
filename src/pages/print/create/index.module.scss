@@ -58,7 +58,7 @@
     border-radius: v.$border-radius;
     font-size: 0.9rem;
     transition: all 0.2s ease;
-    background: white;
+    background: v.$color-background-accent;
 
     &:hover:not(:disabled) {
       border-color: v.$color-primary;

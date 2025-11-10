@@ -205,11 +205,6 @@ export function Page() {
     </Container>
   );
 }
-        </div>
-      )}
-    </Container>
-  );
-}
 
 Page.getLayout = Layout.getDefault;
 

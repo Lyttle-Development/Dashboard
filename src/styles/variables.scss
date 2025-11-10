@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // Dark Theme Design System - Inspired by Lyttle Development Website
 // Professional dark color palette matching https://www.lyttledevelopment.com
 
@@ -81,4 +83,4 @@ $transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 // Gradients
 $gradient-primary: linear-gradient(90deg, #6C62FF 0%, #271B5E 100%);
 $gradient-secondary: linear-gradient(90deg, #E1575C 0%, #4B1B37 100%);
-$gradient-background: linear-gradient(135deg, $color-background 0%, darken($color-background, 3%) 100%);
+$gradient-background: linear-gradient(135deg, $color-background 0%, color.adjust($color-background, $lightness: -3%) 100%);
