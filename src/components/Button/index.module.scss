@@ -6,30 +6,30 @@
   align-items: center;
   justify-content: center;
   width: fit-content;
-  border-radius: v.$border-radius;
+  border-radius: v.$border-radius-sm;
   padding: 0.625rem 1.25rem;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 600;
   min-height: 2.5rem;
   gap: 0.5rem;
-  background-color: v.$background-primary;
+  background-color: v.$color-background-accent;
   color: v.$color-text;
-  border: 2px solid v.$border-light;
+  border: 1px solid v.$border-medium;
   box-shadow: v.$shadow-sm;
   transition: all v.$transition-base;
   outline: none;
   cursor: pointer;
 
   &:hover:not(:disabled) {
-    background-color: v.$background-secondary;
-    border-color: v.$border-medium;
+    background-color: v.$color-background-elevated;
+    border-color: v.$border-dark;
     box-shadow: v.$shadow-md;
     transform: translateY(-1px);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
   }
 
   &:active:not(:disabled) {
@@ -48,10 +48,12 @@
   background: v.$color-primary;
   color: white;
   border-color: v.$color-primary;
+  box-shadow: v.$shadow-glow;
 
   &:hover:not(:disabled) {
-    background: v.$color-primary-dark;
-    border-color: v.$color-primary-dark;
+    background: v.$color-primary-light;
+    border-color: v.$color-primary-light;
+    box-shadow: 0 0 25px rgba(108, 99, 255, 0.4);
   }
 }
 
@@ -61,8 +63,8 @@
   border-color: v.$color-danger;
 
   &:hover:not(:disabled) {
-    background: #dc2626;
-    border-color: #dc2626;
+    background: v.$color-secondary-light;
+    border-color: v.$color-secondary-light;
   }
 }
 
@@ -72,18 +74,18 @@
   border-color: v.$color-success;
 
   &:hover:not(:disabled) {
-    background: v.$color-accent-dark;
-    border-color: v.$color-accent-dark;
+    background: v.$color-accent-light;
+    border-color: v.$color-accent-light;
   }
 }
 
 .secondary {
-  background: v.$background-tertiary;
+  background: v.$color-background-elevated;
   color: v.$color-text;
   border-color: v.$border-medium;
 
   &:hover:not(:disabled) {
-    background: v.$border-light;
+    background: v.$color-background-hover;
     border-color: v.$border-dark;
   }
 }

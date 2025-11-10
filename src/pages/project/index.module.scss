@@ -6,9 +6,12 @@
   align-items: flex-start;
   margin-bottom: 2rem;
   gap: 1rem;
+  // Fixed height to prevent jumping
+  min-height: 80px;
 
   @media (max-width: 768px) {
     flex-direction: column;
+    min-height: auto;
   }
 }
 
@@ -32,9 +35,9 @@
   justify-content: center;
   padding: 4rem 2rem;
   text-align: center;
-  background: v.$background-primary;
+  background: v.$color-background-accent;
   border-radius: v.$border-radius-lg;
-  border: 2px dashed v.$border-light;
+  border: 2px dashed v.$border-medium;
   margin-top: 2rem;
 
   h3 {
@@ -50,7 +53,7 @@
 
 .emptyIcon {
   font-size: 4rem;
-  color: v.$color-text-light;
+  color: v.$color-text-tertiary;
 }
 
 .projectGrid {
@@ -58,20 +61,27 @@
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
   margin-top: 2rem;
+  // Fixed minimum height to prevent jumping during load
+  min-height: 200px;
 }
 
 .projectCard {
-  background: v.$background-primary;
+  background: v.$color-background-accent;
   border-radius: v.$border-radius-lg;
-  border: 2px solid v.$border-light;
+  border: 1px solid v.$border-medium;
   padding: 1.5rem;
   transition: all v.$transition-base;
   box-shadow: v.$shadow-sm;
+  // Fixed height helps prevent layout shifts
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
-    border-color: v.$color-primary-light;
-    box-shadow: v.$shadow-lg;
+    border-color: v.$color-primary;
+    box-shadow: v.$shadow-glow;
     transform: translateY(-2px);
+    background: v.$color-background-elevated;
   }
 }
 
@@ -89,17 +99,20 @@
   color: v.$color-text;
   margin: 0;
   flex: 1;
+  // Prevent text from jumping
+  line-height: 1.4;
 }
 
 .badge {
   padding: 0.25rem 0.75rem;
-  background: v.$color-accent-light;
+  background: v.$color-accent;
   color: white;
   border-radius: v.$border-radius-full;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  flex-shrink: 0;
 }
 
 .projectStats {
@@ -107,8 +120,9 @@
   gap: 1.5rem;
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: v.$background-secondary;
-  border-radius: v.$border-radius;
+  background: v.$color-background-elevated;
+  border-radius: v.$border-radius-sm;
+  border: 1px solid v.$border-light;
 }
 
 .stat {
@@ -125,6 +139,7 @@
 
   span {
     font-weight: 500;
+    color: v.$color-text;
   }
 }
 
@@ -132,4 +147,5 @@
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
+  margin-top: auto;
 }

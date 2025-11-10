@@ -1,37 +1,40 @@
 @use './variables.scss' as v;
 
-/* Modern input styles matching new design system */
+/* Dark theme input styles matching Lyttle Development design */
 
 @mixin input-base {
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 0.9375rem;
   font-family: inherit;
-  border: 2px solid v.$border-light;
-  border-radius: v.$border-radius;
-  background: v.$background-primary;
+  border: 1px solid v.$border-medium;
+  border-radius: v.$border-radius-sm;
+  background: v.$color-background-elevated;
   color: v.$color-text;
   transition: all v.$transition-base;
 
   &::placeholder {
-    color: v.$color-text-light;
+    color: v.$color-text-tertiary;
   }
 
   &:hover:not(:disabled):not(:read-only) {
-    border-color: v.$color-primary-light;
+    border-color: v.$color-primary;
+    background: v.$color-background-hover;
   }
 
   &:focus {
     outline: none;
     border-color: v.$color-primary;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    background: v.$color-background-hover;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
   }
 
   &:disabled,
   &:read-only {
-    background: v.$background-tertiary;
+    background: v.$color-background-accent;
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.5;
+    color: v.$color-text-muted;
   }
 }
 
@@ -40,14 +43,14 @@
   padding-right: 2.5rem;
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23B8B8C7' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   background-size: 12px;
 
   option {
     padding: 0.5rem;
-    background: v.$background-primary;
+    background: v.$color-background-elevated;
     color: v.$color-text;
   }
 }
@@ -62,12 +65,13 @@
 @mixin checkbox-base {
   width: 1.125rem;
   height: 1.125rem;
-  border: 2px solid v.$border-light;
+  border: 1px solid v.$border-medium;
   border-radius: 0.25rem;
   cursor: pointer;
   transition: all v.$transition-base;
   appearance: none;
   position: relative;
+  background: v.$color-background-elevated;
 
   &:checked {
     background: v.$color-primary;
@@ -92,7 +96,7 @@
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
   }
 }
 
@@ -146,4 +150,3 @@
     pointer-events: none;
   }
 }
-
