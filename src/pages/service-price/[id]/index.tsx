@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import styles from "./index.module.scss";
-import { Button } from "@/components/Button";
+import { Button, ButtonStyle } from "@/components/Button";
 import { Modal } from "@/components/Modal";
 import { Icon } from "@/components/Icon";
 import { faArrowLeft, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -105,16 +105,16 @@ export default function ServicePriceDetailPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <Link href={LINKS.servicePrice.root}>
-          <Button variant="secondary">
+          <Button style={ButtonStyle.Default}>
             <Icon icon={faArrowLeft} /> Back
           </Button>
         </Link>
         <h1>{price.service}</h1>
         <div className={styles.actions}>
-          <Button onClick={() => setShowEditModal(true)} variant="primary">
+          <Button onClick={() => setShowEditModal(true)} style={ButtonStyle.Primary}>
             <Icon icon={faEdit} /> Edit
           </Button>
-          <Button onClick={() => setShowDeleteConfirm(true)} variant="danger">
+          <Button onClick={() => setShowDeleteConfirm(true)} style={ButtonStyle.Danger}>
             <Icon icon={faTrash} /> Delete
           </Button>
         </div>
@@ -176,8 +176,8 @@ export default function ServicePriceDetailPage() {
             </select>
           </div>
           <div className={styles.modalActions}>
-            <Button onClick={handleEdit} variant="primary">Save Changes</Button>
-            <Button onClick={() => setShowEditModal(false)} variant="secondary">Cancel</Button>
+            <Button onClick={handleEdit} style={ButtonStyle.Primary}>Save Changes</Button>
+            <Button onClick={() => setShowEditModal(false)} style={ButtonStyle.Default}>Cancel</Button>
           </div>
         </div>
       </Modal>
@@ -186,8 +186,8 @@ export default function ServicePriceDetailPage() {
         <div className={styles.modalForm}>
           <p>Are you sure you want to delete this service price? This action cannot be undone.</p>
           <div className={styles.modalActions}>
-            <Button onClick={handleDelete} variant="danger">Delete</Button>
-            <Button onClick={() => setShowDeleteConfirm(false)} variant="secondary">Cancel</Button>
+            <Button onClick={handleDelete} style={ButtonStyle.Danger}>Delete</Button>
+            <Button onClick={() => setShowDeleteConfirm(false)} style={ButtonStyle.Default}>Cancel</Button>
           </div>
         </div>
       </Modal>

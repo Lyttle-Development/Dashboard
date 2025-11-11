@@ -84,7 +84,7 @@ function Page() {
 
       let statusId = statuses?.[0]?.id;
       if (!statusId) {
-        // Create "Open" status if it doesn't exist
+        // Create "Open" status if it doesn&apos;t exist
         const newStatus = await fetch("/api/invoiceStatus", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -62,7 +62,7 @@
   h2 {
     font-size: 1.3rem;
     font-weight: 600;
-    color: v.$color-text-primary;
+    color: v.$color-text;
     margin: 0;
   }
 
@@ -80,7 +80,7 @@
 
     &:hover {
       background: v.$color-background-elevated;
-      color: v.$color-text-primary;
+      color: v.$color-text;
     }
 
     &:active {

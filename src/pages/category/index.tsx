@@ -13,7 +13,7 @@ import {
   faCheck,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import { Button } from "@/components/Button";
+import { Button, ButtonStyle } from "@/components/Button";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { Modal } from "@/components/Modal";
 
@@ -123,7 +123,7 @@ export function Page() {
             Organize tasks, prices, and other items by category
           </p>
         </div>
-        <Button onClick={() => setShowCreateModal(true)} variant="primary">
+        <Button onClick={() => setShowCreateModal(true)} style={ButtonStyle.Primary}>
           <Icon icon={faPlus} />
           Add Category
         </Button>
@@ -159,7 +159,7 @@ export function Page() {
             />
           </div>
           <div className={styles.modalActions}>
-            <Button onClick={handleCreate} variant="primary">
+            <Button onClick={handleCreate} style={ButtonStyle.Primary}>
               <Icon icon={faCheck} />
               Create
             </Button>
@@ -168,7 +168,7 @@ export function Page() {
                 setShowCreateModal(false);
                 setNewData({ name: "" });
               }}
-              variant="secondary"
+              style={ButtonStyle.Default}
             >
               <Icon icon={faTimes} />
               Cancel
@@ -192,7 +192,7 @@ export function Page() {
                   autoFocus
                 />
                 <div className={styles.cardActions}>
-                  <Button onClick={handleSaveEdit} variant="primary">
+                  <Button onClick={handleSaveEdit} style={ButtonStyle.Primary}>
                     <Icon icon={faCheck} />
                   </Button>
                   <Button
@@ -200,7 +200,7 @@ export function Page() {
                       setEditingId(null);
                       setEditData({});
                     }}
-                    variant="secondary"
+                    style={ButtonStyle.Default}
                   >
                     <Icon icon={faTimes} />
                   </Button>
@@ -215,10 +215,10 @@ export function Page() {
                   <h3 className={styles.cardTitle}>{category.name}</h3>
                 </div>
                 <div className={styles.cardActions}>
-                  <Button onClick={() => handleEdit(category)} variant="secondary">
+                  <Button onClick={() => handleEdit(category)} style={ButtonStyle.Default}>
                     <Icon icon={faEdit} />
                   </Button>
-                  <Button onClick={() => handleDelete(category.id)} variant="danger">
+                  <Button onClick={() => handleDelete(category.id)} style={ButtonStyle.Danger}>
                     <Icon icon={faTrash} />
                   </Button>
                 </div>

@@ -7,7 +7,7 @@ import {
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "@/components/Button";
+import { Button, ButtonStyle } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
 import { Expense } from "@/lib/prisma";
 import { LINKS } from "@/links";
@@ -35,14 +35,13 @@ export function Page() {
 
   const filteredExpenses = expenses.filter(
     (expense) =>
-      expense.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (expense.description?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+      expense.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalAmount = expenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
+  const totalAmount = expenses.reduce((sum, exp) => sum + ((exp.unitPrice || 0) * (exp.quantity || 0)), 0);
   const paidAmount = expenses
     .filter((exp) => exp.statusId === "2dee2fe0-e126-4ac4-b451-8e75c3316c7b") // Closed/Paid
-    .reduce((sum, exp) => sum + (exp.amount || 0), 0);
+    .reduce((sum, exp) => sum + ((exp.unitPrice || 0) * (exp.quantity || 0)), 0);
 
   return (
     <Container>
@@ -52,7 +51,7 @@ export function Page() {
             <Icon icon={faHandHoldingDollar} className={styles.icon} />
             <h1>Expenses</h1>
           </div>
-          <Button href={LINKS.expense.create} variant="primary">
+          <Button href={LINKS.expense.create} style={ButtonStyle.Primary}>
             <Icon icon={faPlus} /> Create Expense
           </Button>
         </div>
@@ -98,7 +97,7 @@ export function Page() {
               : "Get started by tracking your first expense"}
           </p>
           {!searchQuery && (
-            <Button href={LINKS.expense.create} variant="primary">
+            <Button href={LINKS.expense.create} style={ButtonStyle.Primary}>
               <Icon icon={faPlus} /> Create Expense
             </Button>
           )}
@@ -109,23 +108,24 @@ export function Page() {
             <div key={expense.id} className={styles.card}>
               <div className={styles.cardHeader}>
                 <h3 className={styles.cardTitle}>{expense.name}</h3>
-                <div className={styles.amount}>€{(expense.amount || 0).toFixed(2)}</div>
+                <div className={styles.amount}>€{(((expense.unitPrice || 0) * (expense.quantity || 0)) || 0).toFixed(2)}</div>
               </div>
-              
-              {expense.description && (
-                <p className={styles.cardDescription}>{expense.description}</p>
-              )}
 
               <div className={styles.cardMeta}>
-                {expense.date && (
+                {expense.neededAt && (
                   <span className={styles.badge}>
-                    {new Date(expense.date).toLocaleDateString()}
+                    {new Date(expense.neededAt).toLocaleDateString()}
+                  </span>
+                )}
+                {expense.quantity && (
+                  <span className={styles.badge}>
+                    Qty: {expense.quantity}
                   </span>
                 )}
               </div>
 
               <div className={styles.cardActions}>
-                <Button href={`${LINKS.expense.index}/${expense.id}`} variant="secondary" size="small">
+                <Button href={`${LINKS.expense.index}/${expense.id}`} style={ButtonStyle.Default}>
                   View Details
                 </Button>
               </div>

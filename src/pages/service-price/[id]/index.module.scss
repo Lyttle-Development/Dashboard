@@ -15,7 +15,7 @@
   h1 {
     flex: 1;
     margin: 0;
-    color: v.$color-text-primary;
+    color: v.$color-text;
   }
 
   .actions {
@@ -38,7 +38,7 @@
   h2 {
     margin-top: 0;
     margin-bottom: 1.5rem;
-    color: v.$color-text-primary;
+    color: v.$color-text;
     font-size: 1.5rem;
   }
 }
@@ -62,7 +62,7 @@
 
   p {
     margin: 0;
-    color: v.$color-text-primary;
+    color: v.$color-text;
     font-size: 1rem;
 
     a {
@@ -109,7 +109,7 @@
 
   label {
     font-weight: 600;
-    color: v.$color-text-primary;
+    color: v.$color-text;
     font-size: 0.9rem;
 
     input[type="checkbox"] {
@@ -123,8 +123,8 @@
     padding: 0.75rem 1rem;
     background: v.$color-background-elevated;
     border: 1px solid v.$border-medium;
-    border-radius: v.$border-radius-base;
-    color: v.$color-text-primary;
+    border-radius: v.$border-radius;
+    color: v.$color-text;
     font-size: 1rem;
     transition: all v.$transition-base;
 

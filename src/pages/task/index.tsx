@@ -3,8 +3,7 @@ import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
 import { faListCheck, faPlus, faSearch, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useState } from "react";
-import { Loader } from "@/components/Loader";
-import { Button } from "@/components/Button";
+import { Button, ButtonStyle } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
 import { Task, Category } from "@/lib/prisma";
 import { LINKS } from "@/links";
@@ -80,7 +79,7 @@ export function Page() {
             <Icon icon={faListCheck} className={styles.icon} />
             <h1>Tasks</h1>
           </div>
-          <Button href={LINKS.task.create} variant="primary">
+          <Button href={LINKS.task.create} style={ButtonStyle.Primary}>
             <Icon icon={faPlus} /> Create Task
           </Button>
         </div>
@@ -126,7 +125,7 @@ export function Page() {
               : "Get started by creating your first task"}
           </p>
           {!searchQuery && (
-            <Button href={LINKS.task.create} variant="primary">
+            <Button href={LINKS.task.create} style={ButtonStyle.Primary}>
               <Icon icon={faPlus} /> Create Task
             </Button>
           )}

@@ -214,7 +214,7 @@ function Page() {
       <div className={styles.header}>
         <h1>Dashboard Overview</h1>
         <p className={styles.subtitle}>
-          Welcome back! Here's what needs your attention.
+          Welcome back! Here&apos;s what needs your attention.
         </p>
       </div>
 
