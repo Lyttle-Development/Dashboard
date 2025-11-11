@@ -1,32 +1,32 @@
-import { Layout } from "@/layouts";
-import { Container } from "@/components/Container";
-import { useCallback, useEffect, useState } from "react";
-import { Expense, ExpenseStatusEnum, PrintJob, Project } from "@/lib/prisma";
-import { fetchApi } from "@/lib/fetchApi";
-import { Loader } from "@/components/Loader";
+import {Layout} from '@/layouts';
+import {Container} from '@/components/Container';
+import {useCallback, useEffect, useState} from 'react';
+import {Expense, ExpenseStatusEnum, PrintJob, Project} from '@/lib/prisma';
+import {fetchApi} from '@/lib/fetchApi';
+import {Loader} from '@/components/Loader';
 
-import styles from "./index.module.scss";
-import { useApp } from "@/contexts/App.context";
-import Link from "next/link";
-import { getProjectFullName } from "@/lib/project";
-import { findNewestTimeLog } from "@/lib/project/find-newest-time-log";
-import { useMobile } from "@/hooks/useMobile";
-import { router } from "next/client";
-import { groupArrayBy, sortGroupedListBy } from "@/lib/array";
-import { capitalizeWords } from "@/lib/format/string";
-import { Icon } from "@/components/Icon";
+import styles from './index.module.scss';
+import {useApp} from '@/contexts/App.context';
+import Link from 'next/link';
+import {getProjectFullName} from '@/lib/project';
+import {findNewestTimeLog} from '@/lib/project/find-newest-time-log';
+import {useMobile} from '@/hooks/useMobile';
+import {router} from 'next/client';
+import {groupArrayBy, sortGroupedListBy} from '@/lib/array';
+import {capitalizeWords} from '@/lib/format/string';
+import {Icon} from '@/components/Icon';
 import {
-  faRotateLeft,
-  faFileInvoice,
-  faDiagramProject,
-  faPrint,
-  faMoneyBill,
-  faClock,
-} from "@fortawesome/free-solid-svg-icons";
-import { ActiveTimeLogs } from "@/components/ActiveTimeLogs";
-import { LINKS } from "@/links";
-import { usePageTitle } from "@/hooks/usePageTitle";
-import { Button, ButtonStyle } from "@/components/Button";
+    faClock,
+    faDiagramProject,
+    faFileInvoice,
+    faMoneyBill,
+    faPrint,
+    faRotateLeft,
+} from '@fortawesome/free-solid-svg-icons';
+import {ActiveTimeLogs} from '@/components/ActiveTimeLogs';
+import {LINKS} from '@/links';
+import {usePageTitle} from '@/hooks/usePageTitle';
+import {Button, ButtonStyle} from '@/components/Button';
 
 function Page() {
   usePageTitle({ title: "Home" });
@@ -311,7 +311,7 @@ function Page() {
                   </div>
                   <div className={styles.cardAction}>
                     <Link href={LINKS.invoice.create.project(project.id)}>
-                      <Button variant="primary">Create Invoice</Button>
+                      <Button style={ButtonStyle.Primary}>Create Invoice</Button>
                     </Link>
                   </div>
                 </div>
@@ -335,7 +335,7 @@ function Page() {
                   </div>
                   <div className={styles.cardAction}>
                     <Link href={LINKS.invoice.create.print(printJob.id)}>
-                      <Button variant="primary">Create Invoice</Button>
+                      <Button style={ButtonStyle.Primary}>Create Invoice</Button>
                     </Link>
                   </div>
                 </div>
