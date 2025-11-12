@@ -125,7 +125,7 @@ export function Page() {
               </div>
 
               <div className={styles.cardActions}>
-                <Button href={`${LINKS.expense.index}/${expense.id}`} style={ButtonStyle.Default}>
+                <Button href={LINKS.expense.detail(expense.id)} style={ButtonStyle.Default}>
                   View Details
                 </Button>
               </div>

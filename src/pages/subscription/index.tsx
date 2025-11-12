@@ -144,7 +144,7 @@ export function Page() {
               </div>
 
               <div className={styles.cardActions}>
-                <Button href={`${LINKS.subscription.index}/${subscription.id}`} variant="secondary" size="small">
+                <Button href={LINKS.subscription.detail(subscription.id)} variant="secondary" size="small">
                   View Details
                 </Button>
               </div>
