@@ -1,0 +1,153 @@
+@use '/src/styles/variables' as v;
+
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  
+  h1 {
+    flex: 1;
+    margin: 0;
+    color: v.$color-text;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+.content {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.card {
+  background: v.$color-background-accent;
+  border-radius: v.$border-radius-lg;
+  padding: 1.5rem;
+  box-shadow: v.$shadow-md;
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: v.$color-text;
+    font-size: 1.5rem;
+  }
+}
+
+.field {
+  margin-bottom: 1rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    color: v.$color-text-secondary;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  p {
+    margin: 0;
+    color: v.$color-text;
+    font-size: 1rem;
+
+    a {
+      color: v.$color-primary;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.badgeSuccess {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: v.$border-radius-sm;
+  background: v.$color-success;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.badgeWarning {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: v.$border-radius-sm;
+  background: v.$color-warning;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 600;
+    color: v.$color-text;
+    font-size: 0.9rem;
+
+    input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
+  }
+
+  input[type="text"],
+  textarea,
+  select {
+    padding: 0.75rem 1rem;
+    background: v.$color-background-elevated;
+    border: 1px solid v.$border-medium;
+    border-radius: v.$border-radius;
+    color: v.$color-text;
+    font-size: 1rem;
+    transition: all v.$transition-base;
+
+    &:hover {
+      border-color: v.$color-primary;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-primary;
+      box-shadow: 0 0 0 3px rgba(v.$color-primary, 0.1);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    font-family: inherit;
+  }
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  justify-content: flex-end;
+}

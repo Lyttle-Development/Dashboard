@@ -4,26 +4,21 @@ import { Container } from "@/components/Container";
 import { useEffect, useState } from "react";
 import { PrintJob, ServicePrice } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
-import { Button } from "@/components/Button";
+import { Button, ButtonStyle } from "@/components/Button";
 import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { KeyValue } from "@/components/KeyValue";
-import { getTotalHours } from "@/lib/price/get-price";
 import { Icon } from "@/components/Icon";
-import { faDiagramProject } from "@fortawesome/free-solid-svg-icons";
-import { formatNumber } from "@/lib/format/number";
-import { SideToSide } from "@/components/SideToSide";
-import { FormOptionType } from "@/components/Form";
-import {
-  PRINT_LABOUR_BASE_COST,
-  PRINT_MARGIN_PROCENT,
-  TAX_COST_PROCENT,
-} from "@/constants";
+import { faDiagramProject, faPrint, faEye } from "@fortawesome/free-solid-svg-icons";
 import { safeParseFloat } from "@/lib/parse";
-import { procentToNumber } from "@/lib/procent";
-import { Markdown } from "@/components/Markdown";
 import { LINKS } from "@/links";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import {
+  calculatePrintJobInvoice,
+  formatCurrency,
+  formatPercentage,
+} from "@/lib/invoice";
+import { InvoicePreview } from "@/components/InvoicePreview";
 
 function Page() {
   usePageTitle({ title: "Create Print Job Invoice" });
@@ -42,6 +37,7 @@ function Page() {
   const [prices, setPrices] = useState<ServicePrice[]>([]);
   const [invoice, setInvoice] = useState({});
   const [discount, setDiscount] = useState(0);
+  const [showPreview, setShowPreview] = useState(false);
 
   const fetchPrintJob = async (id: string) => {
     updateLoading("printJob", true);
@@ -53,6 +49,7 @@ function Page() {
         timeLogs: true,
         price: true,
         material: true,
+        customer: true,
       },
     });
     setPrintJob(printJobData);
@@ -69,7 +66,74 @@ function Page() {
     updateLoading("prices", false);
   };
 
-  const createInvoice = async () => {};
+  const createInvoice = async () => {
+    if (!printJob?.customer) {
+      alert("Please assign a customer to this print job first");
+      return;
+    }
+
+    try {
+      setLoading({ printJob: true, prices: true });
+      setLoadingTask("Creating invoice...");
+
+      // Get or create invoice status "Open"
+      const statuses = await fetchApi<any[]>({
+        table: "invoiceStatus",
+        where: { status: "Open" },
+      });
+
+      let statusId = statuses?.[0]?.id;
+      if (!statusId) {
+        // Create "Open" status if it doesn&apos;t exist
+        const newStatus = await fetch("/api/invoiceStatus", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "Open" }),
+        }).then((res) => res.json());
+        statusId = newStatus.id;
+      }
+
+      // Create the invoice
+      const invoiceData = {
+        invoiceDate: new Date().toISOString(),
+        amount: calculation.total,
+        statusId,
+        customerId: printJob.customer.id,
+        priceId: printJob.priceId,
+      };
+
+      const response = await fetch("/api/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(invoiceData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create invoice");
+      }
+
+      const newInvoice = await response.json();
+
+      // Link print job to this invoice
+      setLoadingTask("Linking print job to invoice...");
+      await fetch(`/api/printJob/${printJob.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ invoiceId: newInvoice.id }),
+      });
+
+      setLoadingTask("Done!");
+      alert("Invoice created successfully!");
+      
+      // Redirect to invoice listing
+      router.push(LINKS.invoice.root);
+    } catch (error) {
+      console.error("Error creating invoice:", error);
+      alert("Failed to create invoice. Please try again.");
+    } finally {
+      setLoading({ printJob: false, prices: false });
+    }
+  };
 
   useEffect(() => {
     void fetchPrintJob(printJobId as string);
@@ -79,171 +143,226 @@ function Page() {
   if (!printJobId || !printJob) return <Loader />;
   if (loading) return <Loader info={loadingTask} />;
 
-  // Electricity cost
+  // Get electricity price from service prices
   const electricityPrice =
     prices?.find(
-      (p) => p.id === "cd90b1ef-af06-49e1-80b5-f6920b2d3a92", // ELECTRICITY_PRICE
-    ).price ?? 0;
-  const printTime = getTotalHours(printJob.timeLogs, true);
-  const costPriceElectricity =
-    Math.ceil(printTime * electricityPrice * 100) / 100;
+      (p) => p.id === "cd90b1ef-af06-49e1-80b5-f6920b2d3a92" // ELECTRICITY_PRICE
+    )?.price ?? 0;
 
-  const totalPriceElectricity = costPriceElectricity; // Electricity cost
-
-  // Material cost
-  const materialPricePerGram = printJob
-    ? Math.ceil(
-        (printJob.material?.unitPrice / printJob.material?.unitAmount) * 100,
-      ) / 100
-    : 0;
-  const costPriceMaterial =
-    Math.ceil(
-      printJob.quantity * printJob.weight * materialPricePerGram * 100,
-    ) / 100;
-  const totalPriceMaterial = totalPriceElectricity + costPriceMaterial; // Material cost
-
-  // Labour cost
-  const totalPriceCalculatedLabour =
-    Math.ceil(
-      (totalPriceMaterial + PRINT_LABOUR_BASE_COST * printJob.quantity) * 100,
-    ) / 100;
-  const costPriceCalculatedLabour =
-    totalPriceCalculatedLabour - totalPriceMaterial;
-
-  // Margin cost
-  const totalPriceCalculatedMargin =
-    Math.ceil(totalPriceCalculatedLabour * PRINT_MARGIN_PROCENT * 100) / 100;
-  const costPriceCalculatedMargin =
-    totalPriceCalculatedMargin - totalPriceCalculatedLabour;
-
-  // Discount cost
-  const totalPriceCalculatedDiscount =
-    discount !== 0
-      ? Math.ceil(totalPriceCalculatedMargin * (1 - discount / 100) * 100) / 100
-      : totalPriceCalculatedMargin;
-  const costPriceCalculatedDiscount =
-    totalPriceCalculatedDiscount - totalPriceCalculatedMargin;
-
-  // TAX/BTW cost
-  const totalPriceCalculatedTax =
-    Math.ceil(totalPriceCalculatedDiscount * TAX_COST_PROCENT * 100) / 100; // Add TAX/BTW
-  const costPriceCalculatedTax =
-    totalPriceCalculatedTax - totalPriceCalculatedDiscount;
-
-  console.log(
-    "totalPriceElectricity",
-    totalPriceElectricity,
-    costPriceElectricity,
+  // Use centralized calculation helper
+  const calculation = calculatePrintJobInvoice(
+    printJob,
+    electricityPrice,
+    discount
   );
-  console.log("totalPriceMaterial", totalPriceMaterial, costPriceMaterial);
-  console.log(
-    "totalPriceCalculatedLabour",
-    totalPriceCalculatedLabour,
-    costPriceCalculatedLabour,
-  );
-  console.log(
-    "totalPriceCalculatedMargin",
-    totalPriceCalculatedMargin,
-    costPriceCalculatedMargin,
-  );
-  console.log(
-    "totalPriceCalculatedDiscount",
-    totalPriceCalculatedDiscount,
-    costPriceCalculatedDiscount,
-  );
-  console.log(
-    "totalPriceCalculatedTax",
-    totalPriceCalculatedTax,
-    costPriceCalculatedTax,
-  );
+
+  // Prepare invoice preview data
+  const invoicePreviewData = {
+    invoiceDate: new Date(),
+    customer: {
+      name: printJob.customer?.firstname
+        ? `${printJob.customer.firstname} ${printJob.customer.lastname || ""}`
+        : "Customer Name",
+      email: printJob.customer?.email,
+    },
+    items: [
+      {
+        description: `3D Print Job: ${printJob.name}`,
+        quantity: printJob.quantity,
+        unitPrice: calculation.subtotalAfterDiscount / printJob.quantity,
+        amount: calculation.subtotalAfterDiscount,
+        details: `${printJob.quantity} units at ${printJob.weight}g each`,
+      },
+    ],
+    subtotal: calculation.subtotal,
+    discount: calculation.discount,
+    discountAmount: calculation.discountAmount,
+    tax: calculation.tax,
+    taxAmount: calculation.taxAmount,
+    total: calculation.total,
+    notes: `Electricity: ${calculation.electricity.hours.toFixed(2)}h × ${formatCurrency(calculation.electricity.rate)}/h = ${formatCurrency(calculation.electricity.cost)}\nMaterial: ${calculation.material.quantity} × ${calculation.material.weightPerUnit}g × ${formatCurrency(calculation.material.pricePerGram)}/g = ${formatCurrency(calculation.material.cost)}\nLabour: ${formatCurrency(calculation.labour.baseCost)} × ${calculation.labour.quantity} units = ${formatCurrency(calculation.labour.cost)}\nMargin: ${formatPercentage(calculation.margin.rate)} = ${formatCurrency(calculation.margin.cost)}`,
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   return (
     <Container className={styles.container}>
-      <h1 className={styles.invoice_title}>
-        <span>Create Invoice</span>
-        <article className={styles.invoice_actions}>
+      <div className={styles.header}>
+        <h1>Create Print Job Invoice</h1>
+        <div className={styles.actions}>
+          <Button
+            onClick={() => setShowPreview(!showPreview)}
+            style={showPreview ? ButtonStyle.Primary : ButtonStyle.Default}
+          >
+            <Icon icon={faEye} />
+            {showPreview ? "Hide Preview" : "Show Preview"}
+          </Button>
+          {showPreview && (
+            <Button onClick={handlePrint} style={ButtonStyle.Primary}>
+              <Icon icon={faPrint} />
+              Print Invoice
+            </Button>
+          )}
           <Button href={LINKS.print.detail(printJob?.id)}>
             <Icon icon={faDiagramProject} />
-            Open Print Job
+            View Print Job
           </Button>
-        </article>
-      </h1>
-      <article className={styles.group}>
-        <h3>Calculations:</h3>
-        <p>
-          Prices are calculated by the total hours worked on the projects, and
-          the price set for each project.
-        </p>
-        <hr />
-        <KeyValue
-          label="Price electricity"
-          value={`€${formatNumber(costPriceElectricity)} (${printTime}h x €${formatNumber(electricityPrice)})`}
-        />
-        <Markdown>
-          {`**Electricity cost**: hours worked (round down) x electricity price (per hour)`}
-        </Markdown>
-        <hr />
-        <KeyValue
-          label="Material cost"
-          value={`€${formatNumber(costPriceMaterial)} (${printJob.quantity}p x ${printJob.weight}g x €${formatNumber(materialPricePerGram)}/g)`}
-        />
-        <Markdown>
-          {`**Material cost**: quantity x weight x material price per gram`}
-        </Markdown>
-        <hr />
-        <KeyValue
-          label="Labour"
-          value={`€${formatNumber(costPriceCalculatedLabour)} (€${PRINT_LABOUR_BASE_COST} * ${printJob.quantity}p)`}
-        />
-        <Markdown>
-          {`**Labour cost**: material cost + labour base cost per print (amount)`}
-        </Markdown>
-        <hr />
-        <KeyValue
-          label="Margin"
-          value={`€${formatNumber(costPriceCalculatedMargin)} (${procentToNumber(PRINT_MARGIN_PROCENT)}%)`}
-        />
-        <Markdown>{`**Margin cost**: labour cost x margin procent`}</Markdown>
-        <hr />
-        <SideToSide className={styles.discount_wrapper}>
-          <KeyValue label="Discount" value={""} />
-          <input
-            type={FormOptionType.NUMBER}
-            value={discount.toString()}
-            onChange={(e) => {
-              const num = safeParseFloat(e.target.value) || 0;
-              setDiscount(num);
-            }}
-            className={styles.discount_input}
-          />
-          <span>% (€{formatNumber(costPriceCalculatedDiscount)})</span>
-        </SideToSide>
-        <Markdown>
-          {`**Discount cost**: margin cost x discount procent (if any)`}
-        </Markdown>
-        <hr />
-        <KeyValue
-          label={`TAX/BTW`}
-          value={`€${formatNumber(costPriceCalculatedTax)} (${procentToNumber(TAX_COST_PROCENT)}%)`}
-        />
-        <Markdown>{`**TAX/BTW cost**: discount cost x TAX/BTW procent`}</Markdown>
-        <hr />
-      </article>
-      <article className={styles.group}>
-        <h3>Total price:</h3>
-        <p>Price after discount and TAX/BTW is applied.</p>
-        <hr />
-        <KeyValue
-          label="Total (excl. TAX/BTW)"
-          value={`€${formatNumber(totalPriceCalculatedDiscount)}`}
-        />
-        <hr />
-        <KeyValue
-          label="Total (incl. TAX/BTW)"
-          value={`€${formatNumber(totalPriceCalculatedTax)}`}
-        />
-        <hr />
-      </article>
+        </div>
+      </div>
+
+      {showPreview ? (
+        <div className={styles.previewSection}>
+          <InvoicePreview {...invoicePreviewData} />
+        </div>
+      ) : (
+        <>
+          <section className={styles.section}>
+            <h2>Print Job Details</h2>
+            <div className={styles.printJobCard}>
+              <div className={styles.printJobHeader}>
+                <h3>{printJob.name}</h3>
+                <Button href={LINKS.print.detail(printJob.id)}>
+                  View Details
+                </Button>
+              </div>
+              <div className={styles.printJobDetails}>
+                <KeyValue label="Quantity" value={`${printJob.quantity} units`} />
+                <KeyValue
+                  label="Weight per Unit"
+                  value={`${printJob.weight}g`}
+                />
+                <KeyValue
+                  label="Print Time"
+                  value={`${calculation.electricity.hours.toFixed(2)} hours`}
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.section}>
+            <h2>Cost Breakdown</h2>
+            <p className={styles.sectionDescription}>
+              Detailed breakdown of all costs involved in this print job.
+            </p>
+            <div className={styles.breakdownCard}>
+              <div className={styles.breakdownItem}>
+                <div className={styles.breakdownLabel}>
+                  <strong>Electricity</strong>
+                  <span className={styles.formula}>
+                    {calculation.electricity.hours.toFixed(2)}h ×{" "}
+                    {formatCurrency(calculation.electricity.rate)}/h
+                  </span>
+                </div>
+                <div className={styles.breakdownValue}>
+                  {formatCurrency(calculation.electricity.cost)}
+                </div>
+              </div>
+
+              <div className={styles.breakdownItem}>
+                <div className={styles.breakdownLabel}>
+                  <strong>Material</strong>
+                  <span className={styles.formula}>
+                    {calculation.material.quantity} units ×{" "}
+                    {calculation.material.weightPerUnit}g ×{" "}
+                    {formatCurrency(calculation.material.pricePerGram)}/g
+                  </span>
+                </div>
+                <div className={styles.breakdownValue}>
+                  {formatCurrency(calculation.material.cost)}
+                </div>
+              </div>
+
+              <div className={styles.breakdownItem}>
+                <div className={styles.breakdownLabel}>
+                  <strong>Labour</strong>
+                  <span className={styles.formula}>
+                    {formatCurrency(calculation.labour.baseCost)} ×{" "}
+                    {calculation.labour.quantity} units
+                  </span>
+                </div>
+                <div className={styles.breakdownValue}>
+                  {formatCurrency(calculation.labour.cost)}
+                </div>
+              </div>
+
+              <div className={styles.breakdownItem}>
+                <div className={styles.breakdownLabel}>
+                  <strong>Margin</strong>
+                  <span className={styles.formula}>
+                    {formatPercentage(calculation.margin.rate)}
+                  </span>
+                </div>
+                <div className={styles.breakdownValue}>
+                  {formatCurrency(calculation.margin.cost)}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.section}>
+            <h2>Invoice Summary</h2>
+            <div className={styles.summaryCard}>
+              <div className={styles.summaryRow}>
+                <span className={styles.label}>Subtotal:</span>
+                <span className={styles.value}>
+                  {formatCurrency(calculation.subtotal)}
+                </span>
+              </div>
+
+              <div className={styles.discountRow}>
+                <div className={styles.discountLabel}>
+                  <span className={styles.label}>Discount:</span>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={discount}
+                    onChange={(e) => {
+                      const num = safeParseFloat(e.target.value) || 0;
+                      setDiscount(Math.max(0, Math.min(100, num)));
+                    }}
+                    className={styles.discountInput}
+                  />
+                  <span>%</span>
+                </div>
+                <span className={styles.value}>
+                  -{formatCurrency(calculation.discountAmount)}
+                </span>
+              </div>
+
+              <div className={styles.summaryRow}>
+                <span className={styles.label}>
+                  Tax ({formatPercentage(calculation.tax)}):
+                </span>
+                <span className={styles.value}>
+                  {formatCurrency(calculation.taxAmount)}
+                </span>
+              </div>
+
+              <div className={styles.totalRow}>
+                <span className={styles.label}>Total:</span>
+                <span className={styles.value}>
+                  {formatCurrency(calculation.total)}
+                </span>
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.section}>
+            <div className={styles.createActions}>
+              <Button
+                onClick={createInvoice}
+                style={ButtonStyle.Primary}
+                disabled={!printJob}
+              >
+                Create Invoice
+              </Button>
+            </div>
+          </section>
+        </>
+      )}
     </Container>
   );
 }
