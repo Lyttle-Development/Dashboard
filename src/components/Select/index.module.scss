@@ -27,22 +27,24 @@
   height: auto;
   min-height: 42px;
   gap: 8px;
-  background-color: white;
-  color: #000;
-  border: 2px solid #dcdcdc;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  background-color: #2D2566;
+  color: #F2F2F2;
+  border: 1px solid rgba(242, 242, 242, 0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease-in-out;
   cursor: pointer;
 
   &:hover {
-    border-color: #6E00FF;
-    box-shadow: 0 4px 12px rgba(110, 0, 255, 0.1);
+    border-color: #6C63FF;
+    background-color: #342A6E;
+    box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
   }
 
   &:focus {
     outline: none;
-    border-color: #6E00FF;
-    box-shadow: 0 0 0 3px rgba(110, 0, 255, 0.1);
+    border-color: #6C63FF;
+    background-color: #342A6E;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
   }
 
   &:active {
@@ -63,14 +65,15 @@
 
 .Content {
   overflow: hidden;
-  background-color: white;
+  background-color: #252257;
   border-radius: 0.5rem;
-  border: 2px solid #dcdcdc;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(242, 242, 242, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   animation: fadeIn 0.2s ease-in-out;
   padding: 0.5rem;
   transform-origin: top;
   transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  z-index: 10000;
 }
 
 @keyframes fadeIn {
@@ -91,7 +94,7 @@
 .Item {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #000;
+  color: #F2F2F2;
   border-radius: 0.375rem;
   display: flex;
   align-items: center;
@@ -103,19 +106,19 @@
   outline: none !important;
 
   &:hover {
-    background-color: #f9f9f9;
-    color: #6E00FF;
+    background-color: #2D2566;
+    color: #8B84FF;
     font-weight: 600;
   }
 
   &[data-disabled] {
-    color: #999;
+    color: #6B6B7E;
     opacity: 0.5;
     pointer-events: none;
   }
 
   &[data-highlighted] {
-    background-color: #6E00FF;
+    background-color: #6C63FF;
     color: white;
     font-weight: 600;
   }
@@ -149,14 +152,14 @@
   align-items: center;
   justify-content: center;
   height: 30px;
-  background-color: white;
-  color: var(--violet-11);
+  background-color: #252257;
+  color: #6C63FF;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
 
   &:hover {
-    background-color: var(--violet-2); /* Lighter color on hover */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #2D2566;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   }
 }
 

@@ -217,10 +217,29 @@ export function Page() {
           )}
         </span>
         <article className={styles.actions}>
-          <Button onClick={deleteExpense} style={ButtonStyle.Danger}>
-            <Icon icon={faTrash} />
-            Delete Expense
-          </Button>
+          {!isEditing ? (
+            <>
+              <Button onClick={() => setIsEditing(true)} style={ButtonStyle.Primary}>
+                <Icon icon={faEdit} />
+                Edit
+              </Button>
+              <Button onClick={deleteExpense} style={ButtonStyle.Danger}>
+                <Icon icon={faTrash} />
+                Delete
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button onClick={updateExpense} style={ButtonStyle.Primary} disabled={!hasChanges || loading}>
+                <Icon icon={faSave} />
+                {loading ? "Saving..." : "Save"}
+              </Button>
+              <Button onClick={cancelEdit} disabled={loading}>
+                <Icon icon={faTimes} />
+                Cancel
+              </Button>
+            </>
+          )}
         </article>
       </h2>
       <SideToSide className={styles.image_splitter}>
@@ -232,94 +251,101 @@ export function Page() {
               value={`${expense.customer.firstname} ${expense.customer.lastname}`} 
             />
           )}
-          <div className={styles.formField}>
-            <label>Customer</label>
-            <Select
-              label="Select Customer"
-              value={expense.customerId || "none"}
-              onValueChange={(value) => handleChange("customerId", value === "none" ? null : value)}
-              options={[
-                { value: "none", label: "No customer" },
-                ...customers.map(c => ({ value: c.id, label: `${c.firstname} ${c.lastname}` }))
-              ]}
-            />
-          </div>
-          <Switch
-            label="Recurring"
-            checked={expense.recurring}
-            onCheckedChange={(value) => handleChange("recurring", value)}
-          />
-          {expense.recurring && (
-            <Select
-              label="Select Interval"
-              options={(Object.values(IntervalEnum) as string[]).map(
-                (interval) => ({
-                  label: interval,
-                  value: interval,
-                }),
-              )}
-              onValueChange={(value) =>
-                handleChange(
-                  "recurringInterval",
-                  typeof value === "string" ? value : "",
-                )
-              }
-              value={expense.recurringInterval?.toString()}
-              searchable
-            />
+          {isEditing && (
+            <div className={styles.formField}>
+              <label>Customer</label>
+              <Select
+                label="Select Customer"
+                value={expense.customerId || "none"}
+                onValueChange={(value) => handleChange("customerId", value === "none" ? null : value)}
+                options={[
+                  { value: "none", label: "No customer" },
+                  ...customers.map(c => ({ value: c.id, label: `${c.firstname} ${c.lastname}` }))
+                ]}
+              />
+            </div>
           )}
-          <Field
-            label="Name"
-            type={FormOptionType.TEXT}
-            required
-            onChange={(value) => handleChange("name", value)}
-            value={expense.name}
-          />
-          <Field
-            label={`Needed At${!expense.neededAt ? " (No date added)" : ""}`}
-            type={FormOptionType.DATE}
-            onChange={(value) => handleChange("neededAt", value)}
-            value={safeParseFieldDate(expense.neededAt)}
-          />
-          <SideToSide className={styles.side_to_side}>
-            <Field
-              label="Link"
-              type={FormOptionType.TEXT}
-              onChange={(value) => handleChange("link", value)}
-              value={expense.link}
-              className={styles.link}
-            />
-            <Link
-              href={expense.link}
-              target={LinkTarget.BLANK}
-              className={styles.linkButton}
-            >
-              <Icon icon={faLink} className={styles.icon} />
-              <span>Open Link</span>
-            </Link>
-          </SideToSide>
-          <Field
-            label="Unit Price"
-            type={FormOptionType.NUMBER}
-            onChange={(value) =>
-              handleChange("unitPrice", safeParseFloat(value))
-            }
-            value={expense.unitPrice}
-          />
-          <Field
-            label="Quantity"
-            type={FormOptionType.NUMBER}
-            onChange={(value) => handleChange("quantity", safeParseInt(value))}
-            value={expense.quantity}
-          />
+          {isEditing && (
+            <>
+              <Switch
+                label="Recurring"
+                checked={expense.recurring}
+                onCheckedChange={(value) => handleChange("recurring", value)}
+              />
+              {expense.recurring && (
+                <Select
+                  label="Select Interval"
+                  options={(Object.values(IntervalEnum) as string[]).map(
+                    (interval) => ({
+                      label: interval,
+                      value: interval,
+                    }),
+                  )}
+                  onValueChange={(value) =>
+                    handleChange(
+                      "recurringInterval",
+                      typeof value === "string" ? value : "",
+                    )
+                  }
+                  value={expense.recurringInterval?.toString()}
+                  searchable
+                />
+              )}
+              <Field
+                label="Name"
+                type={FormOptionType.TEXT}
+                required
+                onChange={(value) => handleChange("name", value)}
+                value={expense.name}
+              />
+              <Field
+                label={`Needed At${!expense.neededAt ? " (No date added)" : ""}`}
+                type={FormOptionType.DATE}
+                onChange={(value) => handleChange("neededAt", value)}
+                value={safeParseFieldDate(expense.neededAt)}
+              />
+              <SideToSide className={styles.side_to_side}>
+                <Field
+                  label="Link"
+                  type={FormOptionType.TEXT}
+                  onChange={(value) => handleChange("link", value)}
+                  value={expense.link}
+                  className={styles.link}
+                />
+                <Link
+                  href={expense.link}
+                  target={LinkTarget.BLANK}
+                  className={styles.linkButton}
+                >
+                  <Icon icon={faLink} className={styles.icon} />
+                  <span>Open Link</span>
+                </Link>
+              </SideToSide>
+              <Field
+                label="Unit Price"
+                type={FormOptionType.NUMBER}
+                onChange={(value) =>
+                  handleChange("unitPrice", safeParseFloat(value))
+                }
+                value={expense.unitPrice}
+              />
+              <Field
+                label="Quantity"
+                type={FormOptionType.NUMBER}
+                onChange={(value) => handleChange("quantity", safeParseInt(value))}
+                value={expense.quantity}
+              />
+            </>
+          )}
         </article>
-        <Preview
-          link={expense.link}
-          image={expense.image}
-          onImage={(image) => handleChange("image", image)}
-        />
+        {isEditing && (
+          <Preview
+            link={expense.link}
+            image={expense.image}
+            onImage={(image) => handleChange("image", image)}
+          />
+        )}
       </SideToSide>
-      {hasChanges && <Button onClick={updateExpense}>Update Expense</Button>}
       {!canAction &&
         [ExpenseStatusEnum.CREATED, ExpenseStatusEnum.REQUESTED].includes(
           expense.statusId as ExpenseStatusEnum,
