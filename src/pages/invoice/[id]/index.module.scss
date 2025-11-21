@@ -1,93 +1,92 @@
-@import "@/styles/variables";
+@use '../../../styles/variables.scss' as v;
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $spacing-lg;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
-  gap: $spacing-md;
+  gap: 1rem;
 }
 
 .title {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  color: $color-text-primary;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: v.$color-text-primary;
   margin: 0;
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: 0.5rem;
 }
 
 .actions {
   display: flex;
-  gap: $spacing-sm;
+  gap: 0.5rem;
 }
 
 .section {
-  background: $color-background-elevated;
-  border: $border-medium;
-  border-radius: $border-radius-md;
-  padding: $spacing-lg;
-  margin-bottom: $spacing-lg;
-  box-shadow: $shadow-md;
+  background: v.$color-background-accent;
+  border-radius: v.$border-radius;
+  padding: 2rem;
+  box-shadow: v.$shadow-md;
+  margin-bottom: 1.5rem;
 }
 
 .sectionTitle {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  margin: 0 0 $spacing-md 0;
-  padding-bottom: $spacing-sm;
-  border-bottom: $border-thin;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: v.$color-text-primary;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid v.$color-border;
 }
 
 .infoGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: $spacing-md;
+  gap: 1rem;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xs;
+  gap: 0.25rem;
 
   label {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: $color-text-secondary;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: v.$color-text-secondary;
   }
 
   input,
   select {
-    background: $color-background-elevated;
-    border: $border-medium;
-    border-radius: $border-radius-sm;
-    padding: $spacing-sm;
-    color: $color-text-primary;
-    font-size: $font-size-base;
-    transition: $transition-base;
+    background: v.$color-background-accent;
+    border: 1px solid v.$color-border;
+    border-radius: v.$border-radius;
+    padding: 0.5rem;
+    color: v.$color-text-primary;
+    font-size: 1rem;
+    transition: all 0.2s ease;
 
     &:hover {
-      background: $color-background-hover;
-      border-color: $color-primary;
+      background: v.$color-background-hover;
+      border-color: v.$color-primary;
     }
 
     &:focus {
       outline: none;
-      border-color: $color-primary;
-      box-shadow: $shadow-glow;
+      border-color: v.$color-primary;
+      box-shadow: 0 0 0 3px rgba(v.$color-primary, 0.1);
     }
 
     &::placeholder {
-      color: $color-text-tertiary;
+      color: v.$color-text-tertiary;
     }
   }
 }
 
 .relationGroup {
-  margin-bottom: $spacing-lg;
+  margin-bottom: 2rem;
 
   &:last-child {
     margin-bottom: 0;
@@ -95,31 +94,31 @@
 }
 
 .relationTitle {
-  font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  color: $color-text-secondary;
-  margin: 0 0 $spacing-sm 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: v.$color-text-secondary;
+  margin: 0 0 0.5rem 0;
 }
 
 .relationList {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: 0.5rem;
 }
 
 .relationCard {
-  background: $color-background-base;
-  border: $border-thin;
-  border-radius: $border-radius-sm;
-  padding: $spacing-md;
+  background: v.$color-background-base;
+  border: 1px solid v.$color-border;
+  border-radius: v.$border-radius;
+  padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: $transition-base;
+  transition: all 0.2s ease;
 
   &:hover {
-    background: $color-background-hover;
-    border-color: $color-primary;
+    background: v.$color-background-hover;
+    border-color: v.$color-primary;
   }
 }
 
@@ -127,19 +126,19 @@
   flex: 1;
 
   strong {
-    color: $color-text-primary;
-    font-weight: $font-weight-semibold;
+    color: v.$color-text-primary;
+    font-weight: 600;
   }
 
   p {
-    margin: $spacing-xs 0 0 0;
-    color: $color-text-secondary;
-    font-size: $font-size-sm;
+    margin: 0.25rem 0 0 0;
+    color: v.$color-text-secondary;
+    font-size: 0.875rem;
   }
 }
 
 .emptyRelation {
-  color: $color-text-tertiary;
+  color: v.$color-text-tertiary;
   font-style: italic;
   margin: 0;
 }
