@@ -32,6 +32,9 @@ export function Page() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [statuses, setStatuses] = useState<ExpenseStatus[]>([]);
+  const [filterCustomerId, setFilterCustomerId] = useState<string>("");
+  const [filterStatusId, setFilterStatusId] = useState<string>("");
+  const [showClosed, setShowClosed] = useState(false);
   const [newExpense, setNewExpense] = useState<Partial<Expense>>({
     name: "",
     link: "",
@@ -128,10 +131,22 @@ export function Page() {
     }
   };
 
-  const filteredExpenses = expenses.filter(
-    (expense) =>
-      expense.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredExpenses = expenses.filter((expense) => {
+    // Search filter
+    const matchesSearch = expense.name?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Customer filter
+    const matchesCustomer = !filterCustomerId || expense.customerId === filterCustomerId;
+    
+    // Status filter
+    const matchesStatus = !filterStatusId || expense.statusId === filterStatusId;
+    
+    // Closed filter - hide closed by default
+    const isClosed = expense.status?.status?.toLowerCase().includes('closed');
+    const matchesClosed = showClosed || !isClosed;
+    
+    return matchesSearch && matchesCustomer && matchesStatus && matchesClosed;
+  });
 
   const totalAmount = expenses.reduce((sum, exp) => sum + ((exp.unitPrice || 0) * (exp.quantity || 0)), 0);
   const paidAmount = expenses
@@ -160,6 +175,41 @@ export function Page() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className={styles.searchInput}
           />
+        </div>
+
+        <div className={styles.filters}>
+          <div className={styles.filterGroup}>
+            <Select
+              label="Filter by Customer"
+              value={filterCustomerId || "all"}
+              onValueChange={(value) => setFilterCustomerId(value === "all" ? "" : value)}
+              options={[
+                { value: "all", label: "All Customers" },
+                ...customers.map(c => ({ value: c.id, label: `${c.firstname} ${c.lastname}` }))
+              ]}
+            />
+          </div>
+          <div className={styles.filterGroup}>
+            <Select
+              label="Filter by Status"
+              value={filterStatusId || "all"}
+              onValueChange={(value) => setFilterStatusId(value === "all" ? "" : value)}
+              options={[
+                { value: "all", label: "All Statuses" },
+                ...statuses.map(s => ({ value: s.id, label: s.status }))
+              ]}
+            />
+          </div>
+          <div className={styles.filterGroup}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={showClosed}
+                onChange={(e) => setShowClosed(e.target.checked)}
+              />
+              <span>Show closed expenses</span>
+            </label>
+          </div>
         </div>
 
         <div className={styles.stats}>
