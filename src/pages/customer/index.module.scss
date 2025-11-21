@@ -89,25 +89,32 @@
   label {
     font-size: 0.85rem;
     font-weight: 600;
-    color: v.$color-text;
+    color: v.$color-text-secondary;
   }
 
   input {
     padding: 0.75rem 1rem;
-    border: 2px solid v.$background-light-500;
-    border-radius: v.$border-radius;
+    border: 1px solid v.$border-medium;
+    border-radius: v.$border-radius-sm;
     font-size: 0.9rem;
-    transition: all 0.2s ease;
-    background: v.$color-background-accent;
+    transition: all v.$transition-base;
+    background: v.$color-background-elevated;
+    color: v.$color-text;
+
+    &::placeholder {
+      color: v.$color-text-tertiary;
+    }
 
     &:hover:not(:disabled) {
       border-color: v.$color-primary;
+      background: v.$color-background-hover;
     }
 
     &:focus {
       outline: none;
       border-color: v.$color-primary;
-      box-shadow: 0 0 0 3px rgba(110, 0, 255, 0.1);
+      background: v.$color-background-hover;
+      box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
     }
   }
 }

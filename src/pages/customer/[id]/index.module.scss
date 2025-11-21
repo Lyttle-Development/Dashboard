@@ -23,7 +23,7 @@
   background: v.$color-background-accent;
   border-radius: v.$border-radius;
   padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: v.$shadow-md;
   margin-bottom: 1.5rem;
 
   h2 {
@@ -62,14 +62,15 @@
     display: block;
     font-size: 0.85rem;
     font-weight: 600;
-    color: v.$color-text;
+    color: v.$color-text-secondary;
     margin-bottom: 0.5rem;
   }
 
   p {
     margin: 0;
     padding: 0.75rem 1rem;
-    background: v.$background-light-500;
+    background: v.$color-background-elevated;
+    border: 1px solid v.$border-medium;
     border-radius: v.$border-radius;
     color: v.$color-text;
     font-size: 0.95rem;
@@ -87,14 +88,14 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 1rem;
-  background: white;
-  border: 2px solid v.$background-light-500;
+  background: v.$color-background-elevated;
+  border: 2px solid v.$border-medium;
   border-radius: v.$border-radius;
-  transition: all 0.2s ease;
+  transition: all v.$transition-base;
 
   &:hover {
     border-color: v.$color-primary;
-    box-shadow: 0 2px 8px rgba(110, 0, 255, 0.1);
+    box-shadow: v.$shadow-glow;
   }
 }
 
@@ -134,23 +135,23 @@
 
 .relationItem {
   padding: 1rem;
-  background: white;
-  border: 2px solid v.$background-light-500;
+  background: v.$color-background-elevated;
+  border: 2px solid v.$border-medium;
   border-radius: v.$border-radius;
-  transition: all 0.2s ease;
+  transition: all v.$transition-base;
   color: v.$color-text;
   text-decoration: none;
   display: block;
 
   &:hover {
     border-color: v.$color-primary;
-    box-shadow: 0 2px 8px rgba(110, 0, 255, 0.1);
+    box-shadow: v.$shadow-glow;
     transform: translateY(-2px);
   }
 }
 
 .emptyMessage {
-  color: #999;
+  color: v.$color-text-tertiary;
   font-style: italic;
   padding: 1rem;
   text-align: center;

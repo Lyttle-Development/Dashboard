@@ -4,10 +4,7 @@ import { Icon } from "@/components/Icon";
 import {
   faCircleUser,
   faPlus,
-  faEdit,
   faTrash,
-  faCheck,
-  faTimes,
   faSearch,
   faEye,
 } from "@fortawesome/free-solid-svg-icons";
@@ -29,8 +26,6 @@ export function Page() {
   const [loading, setLoading] = useState(false);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editData, setEditData] = useState<Partial<Customer>>({});
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newData, setNewData] = useState<Partial<Customer>>({
     firstname: "",
@@ -76,38 +71,6 @@ export function Page() {
     } catch (error) {
       alert("Error creating customer");
       console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEdit = (customer: Customer) => {
-    setEditingId(customer.id);
-    setEditData(customer);
-  };
-
-  const handleSaveEdit = async () => {
-    if (!editingId) return;
-
-    setLoading(true);
-    try {
-      const result = await fetchApi<Customer>({
-        table: "customer",
-        id: editingId,
-        method: "PUT",
-        body: editData,
-      });
-
-      if (result) {
-        setEditingId(null);
-        setEditData({});
-        await fetchCustomers();
-      } else {
-        alert("Error updating customer");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Error updating customer");
     } finally {
       setLoading(false);
     }
@@ -255,102 +218,35 @@ export function Page() {
       <div className={styles.customersList}>
         {filteredCustomers.map((customer) => (
           <div key={customer.id} className={styles.customerCard}>
-            {editingId === customer.id ? (
-              <>
-                <div className={styles.editForm}>
-                  <div className={styles.formField}>
-                    <label>First Name</label>
-                    <input
-                      type="text"
-                      value={editData.firstname || ""}
-                      onChange={(e) =>
-                        setEditData({ ...editData, firstname: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className={styles.formField}>
-                    <label>Last Name</label>
-                    <input
-                      type="text"
-                      value={editData.lastname || ""}
-                      onChange={(e) =>
-                        setEditData({ ...editData, lastname: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className={styles.formField}>
-                    <label>Email</label>
-                    <input
-                      type="email"
-                      value={editData.email || ""}
-                      onChange={(e) =>
-                        setEditData({ ...editData, email: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className={styles.formField}>
-                    <label>Phone</label>
-                    <input
-                      type="tel"
-                      value={editData.phone || ""}
-                      onChange={(e) =>
-                        setEditData({ ...editData, phone: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-                <div className={styles.cardActions}>
-                  <Button onClick={handleSaveEdit} style={ButtonStyle.Primary}>
-                    <Icon icon={faCheck} />
-                    Save
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setEditingId(null);
-                      setEditData({});
-                    }}
-                  >
-                    <Icon icon={faTimes} />
-                    Cancel
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className={styles.cardIcon}>
-                  <Icon icon={faCircleUser} />
-                </div>
-                <div className={styles.cardContent}>
-                  <h3>
-                    {customer.firstname} {customer.lastname}
-                  </h3>
-                  <div className={styles.cardMeta}>
-                    {customer.email && (
-                      <span className={styles.email}>{customer.email}</span>
-                    )}
-                    {customer.phone && (
-                      <span className={styles.phone}>{customer.phone}</span>
-                    )}
-                  </div>
-                </div>
-                <div className={styles.cardActions}>
-                  <Link href={LINKS.customer.detail(customer.id)}>
-                    <Button>
-                      <Icon icon={faEye} />
-                    </Button>
-                  </Link>
-                  <Button onClick={() => handleEdit(customer)}>
-                    <Icon icon={faEdit} />
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(customer.id)}
-                    style={ButtonStyle.Danger}
-                  >
-                    <Icon icon={faTrash} />
-                  </Button>
-                </div>
-              </>
-            )}
+            <div className={styles.cardIcon}>
+              <Icon icon={faCircleUser} />
+            </div>
+            <div className={styles.cardContent}>
+              <h3>
+                {customer.firstname} {customer.lastname}
+              </h3>
+              <div className={styles.cardMeta}>
+                {customer.email && (
+                  <span className={styles.email}>{customer.email}</span>
+                )}
+                {customer.phone && (
+                  <span className={styles.phone}>{customer.phone}</span>
+                )}
+              </div>
+            </div>
+            <div className={styles.cardActions}>
+              <Link href={LINKS.customer.detail(customer.id)}>
+                <Button>
+                  <Icon icon={faEye} />
+                </Button>
+              </Link>
+              <Button
+                onClick={() => handleDelete(customer.id)}
+                style={ButtonStyle.Danger}
+              >
+                <Icon icon={faTrash} />
+              </Button>
+            </div>
           </div>
         ))}
       </div>
