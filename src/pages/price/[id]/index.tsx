@@ -94,12 +94,12 @@ export function Page() {
   if (loading) return <Loader />;
   if (!price) return <div>Price not found</div>;
 
-  const categoryOptions: FormOptionType[] = categories.map((cat) => ({
+  const categoryOptions = categories.map((cat) => ({
     value: cat.id,
     label: cat.name,
   }));
 
-  const intervalOptions: FormOptionType[] = [
+  const intervalOptions = [
     { value: "ONE_TIME", label: "One Time" },
     { value: "HOURLY", label: "Hourly" },
     { value: "DAILY", label: "Daily" },
@@ -113,15 +113,15 @@ export function Page() {
       <div className={styles.header}>
         <h1 className={styles.title}>{price.service || "Unnamed Price"}</h1>
         {!isEditing ? (
-          <Button style={ButtonStyle.INFO} onClick={handleEdit}>
+          <Button onClick={handleEdit}>
             <Icon icon={faEdit}>Edit</Icon>
           </Button>
         ) : (
           <div className={styles.editActions}>
-            <Button style={ButtonStyle.SUCCESS} onClick={handleSave}>
+            <Button style={ButtonStyle.Primary} onClick={handleSave}>
               <Icon icon={faSave}>Save</Icon>
             </Button>
-            <Button style={ButtonStyle.SECONDARY} onClick={handleCancel}>
+            <Button onClick={handleCancel}>
               <Icon icon={faTimes}>Cancel</Icon>
             </Button>
           </div>
@@ -151,19 +151,18 @@ export function Page() {
               <Field
                 label="Service"
                 value={editData.service || ""}
-                onChange={(e) =>
-                  setEditData({ ...editData, service: e.target.value })
+                onChange={(value) =>
+                  setEditData({ ...editData, service: value as string })
                 }
               />
               <Field
                 label="Price"
-                type="number"
-                step="0.01"
+                type={FormOptionType.NUMBER as any}
                 value={editData.price?.toString() || ""}
-                onChange={(e) =>
+                onChange={(value) =>
                   setEditData({
                     ...editData,
-                    price: parseFloat(e.target.value) || 0,
+                    price: parseFloat(value as string) || 0,
                   })
                 }
               />
@@ -173,7 +172,7 @@ export function Page() {
                 onValueChange={(value) =>
                   setEditData({ ...editData, categoryId: value })
                 }
-                options={categoryOptions}
+                options={categoryOptions as any}
                 searchable
               />
               <Select
@@ -182,21 +181,21 @@ export function Page() {
                 onValueChange={(value) =>
                   setEditData({ ...editData, interval: value })
                 }
-                options={intervalOptions}
+                options={intervalOptions as any}
                 searchable
               />
               <Field
                 label="Description"
                 value={editData.description || ""}
-                onChange={(e) =>
-                  setEditData({ ...editData, description: e.target.value })
+                onChange={(value) =>
+                  setEditData({ ...editData, description: value as string })
                 }
               />
               <Field
                 label="Notes"
                 value={editData.notes || ""}
-                onChange={(e) =>
-                  setEditData({ ...editData, notes: e.target.value })
+                onChange={(value) =>
+                  setEditData({ ...editData, notes: value as string })
                 }
               />
             </>

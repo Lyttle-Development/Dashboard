@@ -99,12 +99,12 @@ export function Page() {
     return matchesCategory && matchesSearch;
   });
 
-  const categoryOptions: FormOptionType[] = [
+  const categoryOptions = [
     { value: "", label: "All Categories" },
     ...categories.map((cat) => ({ value: cat.id, label: cat.name })),
   ];
 
-  const intervalOptions: FormOptionType[] = [
+  const intervalOptions = [
     { value: "", label: "Select Interval" },
     { value: "ONE_TIME", label: "One Time" },
     { value: "HOURLY", label: "Hourly" },
@@ -122,7 +122,7 @@ export function Page() {
         <h1>
           <Icon icon={faTag}>Prices</Icon>
         </h1>
-        <Button style={ButtonStyle.PRIMARY} onClick={() => setShowCreateModal(true)}>
+        <Button style={ButtonStyle.Primary} onClick={() => setShowCreateModal(true)}>
           <Icon icon={faPlus}>Create Price</Icon>
         </Button>
       </div>
@@ -131,14 +131,14 @@ export function Page() {
         <Field
           label="Search"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(value) => setSearchQuery(value as string)}
           placeholder="Search by service or description..."
         />
         <Select
           label="Filter by Category"
           value={filterCategoryId}
           onValueChange={setFilterCategoryId}
-          options={categoryOptions}
+          options={categoryOptions as any}
           searchable
         />
       </div>
@@ -180,13 +180,12 @@ export function Page() {
               </div>
               <div className={styles.priceActions}>
                 <Button
-                  style={ButtonStyle.INFO}
                   onClick={() => router.push(`/price/${price.id}`)}
                 >
                   <Icon icon={faEye}>View</Icon>
                 </Button>
                 <Button
-                  style={ButtonStyle.DANGER}
+                  style={ButtonStyle.Danger}
                   onClick={() => handleDeletePrice(price.id)}
                 >
                   <Icon icon={faTrash}>Delete</Icon>
@@ -199,7 +198,7 @@ export function Page() {
 
       {/* Create Price Modal */}
       <Modal
-        show={showCreateModal}
+        isOpen={showCreateModal}
         title="Create New Price"
         onClose={() => setShowCreateModal(false)}
       >
@@ -207,16 +206,15 @@ export function Page() {
           <Field
             label="Service Name"
             value={newPrice.service}
-            onChange={(e) => setNewPrice({ ...newPrice, service: e.target.value })}
+            onChange={(value) => setNewPrice({ ...newPrice, service: value as string })}
             required
           />
           <Field
             label="Price"
-            type="number"
-            step="0.01"
+            type={FormOptionType.NUMBER as any}
             value={newPrice.price.toString()}
-            onChange={(e) =>
-              setNewPrice({ ...newPrice, price: parseFloat(e.target.value) || 0 })
+            onChange={(value) =>
+              setNewPrice({ ...newPrice, price: parseFloat(value as string) || 0 })
             }
             required
           />
@@ -224,32 +222,31 @@ export function Page() {
             label="Category"
             value={newPrice.categoryId}
             onValueChange={(value) => setNewPrice({ ...newPrice, categoryId: value })}
-            options={categories.map((cat) => ({ value: cat.id, label: cat.name }))}
+            options={categories.map((cat) => ({ value: cat.id, label: cat.name })) as any}
             searchable
           />
           <Select
             label="Interval"
             value={newPrice.interval}
             onValueChange={(value) => setNewPrice({ ...newPrice, interval: value })}
-            options={intervalOptions}
+            options={intervalOptions as any}
             searchable
           />
           <Field
             label="Description"
             value={newPrice.description}
-            onChange={(e) => setNewPrice({ ...newPrice, description: e.target.value })}
+            onChange={(value) => setNewPrice({ ...newPrice, description: value as string })}
           />
           <Field
             label="Notes"
             value={newPrice.notes}
-            onChange={(e) => setNewPrice({ ...newPrice, notes: e.target.value })}
+            onChange={(value) => setNewPrice({ ...newPrice, notes: value as string })}
           />
           <div className={styles.modalActions}>
-            <Button style={ButtonStyle.SUCCESS} onClick={handleCreatePrice}>
+            <Button style={ButtonStyle.Primary} onClick={handleCreatePrice}>
               Create Price
             </Button>
             <Button
-              style={ButtonStyle.SECONDARY}
               onClick={() => setShowCreateModal(false)}
             >
               Cancel

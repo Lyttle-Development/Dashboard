@@ -343,7 +343,7 @@ export function Page() {
               <Select
                 label="Select Status"
                 value={newExpense.statusId || "none"}
-                onValueChange={(value) => setNewExpense({ ...newExpense, statusId: value === "none" ? "" : value })}
+                onValueChange={(value) => setNewExpense({ ...newExpense, statusId: value === "none" ? "" : value as any })}
                 options={[
                   { value: "none", label: "Select a status..." },
                   ...statuses.map(s => ({ value: s.id, label: s.status }))
