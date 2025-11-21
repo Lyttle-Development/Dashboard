@@ -4,7 +4,7 @@ import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
-import { Customer, Project, Address, Subscription, Expense } from "@/lib/prisma";
+import { Customer, Project, Address, Subscription, Expense, Invoice } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
@@ -24,6 +24,7 @@ export function Page() {
   const [loading, setLoading] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
   const [newAddress, setNewAddress] = useState<Partial<Address>>({
     street: "",
     number: "",
@@ -32,6 +33,7 @@ export function Page() {
     country: "",
     zipCode: "",
   });
+  const [editingAddress, setEditingAddress] = useState<Partial<Address>>({});
 
   // Fetch the customer details by id.
   const fetchCustomer = useCallback(async (customerId: string) => {
@@ -46,6 +48,7 @@ export function Page() {
           printJobs: true,
           subscriptions: true,
           expenses: true,
+          invoices: true,
         },
       });
 
@@ -173,6 +176,41 @@ export function Page() {
     }
   };
 
+  const handleEditAddress = (address: Address) => {
+    setEditingAddressId(address.id);
+    setEditingAddress({ ...address });
+  };
+
+  const handleUpdateAddress = async () => {
+    if (!editingAddressId) return;
+
+    setLoading(true);
+    try {
+      const result = await fetchApi<Address>({
+        table: "address",
+        id: editingAddressId,
+        method: "PUT",
+        body: editingAddress,
+      });
+
+      if (result) {
+        setEditingAddressId(null);
+        setEditingAddress({});
+        await fetchCustomer(customer.id);
+      }
+    } catch (error) {
+      console.error("Error updating address:", error);
+      alert("Error updating address");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelAddressEdit = () => {
+    setEditingAddressId(null);
+    setEditingAddress({});
+  };
+
   const cancelEdit = () => {
     setCustomer(originalCustomer);
     setIsEditing(false);
@@ -288,21 +326,95 @@ export function Page() {
         <div className={styles.addressList}>
           {customer.addresses.map((address) => (
             <div key={address.id} className={styles.addressCard}>
-              <div className={styles.addressContent}>
-                <p className={styles.addressLine}>
-                  {address.street} {address.number}
-                </p>
-                <p className={styles.addressLine}>
-                  {address.city}, {address.state} {address.zipCode}
-                </p>
-                {address.country && <p className={styles.addressLine}>{address.country}</p>}
-              </div>
-              <Button
-                onClick={() => handleDeleteAddress(address.id)}
-                style={ButtonStyle.Danger}
-              >
-                <Icon icon={faTrash} />
-              </Button>
+              {editingAddressId === address.id ? (
+                <>
+                  <div className={styles.addressEditForm}>
+                    <div className={styles.formGrid}>
+                      <Field
+                        label="Street"
+                        type={FormOptionType.TEXT}
+                        value={editingAddress.street}
+                        onChange={(value) =>
+                          setEditingAddress({ ...editingAddress, street: typeof value === "string" ? value : "" })
+                        }
+                      />
+                      <Field
+                        label="Number"
+                        type={FormOptionType.TEXT}
+                        value={editingAddress.number}
+                        onChange={(value) =>
+                          setEditingAddress({ ...editingAddress, number: typeof value === "string" ? value : "" })
+                        }
+                      />
+                      <Field
+                        label="City"
+                        type={FormOptionType.TEXT}
+                        value={editingAddress.city}
+                        onChange={(value) =>
+                          setEditingAddress({ ...editingAddress, city: typeof value === "string" ? value : "" })
+                        }
+                      />
+                      <Field
+                        label="State"
+                        type={FormOptionType.TEXT}
+                        value={editingAddress.state}
+                        onChange={(value) =>
+                          setEditingAddress({ ...editingAddress, state: typeof value === "string" ? value : "" })
+                        }
+                      />
+                      <Field
+                        label="Zip Code"
+                        type={FormOptionType.TEXT}
+                        value={editingAddress.zipCode}
+                        onChange={(value) =>
+                          setEditingAddress({ ...editingAddress, zipCode: typeof value === "string" ? value : "" })
+                        }
+                      />
+                      <Field
+                        label="Country"
+                        type={FormOptionType.TEXT}
+                        value={editingAddress.country}
+                        onChange={(value) =>
+                          setEditingAddress({ ...editingAddress, country: typeof value === "string" ? value : "" })
+                        }
+                      />
+                    </div>
+                    <div className={styles.addressActions}>
+                      <Button onClick={handleUpdateAddress} style={ButtonStyle.Primary} disabled={loading}>
+                        <Icon icon={faSave} />
+                        {loading ? "Saving..." : "Save"}
+                      </Button>
+                      <Button onClick={cancelAddressEdit} disabled={loading}>
+                        <Icon icon={faTimes} />
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.addressContent}>
+                    <p className={styles.addressLine}>
+                      {address.street} {address.number}
+                    </p>
+                    <p className={styles.addressLine}>
+                      {address.city}, {address.state} {address.zipCode}
+                    </p>
+                    {address.country && <p className={styles.addressLine}>{address.country}</p>}
+                  </div>
+                  <div className={styles.addressActions}>
+                    <Button onClick={() => handleEditAddress(address)}>
+                      <Icon icon={faEdit} />
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteAddress(address.id)}
+                      style={ButtonStyle.Danger}
+                    >
+                      <Icon icon={faTrash} />
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           ))}
           {customer.addresses.length === 0 && (
@@ -371,6 +483,20 @@ export function Page() {
           ))}
           {(!customer.expenses || customer.expenses.length === 0) && (
             <p className={styles.emptyMessage}>No expenses found</p>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.section}>
+        <h2>Invoices</h2>
+        <div className={styles.relationList}>
+          {customer.invoices?.map((invoice: Invoice) => (
+            <div key={invoice.id} className={styles.relationItem}>
+              Invoice #{invoice.id.substring(0, 8)} - ${invoice.amount.toFixed(2)} ({new Date(invoice.invoiceDate).toLocaleDateString()})
+            </div>
+          ))}
+          {(!customer.invoices || customer.invoices.length === 0) && (
+            <p className={styles.emptyMessage}>No invoices found</p>
           )}
         </div>
       </div>
