@@ -1,0 +1,145 @@
+@import "@/styles/variables";
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.section {
+  background: $color-background-elevated;
+  border: $border-medium;
+  border-radius: $border-radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-md;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin: 0 0 $spacing-md 0;
+  padding-bottom: $spacing-sm;
+  border-bottom: $border-thin;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-md;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-secondary;
+  }
+
+  input,
+  select {
+    background: $color-background-elevated;
+    border: $border-medium;
+    border-radius: $border-radius-sm;
+    padding: $spacing-sm;
+    color: $color-text-primary;
+    font-size: $font-size-base;
+    transition: $transition-base;
+
+    &:hover {
+      background: $color-background-hover;
+      border-color: $color-primary;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: $shadow-glow;
+    }
+
+    &::placeholder {
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+.relationGroup {
+  margin-bottom: $spacing-lg;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.relationTitle {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.relationList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.relationCard {
+  background: $color-background-base;
+  border: $border-thin;
+  border-radius: $border-radius-sm;
+  padding: $spacing-md;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: $transition-base;
+
+  &:hover {
+    background: $color-background-hover;
+    border-color: $color-primary;
+  }
+}
+
+.relationInfo {
+  flex: 1;
+
+  strong {
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  p {
+    margin: $spacing-xs 0 0 0;
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+  }
+}
+
+.emptyRelation {
+  color: $color-text-tertiary;
+  font-style: italic;
+  margin: 0;
+}
