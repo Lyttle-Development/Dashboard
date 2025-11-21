@@ -178,14 +178,6 @@ export function Page() {
     setIsEditing(false);
   };
 
-  const changes = Object.keys(customer ?? {}).reduce((acc, key) => {
-    if (customer[key] !== originalCustomer[key]) {
-      acc[key] = customer[key];
-    }
-    return acc;
-  }, {});
-  const hasChanges = Object.keys(changes).length > 0;
-
   if (loading && !customer) return <Loader />;
   if (!customer) return <div>Customer not found</div>;
 
