@@ -88,23 +88,39 @@ export function Page() {
   };
 
   const updateExpense = async () => {
-    await fetchApi<Expense>({
-      table: "expense",
-      id: expense.id,
-      method: "PUT",
-      body: {
-        neededAt: expense.neededAt ? new Date(expense.neededAt) : null,
-        name: expense.name,
-        link: expense.link,
-        image: expense.image,
-        unitPrice: expense.unitPrice,
-        quantity: expense.quantity,
-        recurring: expense.recurring,
-        recurringInterval: expense.recurringInterval,
-      },
-    });
-    setExpense(expense);
-    setOriginalExpense(expense);
+    setLoading(true);
+    try {
+      const result = await fetchApi<Expense>({
+        table: "expense",
+        id: expense.id,
+        method: "PUT",
+        body: {
+          neededAt: expense.neededAt ? new Date(expense.neededAt) : null,
+          name: expense.name,
+          link: expense.link,
+          image: expense.image,
+          unitPrice: expense.unitPrice,
+          quantity: expense.quantity,
+          recurring: expense.recurring,
+          recurringInterval: expense.recurringInterval,
+          customerId: expense.customerId,
+          statusId: expense.statusId,
+        },
+      });
+      if (result) {
+        setOriginalExpense(expense);
+        setIsEditing(false);
+      }
+    } catch (error) {
+      console.error("Error updating expense:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelEdit = () => {
+    setExpense(originalExpense);
+    setIsEditing(false);
   };
 
   const deleteExpense = async () => {
@@ -193,28 +209,149 @@ export function Page() {
 
   return (
     <Container>
-      <h2 className={styles.title}>
-        <span>
-          Expense: {expense.name}
+      <div className={styles.header}>
+        <h1>
+          {expense.name}
           {!!expense.recurring && (
             <Icon icon={faRotateLeft} className={styles.recurring_icon} />
           )}
-        </span>
-        <article className={styles.actions}>
-          <Button
-            onClick={() => router.push(LINKS.homepage)}
-            style={ButtonStyle.Primary}
-          >
-            Go Back
-          </Button>
-          <Button onClick={deleteExpense} style={ButtonStyle.Danger}>
-            Delete Expense
-          </Button>
-        </article>
-      </h2>
+        </h1>
+        <div className={styles.actions}>
+          {!isEditing ? (
+            <>
+              <Button onClick={() => setIsEditing(true)} style={ButtonStyle.Primary}>
+                <Icon icon={faEdit} />
+                Edit Expense
+              </Button>
+              <Button onClick={deleteExpense} style={ButtonStyle.Danger}>
+                <Icon icon={faTrash} />
+                Delete
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button onClick={updateExpense} style={ButtonStyle.Primary} disabled={!hasChanges || loading}>
+                <Icon icon={faSave} />
+                {loading ? "Saving..." : "Save Changes"}
+              </Button>
+              <Button onClick={cancelEdit} disabled={loading}>
+                <Icon icon={faTimes} />
+                Cancel
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+      <div className={styles.section}>
+        <h2>Expense Information</h2>
+        {isEditing ? (
+          <div className={styles.formGrid}>
+            <Field
+              label="Name *"
+              type={FormOptionType.TEXT}
+              required
+              onChange={(value) => handleChange("name", value)}
+              value={expense.name}
+            />
+            <Field
+              label="Unit Price"
+              type={FormOptionType.NUMBER}
+              onChange={(value) =>
+                handleChange("unitPrice", safeParseFloat(value))
+              }
+              value={expense.unitPrice}
+            />
+            <Field
+              label="Quantity"
+              type={FormOptionType.NUMBER}
+              onChange={(value) => handleChange("quantity", safeParseInt(value))}
+              value={expense.quantity}
+            />
+            <Field
+              label="Needed At"
+              type={FormOptionType.DATE}
+              onChange={(value) => handleChange("neededAt", value)}
+              value={safeParseFieldDate(expense.neededAt)}
+            />
+            <Field
+              label="Link"
+              type={FormOptionType.TEXT}
+              onChange={(value) => handleChange("link", value)}
+              value={expense.link}
+            />
+          </div>
+        ) : (
+          <div className={styles.infoDisplay}>
+            <div className={styles.infoItem}>
+              <label>Name</label>
+              <p>{expense.name || "-"}</p>
+            </div>
+            <div className={styles.infoItem}>
+              <label>Unit Price</label>
+              <p>€{expense.unitPrice?.toFixed(2) || "0.00"}</p>
+            </div>
+            <div className={styles.infoItem}>
+              <label>Quantity</label>
+              <p>{expense.quantity || "-"}</p>
+            </div>
+            <div className={styles.infoItem}>
+              <label>Total Amount</label>
+              <p>€{((expense.unitPrice || 0) * (expense.quantity || 0)).toFixed(2)}</p>
+            </div>
+            <div className={styles.infoItem}>
+              <label>Needed At</label>
+              <p>{expense.neededAt ? new Date(expense.neededAt).toLocaleDateString() : "-"}</p>
+            </div>
+            <div className={styles.infoItem}>
+              <label>Link</label>
+              <p>{expense.link ? <a href={expense.link} target="_blank" rel="noopener noreferrer">{expense.link}</a> : "-"}</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.section}>
+        <h2>Relations</h2>
+        {isEditing ? (
+          <div className={styles.formGrid}>
+            <div className={styles.formField}>
+              <label>Customer</label>
+              <Select
+                value={expense.customerId || ""}
+                onChange={(value) => handleChange("customerId", value || null)}
+                options={[
+                  { value: "", label: "No customer" },
+                  ...customers.map(c => ({ value: c.id, label: `${c.firstname} ${c.lastname}` }))
+                ]}
+              />
+            </div>
+            <div className={styles.formField}>
+              <label>Status</label>
+              <Select
+                value={expense.statusId || ""}
+                onChange={(value) => handleChange("statusId", value)}
+                options={statuses.map(s => ({ value: s.id, label: s.status }))}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className={styles.infoDisplay}>
+            <div className={styles.infoItem}>
+              <label>Customer</label>
+              <p>{expense.customer ? `${expense.customer.firstname} ${expense.customer.lastname}` : "No customer"}</p>
+            </div>
+            <div className={styles.infoItem}>
+              <label>Status</label>
+              <p>{expense.status?.status || "-"}</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Legacy Section - Keep existing functionality */}
       <SideToSide className={styles.image_splitter}>
         <article className={styles.information}>
-          <KeyValue label="Status" value={expense.status.status} />
+          <KeyValue label="Current Status" value={expense.status.status} />
           <Switch
             label="Recurring"
             checked={expense.recurring}
