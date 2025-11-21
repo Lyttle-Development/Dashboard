@@ -10,7 +10,8 @@ import { fetchApi } from "@/lib/fetchApi";
 import { ServicePrice, Category } from "@/lib/prisma";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { Modal } from "@/components/Modal";
-import { Field, FormOptionType } from "@/components/Form";
+import { Field } from "@/components/Field";
+import { FormOptionType } from "@/components/Form";
 import { Select } from "@/components/Select";
 import styles from "./index.module.scss";
 
