@@ -4,7 +4,7 @@ import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
-import { Expense, ExpenseStatusEnum, IntervalEnum } from "@/lib/prisma";
+import { Expense, ExpenseStatusEnum, IntervalEnum, Customer, ExpenseStatus } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Field } from "@/components/Field";
 import { FormOptionType, FormValueTypes } from "@/components/Form";
@@ -12,7 +12,7 @@ import { Button, ButtonStyle } from "@/components/Button";
 import { safeParseFieldDate, safeParseFloat, safeParseInt } from "@/lib/parse";
 import { SideToSide } from "@/components/SideToSide";
 import { Icon } from "@/components/Icon";
-import { faLink, faRotateLeft } from "@fortawesome/free-solid-svg-icons";
+import { faLink, faRotateLeft, faEdit, faSave, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Link, LinkTarget } from "@/components/Link";
 import { useApp } from "@/contexts/App.context";
 import { KeyValue } from "@/components/KeyValue";
@@ -31,28 +31,49 @@ export function Page() {
   const [expense, setExpense] = useState<Expense>(null);
   const [originalExpense, setOriginalExpense] = useState<Expense>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [statuses, setStatuses] = useState<ExpenseStatus[]>([]);
 
   // Fetch the expense details by id.
   const fetchExpense = useCallback(async (id: string) => {
     setLoading(true);
-    const expenseData = await fetchApi<Expense>({
-      table: "expense",
-      id,
-      relations: {
-        status: true,
-      },
-    });
+    try {
+      const expenseData = await fetchApi<Expense>({
+        table: "expense",
+        id,
+        relations: {
+          status: true,
+          customer: true,
+        },
+      });
 
-    setExpense(expenseData);
-    setOriginalExpense(expenseData);
-    setLoading(false);
+      setExpense(expenseData);
+      setOriginalExpense(expenseData);
+    } catch (error) {
+      console.error("Error fetching expense:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchCustomers = useCallback(async () => {
+    const customersData = await fetchApi<Customer[]>({ table: "customer" });
+    setCustomers(customersData ?? []);
+  }, []);
+
+  const fetchStatuses = useCallback(async () => {
+    const statusesData = await fetchApi<ExpenseStatus[]>({ table: "expense-status" });
+    setStatuses(statusesData ?? []);
   }, []);
 
   useEffect(() => {
     if (expenseId) {
       void fetchExpense(expenseId as string);
+      void fetchCustomers();
+      void fetchStatuses();
     }
-  }, []);
+  }, [expenseId, fetchExpense, fetchCustomers, fetchStatuses]);
 
   useEffect(() => {
     if (!expense) return;
