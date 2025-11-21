@@ -2,12 +2,12 @@ import { Layout } from "@/layouts";
 import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
 import {
-  faCircleUser,
-  faPlus,
-  faTrash,
-  faSearch,
-  faEye,
-} from "@fortawesome/free-solid-svg-icons";
+    faCircleUser,
+    faPlus,
+    faTrash,
+    faSearch,
+    faEye, faTimes, faCheck,
+} from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Loader } from "@/components/Loader";
@@ -107,7 +107,7 @@ export function Page() {
     const searchLower = searchTerm.toLowerCase();
     const fullName = `${customer.firstname} ${customer.lastname}`.toLowerCase();
     const email = customer.email?.toLowerCase() || "";
-    
+
     return fullName.includes(searchLower) || email.includes(searchLower);
   });
 
