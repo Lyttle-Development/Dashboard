@@ -146,9 +146,10 @@ export function Page() {
     return matchesStatus && matchesClosed;
   });
 
-  const totalAmount = expenses.reduce((sum, exp) => sum + ((exp.unitPrice || 0) * (exp.quantity || 0)), 0);
-  const paidAmount = expenses
-    .filter((exp) => exp.statusId === "2dee2fe0-e126-4ac4-b451-8e75c3316c7b") // Closed/Paid
+  // Calculate totals based on filtered expenses
+  const totalAmount = filteredExpenses.reduce((sum, exp) => sum + ((exp.unitPrice || 0) * (exp.quantity || 0)), 0);
+  const paidAmount = filteredExpenses
+    .filter((exp) => exp.status?.status?.toLowerCase().includes('closed'))
     .reduce((sum, exp) => sum + ((exp.unitPrice || 0) * (exp.quantity || 0)), 0);
 
   return (
@@ -164,42 +165,44 @@ export function Page() {
           </Button>
         </div>
 
-        <HierarchicalFilter
-          onCustomerChange={(customer) => setSelectedCustomer(customer)}
-          showProjectFilter={false}
-          placeholder={{
-            customer: "Select customer to filter expenses...",
-          }}
-        />
+        <div className={styles.filterPanel}>
+          <HierarchicalFilter
+            onCustomerChange={(customer) => setSelectedCustomer(customer)}
+            showProjectFilter={false}
+            placeholder={{
+              customer: "Select customer to filter expenses...",
+            }}
+          />
 
-        <div className={styles.filters}>
-          <div className={styles.filterGroup}>
-            <Select
-              label="Filter by Status"
-              value={filterStatusId || "all"}
-              onValueChange={(value) => setFilterStatusId(value === "all" ? "" : value)}
-              options={[
-                { value: "all", label: "All Statuses" },
-                ...statuses.map(s => ({ value: s.id, label: s.status }))
-              ]}
-              searchable
-            />
-          </div>
-          <div className={styles.filterGroup}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={showClosed}
-                onChange={(e) => setShowClosed(e.target.checked)}
+          <div className={styles.additionalFilters}>
+            <div className={styles.filterGroup}>
+              <Select
+                label="Filter by Status"
+                value={filterStatusId || "all"}
+                onValueChange={(value) => setFilterStatusId(value === "all" ? "" : value)}
+                options={[
+                  { value: "all", label: "All Statuses" },
+                  ...statuses.map(s => ({ value: s.id, label: s.status }))
+                ]}
+                searchable
               />
-              <span>Show closed expenses</span>
-            </label>
+            </div>
+            <div className={styles.filterGroup}>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={showClosed}
+                  onChange={(e) => setShowClosed(e.target.checked)}
+                />
+                <span>Show closed expenses</span>
+              </label>
+            </div>
           </div>
         </div>
 
         <div className={styles.stats}>
           <div className={styles.stat}>
-            <div className={styles.statValue}>{expenses.length}</div>
+            <div className={styles.statValue}>{filteredExpenses.length}</div>
             <div className={styles.statLabel}>Total Expenses</div>
           </div>
           <div className={styles.stat}>
@@ -208,7 +211,7 @@ export function Page() {
           </div>
           <div className={styles.stat}>
             <div className={styles.statValue}>€{paidAmount.toFixed(2)}</div>
-            <div className={styles.statLabel}>Paid</div>
+            <div className={styles.statLabel}>Paid/Closed</div>
           </div>
         </div>
       </div>
@@ -222,11 +225,11 @@ export function Page() {
           <Icon icon={faHandHoldingDollar} className={styles.emptyIcon} />
           <h3>No expenses found</h3>
           <p>
-            {searchQuery
-              ? "No expenses match your search criteria"
+            {selectedCustomer || filterStatusId
+              ? "No expenses match your filter criteria"
               : "Get started by tracking your first expense"}
           </p>
-          {!searchQuery && (
+          {!selectedCustomer && !filterStatusId && (
             <Button onClick={() => setIsCreateModalOpen(true)} style={ButtonStyle.Primary}>
               <Icon icon={faPlus} /> Create Expense
             </Button>

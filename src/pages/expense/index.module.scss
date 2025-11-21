@@ -64,6 +64,22 @@
   }
 }
 
+.filterPanel {
+  margin-bottom: 1.5rem;
+}
+
+.additionalFilters {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1rem 1.5rem;
+  background: v.$color-background-accent;
+  border-radius: v.$border-radius-lg;
+  border: 1px solid v.$border-medium;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .filters {
   display: flex;
   gap: 1rem;
