@@ -4,7 +4,6 @@ import { Icon } from "@/components/Icon";
 import {
   faHandHoldingDollar,
   faPlus,
-  faSearch,
   faTrash,
   faEye,
   faTimes,
@@ -20,6 +19,7 @@ import { Modal } from "@/components/Modal";
 import { Field } from "@/components/Field";
 import { FormOptionType } from "@/components/Form";
 import { Select } from "@/components/Select";
+import { HierarchicalFilter } from "@/components/HierarchicalFilter";
 import Link from "next/link";
 import styles from "./index.module.scss";
 
@@ -28,11 +28,10 @@ export function Page() {
   
   const [loading, setLoading] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [statuses, setStatuses] = useState<ExpenseStatus[]>([]);
-  const [filterCustomerId, setFilterCustomerId] = useState<string>("");
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [filterStatusId, setFilterStatusId] = useState<string>("");
   const [showClosed, setShowClosed] = useState(false);
   const [newExpense, setNewExpense] = useState<Partial<Expense>>({
@@ -132,11 +131,10 @@ export function Page() {
   };
 
   const filteredExpenses = expenses.filter((expense) => {
-    // Search filter
-    const matchesSearch = expense.name?.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    // Customer filter
-    const matchesCustomer = !filterCustomerId || expense.customerId === filterCustomerId;
+    // Customer filter - hierarchical (top level)
+    if (selectedCustomer && expense.customerId !== selectedCustomer.id) {
+      return false;
+    }
     
     // Status filter
     const matchesStatus = !filterStatusId || expense.statusId === filterStatusId;
@@ -145,7 +143,7 @@ export function Page() {
     const isClosed = expense.status?.status?.toLowerCase().includes('closed');
     const matchesClosed = showClosed || !isClosed;
     
-    return matchesSearch && matchesCustomer && matchesStatus && matchesClosed;
+    return matchesStatus && matchesClosed;
   });
 
   const totalAmount = expenses.reduce((sum, exp) => sum + ((exp.unitPrice || 0) * (exp.quantity || 0)), 0);
@@ -166,29 +164,15 @@ export function Page() {
           </Button>
         </div>
 
-        <div className={styles.searchBar}>
-          <Icon icon={faSearch} className={styles.searchIcon} />
-          <input
-            type="text"
-            placeholder="Search expenses..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className={styles.searchInput}
-          />
-        </div>
+        <HierarchicalFilter
+          onCustomerChange={(customer) => setSelectedCustomer(customer)}
+          showProjectFilter={false}
+          placeholder={{
+            customer: "Select customer to filter expenses...",
+          }}
+        />
 
         <div className={styles.filters}>
-          <div className={styles.filterGroup}>
-            <Select
-              label="Filter by Customer"
-              value={filterCustomerId || "all"}
-              onValueChange={(value) => setFilterCustomerId(value === "all" ? "" : value)}
-              options={[
-                { value: "all", label: "All Customers" },
-                ...customers.map(c => ({ value: c.id, label: `${c.firstname} ${c.lastname}` }))
-              ]}
-            />
-          </div>
           <div className={styles.filterGroup}>
             <Select
               label="Filter by Status"
@@ -198,6 +182,7 @@ export function Page() {
                 { value: "all", label: "All Statuses" },
                 ...statuses.map(s => ({ value: s.id, label: s.status }))
               ]}
+              searchable
             />
           </div>
           <div className={styles.filterGroup}>
@@ -347,6 +332,7 @@ export function Page() {
                   { value: "none", label: "No customer" },
                   ...customers.map(c => ({ value: c.id, label: `${c.firstname} ${c.lastname}` }))
                 ]}
+                searchable
               />
             </div>
             <div className={styles.formField}>
@@ -359,6 +345,7 @@ export function Page() {
                   { value: "none", label: "Select a status..." },
                   ...statuses.map(s => ({ value: s.id, label: s.status }))
                 ]}
+                searchable
               />
             </div>
             <Field

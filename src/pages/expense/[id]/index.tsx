@@ -245,28 +245,44 @@ export function Page() {
       <SideToSide className={styles.image_splitter}>
         <article className={styles.information}>
           <KeyValue label="Status" value={expense.status.status} />
-          {expense.customer && (
-            <KeyValue 
-              label="Customer" 
-              value={`${expense.customer.firstname} ${expense.customer.lastname}`} 
-            />
-          )}
-          {isEditing && (
-            <div className={styles.formField}>
-              <label>Customer</label>
-              <Select
-                label="Select Customer"
-                value={expense.customerId || "none"}
-                onValueChange={(value) => handleChange("customerId", value === "none" ? null : value)}
-                options={[
-                  { value: "none", label: "No customer" },
-                  ...customers.map(c => ({ value: c.id, label: `${c.firstname} ${c.lastname}` }))
-                ]}
-              />
-            </div>
-          )}
-          {isEditing && (
+          {!isEditing ? (
             <>
+              <KeyValue 
+                label="Customer" 
+                value={expense.customer ? `${expense.customer.firstname} ${expense.customer.lastname}` : "No customer"}
+              />
+              <KeyValue label="Recurring" value={expense.recurring ? "Yes" : "No"} />
+              {expense.recurring && expense.recurringInterval && (
+                <KeyValue label="Recurring Interval" value={expense.recurringInterval} />
+              )}
+              <KeyValue label="Name" value={expense.name} />
+              <KeyValue label="Needed At" value={expense.neededAt ? new Date(expense.neededAt).toLocaleDateString() : "No date added"} />
+              <KeyValue label="Link" value={expense.link || "No link"} />
+              {expense.link && (
+                <Link href={expense.link} target={LinkTarget.BLANK} className={styles.linkButton}>
+                  <Icon icon={faLink} className={styles.icon} />
+                  <span>Open Link</span>
+                </Link>
+              )}
+              <KeyValue label="Unit Price" value={`€${expense.unitPrice?.toFixed(2) || "0.00"}`} />
+              <KeyValue label="Quantity" value={expense.quantity?.toString() || "0"} />
+              <KeyValue label="Total" value={`€${((expense.unitPrice || 0) * (expense.quantity || 0)).toFixed(2)}`} />
+            </>
+          ) : (
+            <>
+              <div className={styles.formField}>
+                <label>Customer</label>
+                <Select
+                  label="Select Customer"
+                  value={expense.customerId || "none"}
+                  onValueChange={(value) => handleChange("customerId", value === "none" ? null : value)}
+                  options={[
+                    { value: "none", label: "No customer" },
+                    ...customers.map(c => ({ value: c.id, label: `${c.firstname} ${c.lastname}` }))
+                  ]}
+                  searchable
+                />
+              </div>
               <Switch
                 label="Recurring"
                 checked={expense.recurring}
@@ -312,14 +328,16 @@ export function Page() {
                   value={expense.link}
                   className={styles.link}
                 />
-                <Link
-                  href={expense.link}
-                  target={LinkTarget.BLANK}
-                  className={styles.linkButton}
-                >
-                  <Icon icon={faLink} className={styles.icon} />
-                  <span>Open Link</span>
-                </Link>
+                {expense.link && (
+                  <Link
+                    href={expense.link}
+                    target={LinkTarget.BLANK}
+                    className={styles.linkButton}
+                  >
+                    <Icon icon={faLink} className={styles.icon} />
+                    <span>Open Link</span>
+                  </Link>
+                )}
               </SideToSide>
               <Field
                 label="Unit Price"
@@ -338,13 +356,11 @@ export function Page() {
             </>
           )}
         </article>
-        {isEditing && (
-          <Preview
-            link={expense.link}
-            image={expense.image}
-            onImage={(image) => handleChange("image", image)}
-          />
-        )}
+        <Preview
+          link={expense.link}
+          image={expense.image}
+          onImage={isEditing ? (image) => handleChange("image", image) : undefined}
+        />
       </SideToSide>
       {!canAction &&
         [ExpenseStatusEnum.CREATED, ExpenseStatusEnum.REQUESTED].includes(
