@@ -290,10 +290,11 @@ export function Page() {
             <div className={styles.formField}>
               <label>Customer</label>
               <Select
-                value={newExpense.customerId || ""}
-                onChange={(value) => setNewExpense({ ...newExpense, customerId: value || null })}
+                label="Select Customer"
+                value={newExpense.customerId || "none"}
+                onValueChange={(value) => setNewExpense({ ...newExpense, customerId: value === "none" ? null : value })}
                 options={[
-                  { value: "", label: "No customer" },
+                  { value: "none", label: "No customer" },
                   ...customers.map(c => ({ value: c.id, label: `${c.firstname} ${c.lastname}` }))
                 ]}
               />
@@ -301,9 +302,13 @@ export function Page() {
             <div className={styles.formField}>
               <label>Status *</label>
               <Select
-                value={newExpense.statusId || ""}
-                onChange={(value) => setNewExpense({ ...newExpense, statusId: value })}
-                options={statuses.map(s => ({ value: s.id, label: s.status }))}
+                label="Select Status"
+                value={newExpense.statusId || "none"}
+                onValueChange={(value) => setNewExpense({ ...newExpense, statusId: value === "none" ? "" : value })}
+                options={[
+                  { value: "none", label: "Select a status..." },
+                  ...statuses.map(s => ({ value: s.id, label: s.status }))
+                ]}
               />
             </div>
             <Field
