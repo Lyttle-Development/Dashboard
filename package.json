@@ -12,15 +12,15 @@
     "prisma:dangerously-db-push": "prisma db push",
     "prisma:migrate": "prisma migrate dev --name merge-upstream",
     "prisma:deploy": "prisma migrate deploy",
-    "docker:setup": "npm run build",
+    "docker:setup": "npm run prisma:generate && npm run build",
     "docker:build": "docker build -t community-v3-dashboard .",
     "update": "npm update --save && npx npm-check-updates -u && npm install"
   },
   "volta": {
-    "node": "22.19.0"
+    "node": "24.15.0"
   },
   "engines": {
-    "node": "22.19.0"
+    "node": "24.15.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
@@ -53,7 +53,7 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "eslint": "^10.3.0",
+    "eslint": "^9",
     "eslint-config-next": "^16.2.4",
     "prisma": "^7.8.0",
     "typescript": "6.0.3"
