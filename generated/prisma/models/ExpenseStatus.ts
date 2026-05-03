@@ -151,7 +151,7 @@ export type ExpenseStatusGroupByOutputType = {
   _max: ExpenseStatusMaxAggregateOutputType | null
 }
 
-type GetExpenseStatusGroupByPayload<T extends ExpenseStatusGroupByArgs> = Prisma.PrismaPromise<
+export type GetExpenseStatusGroupByPayload<T extends ExpenseStatusGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ExpenseStatusGroupByOutputType, T['by']> &
       {
@@ -1056,6 +1056,11 @@ export type ExpenseStatusFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` ExpenseStatuses.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ExpenseStatuses.
+   */
   distinct?: Prisma.ExpenseStatusScalarFieldEnum | Prisma.ExpenseStatusScalarFieldEnum[]
 }
 

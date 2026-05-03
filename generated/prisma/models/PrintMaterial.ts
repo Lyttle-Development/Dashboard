@@ -228,7 +228,7 @@ export type PrintMaterialGroupByOutputType = {
   _max: PrintMaterialMaxAggregateOutputType | null
 }
 
-type GetPrintMaterialGroupByPayload<T extends PrintMaterialGroupByArgs> = Prisma.PrismaPromise<
+export type GetPrintMaterialGroupByPayload<T extends PrintMaterialGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<PrintMaterialGroupByOutputType, T['by']> &
       {
@@ -1272,6 +1272,11 @@ export type PrintMaterialFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` PrintMaterials.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of PrintMaterials.
+   */
   distinct?: Prisma.PrintMaterialScalarFieldEnum | Prisma.PrintMaterialScalarFieldEnum[]
 }
 

@@ -220,7 +220,7 @@ export type ServicePriceGroupByOutputType = {
   _max: ServicePriceMaxAggregateOutputType | null
 }
 
-type GetServicePriceGroupByPayload<T extends ServicePriceGroupByArgs> = Prisma.PrismaPromise<
+export type GetServicePriceGroupByPayload<T extends ServicePriceGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ServicePriceGroupByOutputType, T['by']> &
       {
@@ -1677,6 +1677,11 @@ export type ServicePriceFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` ServicePrices.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ServicePrices.
+   */
   distinct?: Prisma.ServicePriceScalarFieldEnum | Prisma.ServicePriceScalarFieldEnum[]
 }
 

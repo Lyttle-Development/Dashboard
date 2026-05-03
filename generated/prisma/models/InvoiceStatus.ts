@@ -151,7 +151,7 @@ export type InvoiceStatusGroupByOutputType = {
   _max: InvoiceStatusMaxAggregateOutputType | null
 }
 
-type GetInvoiceStatusGroupByPayload<T extends InvoiceStatusGroupByArgs> = Prisma.PrismaPromise<
+export type GetInvoiceStatusGroupByPayload<T extends InvoiceStatusGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<InvoiceStatusGroupByOutputType, T['by']> &
       {
@@ -1056,6 +1056,11 @@ export type InvoiceStatusFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` InvoiceStatuses.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of InvoiceStatuses.
+   */
   distinct?: Prisma.InvoiceStatusScalarFieldEnum | Prisma.InvoiceStatusScalarFieldEnum[]
 }
 

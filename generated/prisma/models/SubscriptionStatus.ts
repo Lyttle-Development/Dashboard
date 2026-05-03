@@ -151,7 +151,7 @@ export type SubscriptionStatusGroupByOutputType = {
   _max: SubscriptionStatusMaxAggregateOutputType | null
 }
 
-type GetSubscriptionStatusGroupByPayload<T extends SubscriptionStatusGroupByArgs> = Prisma.PrismaPromise<
+export type GetSubscriptionStatusGroupByPayload<T extends SubscriptionStatusGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<SubscriptionStatusGroupByOutputType, T['by']> &
       {
@@ -1056,6 +1056,11 @@ export type SubscriptionStatusFindManyArgs<ExtArgs extends runtime.Types.Extensi
    * Skip the first `n` SubscriptionStatuses.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of SubscriptionStatuses.
+   */
   distinct?: Prisma.SubscriptionStatusScalarFieldEnum | Prisma.SubscriptionStatusScalarFieldEnum[]
 }
 
