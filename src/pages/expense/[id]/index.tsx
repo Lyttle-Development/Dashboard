@@ -4,7 +4,7 @@ import { Layout } from "@/layouts";
 import styles from "./index.module.scss";
 import { Loader } from "@/components/Loader";
 import { Container } from "@/components/Container";
-import { Expense, ExpenseStatusEnum, IntervalEnum } from "@/lib/prisma";
+import { Expense, ExpenseStatusEnum, IntervalEnum, Customer, ExpenseStatus } from "@/lib/prisma";
 import { fetchApi } from "@/lib/fetchApi";
 import { Field } from "@/components/Field";
 import { FormOptionType, FormValueTypes } from "@/components/Form";
@@ -12,7 +12,7 @@ import { Button, ButtonStyle } from "@/components/Button";
 import { safeParseFieldDate, safeParseFloat, safeParseInt } from "@/lib/parse";
 import { SideToSide } from "@/components/SideToSide";
 import { Icon } from "@/components/Icon";
-import { faLink, faRotateLeft } from "@fortawesome/free-solid-svg-icons";
+import { faLink, faRotateLeft, faEdit, faSave, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Link, LinkTarget } from "@/components/Link";
 import { useApp } from "@/contexts/App.context";
 import { KeyValue } from "@/components/KeyValue";
@@ -31,28 +31,49 @@ export function Page() {
   const [expense, setExpense] = useState<Expense>(null);
   const [originalExpense, setOriginalExpense] = useState<Expense>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [statuses, setStatuses] = useState<ExpenseStatus[]>([]);
 
   // Fetch the expense details by id.
   const fetchExpense = useCallback(async (id: string) => {
     setLoading(true);
-    const expenseData = await fetchApi<Expense>({
-      table: "expense",
-      id,
-      relations: {
-        status: true,
-      },
-    });
+    try {
+      const expenseData = await fetchApi<Expense>({
+        table: "expense",
+        id,
+        relations: {
+          status: true,
+          customer: true,
+        },
+      });
 
-    setExpense(expenseData);
-    setOriginalExpense(expenseData);
-    setLoading(false);
+      setExpense(expenseData);
+      setOriginalExpense(expenseData);
+    } catch (error) {
+      console.error("Error fetching expense:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchCustomers = useCallback(async () => {
+    const customersData = await fetchApi<Customer[]>({ table: "customer" });
+    setCustomers(customersData ?? []);
+  }, []);
+
+  const fetchStatuses = useCallback(async () => {
+    const statusesData = await fetchApi<ExpenseStatus[]>({ table: "expense-status" });
+    setStatuses(statusesData ?? []);
   }, []);
 
   useEffect(() => {
     if (expenseId) {
       void fetchExpense(expenseId as string);
+      void fetchCustomers();
+      void fetchStatuses();
     }
-  }, []);
+  }, [expenseId, fetchExpense, fetchCustomers, fetchStatuses]);
 
   useEffect(() => {
     if (!expense) return;
@@ -67,23 +88,39 @@ export function Page() {
   };
 
   const updateExpense = async () => {
-    await fetchApi<Expense>({
-      table: "expense",
-      id: expense.id,
-      method: "PUT",
-      body: {
-        neededAt: expense.neededAt ? new Date(expense.neededAt) : null,
-        name: expense.name,
-        link: expense.link,
-        image: expense.image,
-        unitPrice: expense.unitPrice,
-        quantity: expense.quantity,
-        recurring: expense.recurring,
-        recurringInterval: expense.recurringInterval,
-      },
-    });
-    setExpense(expense);
-    setOriginalExpense(expense);
+    setLoading(true);
+    try {
+      const result = await fetchApi<Expense>({
+        table: "expense",
+        id: expense.id,
+        method: "PUT",
+        body: {
+          neededAt: expense.neededAt ? new Date(expense.neededAt) : null,
+          name: expense.name,
+          link: expense.link,
+          image: expense.image,
+          unitPrice: expense.unitPrice,
+          quantity: expense.quantity,
+          recurring: expense.recurring,
+          recurringInterval: expense.recurringInterval,
+          customerId: expense.customerId,
+          statusId: expense.statusId,
+        },
+      });
+      if (result) {
+        setOriginalExpense(expense);
+        setIsEditing(false);
+      }
+    } catch (error) {
+      console.error("Error updating expense:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelEdit = () => {
+    setExpense(originalExpense);
+    setIsEditing(false);
   };
 
   const deleteExpense = async () => {
@@ -180,96 +217,151 @@ export function Page() {
           )}
         </span>
         <article className={styles.actions}>
-          <Button
-            onClick={() => router.push(LINKS.homepage)}
-            style={ButtonStyle.Primary}
-          >
-            Go Back
-          </Button>
-          <Button onClick={deleteExpense} style={ButtonStyle.Danger}>
-            Delete Expense
-          </Button>
+          {!isEditing ? (
+            <>
+              <Button onClick={() => setIsEditing(true)} style={ButtonStyle.Primary}>
+                <Icon icon={faEdit} />
+                Edit
+              </Button>
+              <Button onClick={deleteExpense} style={ButtonStyle.Danger}>
+                <Icon icon={faTrash} />
+                Delete
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button onClick={updateExpense} style={ButtonStyle.Primary} disabled={!hasChanges || loading}>
+                <Icon icon={faSave} />
+                {loading ? "Saving..." : "Save"}
+              </Button>
+              <Button onClick={cancelEdit} disabled={loading}>
+                <Icon icon={faTimes} />
+                Cancel
+              </Button>
+            </>
+          )}
         </article>
       </h2>
       <SideToSide className={styles.image_splitter}>
         <article className={styles.information}>
           <KeyValue label="Status" value={expense.status.status} />
-          <Switch
-            label="Recurring"
-            checked={expense.recurring}
-            onCheckedChange={(value) => handleChange("recurring", value)}
-          />
-          {expense.recurring && (
-            <Select
-              label="Select Interval"
-              options={(Object.values(IntervalEnum) as string[]).map(
-                (interval) => ({
-                  label: interval,
-                  value: interval,
-                }),
+          {!isEditing ? (
+            <>
+              <KeyValue 
+                label="Customer" 
+                value={expense.customer ? `${expense.customer.firstname} ${expense.customer.lastname}` : "No customer"}
+              />
+              <KeyValue label="Recurring" value={expense.recurring ? "Yes" : "No"} />
+              {expense.recurring && expense.recurringInterval && (
+                <KeyValue label="Recurring Interval" value={expense.recurringInterval} />
               )}
-              onValueChange={(value) =>
-                handleChange(
-                  "recurringInterval",
-                  typeof value === "string" ? value : "",
-                )
-              }
-              value={expense.recurringInterval?.toString()}
-              searchable
-            />
+              <KeyValue label="Name" value={expense.name} />
+              <KeyValue label="Needed At" value={expense.neededAt ? new Date(expense.neededAt).toLocaleDateString() : "No date added"} />
+              <KeyValue label="Link" value={expense.link || "No link"} />
+              {expense.link && (
+                <Link href={expense.link} target={LinkTarget.BLANK} className={styles.linkButton}>
+                  <Icon icon={faLink} className={styles.icon} />
+                  <span>Open Link</span>
+                </Link>
+              )}
+              <KeyValue label="Unit Price" value={`€${expense.unitPrice?.toFixed(2) || "0.00"}`} />
+              <KeyValue label="Quantity" value={expense.quantity?.toString() || "0"} />
+              <KeyValue label="Total" value={`€${((expense.unitPrice || 0) * (expense.quantity || 0)).toFixed(2)}`} />
+            </>
+          ) : (
+            <>
+              <div className={styles.formField}>
+                <label>Customer</label>
+                <Select
+                  label="Select Customer"
+                  value={expense.customerId || "none"}
+                  onValueChange={(value) => handleChange("customerId", value === "none" ? null : value)}
+                  options={[
+                    { value: "none", label: "No customer" },
+                    ...customers.map(c => ({ value: c.id, label: `${c.firstname} ${c.lastname}` }))
+                  ]}
+                  searchable
+                />
+              </div>
+              <Switch
+                label="Recurring"
+                checked={expense.recurring}
+                onCheckedChange={(value) => handleChange("recurring", value)}
+              />
+              {expense.recurring && (
+                <Select
+                  label="Select Interval"
+                  options={(Object.values(IntervalEnum) as string[]).map(
+                    (interval) => ({
+                      label: interval,
+                      value: interval,
+                    }),
+                  )}
+                  onValueChange={(value) =>
+                    handleChange(
+                      "recurringInterval",
+                      typeof value === "string" ? value : "",
+                    )
+                  }
+                  value={expense.recurringInterval?.toString()}
+                  searchable
+                />
+              )}
+              <Field
+                label="Name"
+                type={FormOptionType.TEXT}
+                required
+                onChange={(value) => handleChange("name", value)}
+                value={expense.name}
+              />
+              <Field
+                label={`Needed At${!expense.neededAt ? " (No date added)" : ""}`}
+                type={FormOptionType.DATE}
+                onChange={(value) => handleChange("neededAt", value)}
+                value={safeParseFieldDate(expense.neededAt)}
+              />
+              <SideToSide className={styles.side_to_side}>
+                <Field
+                  label="Link"
+                  type={FormOptionType.TEXT}
+                  onChange={(value) => handleChange("link", value)}
+                  value={expense.link}
+                  className={styles.link}
+                />
+                {expense.link && (
+                  <Link
+                    href={expense.link}
+                    target={LinkTarget.BLANK}
+                    className={styles.linkButton}
+                  >
+                    <Icon icon={faLink} className={styles.icon} />
+                    <span>Open Link</span>
+                  </Link>
+                )}
+              </SideToSide>
+              <Field
+                label="Unit Price"
+                type={FormOptionType.NUMBER}
+                onChange={(value) =>
+                  handleChange("unitPrice", safeParseFloat(value))
+                }
+                value={expense.unitPrice}
+              />
+              <Field
+                label="Quantity"
+                type={FormOptionType.NUMBER}
+                onChange={(value) => handleChange("quantity", safeParseInt(value))}
+                value={expense.quantity}
+              />
+            </>
           )}
-          <Field
-            label="Name"
-            type={FormOptionType.TEXT}
-            required
-            onChange={(value) => handleChange("name", value)}
-            value={expense.name}
-          />
-          <Field
-            label={`Needed At${!expense.neededAt ? " (No date added)" : ""}`}
-            type={FormOptionType.DATE}
-            onChange={(value) => handleChange("neededAt", value)}
-            value={safeParseFieldDate(expense.neededAt)}
-          />
-          <SideToSide className={styles.side_to_side}>
-            <Field
-              label="Link"
-              type={FormOptionType.TEXT}
-              onChange={(value) => handleChange("link", value)}
-              value={expense.link}
-              className={styles.link}
-            />
-            <Link
-              href={expense.link}
-              target={LinkTarget.BLANK}
-              className={styles.linkButton}
-            >
-              <Icon icon={faLink} className={styles.icon} />
-              <span>Open Link</span>
-            </Link>
-          </SideToSide>
-          <Field
-            label="Unit Price"
-            type={FormOptionType.NUMBER}
-            onChange={(value) =>
-              handleChange("unitPrice", safeParseFloat(value))
-            }
-            value={expense.unitPrice}
-          />
-          <Field
-            label="Quantity"
-            type={FormOptionType.NUMBER}
-            onChange={(value) => handleChange("quantity", safeParseInt(value))}
-            value={expense.quantity}
-          />
         </article>
         <Preview
           link={expense.link}
           image={expense.image}
-          onImage={(image) => handleChange("image", image)}
+          onImage={isEditing ? (image) => handleChange("image", image) : undefined}
         />
       </SideToSide>
-      {hasChanges && <Button onClick={updateExpense}>Update Expense</Button>}
       {!canAction &&
         [ExpenseStatusEnum.CREATED, ExpenseStatusEnum.REQUESTED].includes(
           expense.statusId as ExpenseStatusEnum,

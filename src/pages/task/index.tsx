@@ -35,11 +35,11 @@ export function Page() {
   }, [fetchData]);
 
   const toggleTaskDone = async (taskId: string, currentStatus: boolean) => {
-    await fetchApi({
+    await fetchApi<Task>({
       table: "task",
       method: "PUT",
       where: { id: taskId },
-      data: { done: !currentStatus },
+      body: { done: !currentStatus },
     });
     await fetchData();
   };
