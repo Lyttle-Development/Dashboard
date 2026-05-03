@@ -21,8 +21,6 @@ const nextConfig: NextConfig = {
     ],
   },
   devIndicators: false, // Disable the "Next.js is running in development mode" message
-  serverExternalPackages: ["pg", "@prisma/adapter-pg", "@prisma/client"],
-  turbopack: {},
 };
 
 export default nextConfig;
