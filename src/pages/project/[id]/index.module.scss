@@ -1,3 +1,5 @@
+@use '../../../styles/variables.scss' as v;
+
 .project_title {
   display: flex;
   justify-content: space-between;
@@ -6,7 +8,7 @@
   width: calc(100% + 2rem);
   position: sticky;
   top: 0;
-  background: white;
+  background: v.$color-background-accent;
   margin: -1rem;
   padding: 1rem;
 }

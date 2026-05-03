@@ -1,16 +1,18 @@
+@use '../../styles/variables' as v;
+
 .container {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   align-items: center;
-  font-size: 16px;
-  color: #333;
+  font-size: 0.9375rem;
+  color: v.$color-text;
 }
 
 .label {
-  font-weight: bold;
-  color: #555;
+  font-weight: 600;
+  color: v.$color-text-secondary;
 }
 
 .value {
-  color: #000;
+  color: v.$color-text;
 }

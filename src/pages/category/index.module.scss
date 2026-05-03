@@ -1,0 +1,264 @@
+@use '../../styles/variables.scss' as v;
+
+.container {
+  gap: 2rem;
+  padding-bottom: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: v.$color-primary;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: v.$color-text-secondary;
+    margin: 0;
+  }
+}
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: v.$color-text;
+  }
+
+  input, select, textarea {
+    padding: 0.75rem 1rem;
+    border: 1px solid v.$border-medium;
+    border-radius: v.$border-radius;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    background: v.$color-background-elevated;
+    color: v.$color-text;
+
+    &:hover:not(:disabled) {
+      border-color: v.$color-primary;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-primary;
+      box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+    }
+
+    &::placeholder {
+      color: v.$color-text-tertiary;
+    }
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+}
+
+.createForm {
+  background: v.$color-background-accent;
+  border-radius: v.$border-radius;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: v.$color-text;
+    margin: 0 0 1.5rem 0;
+  }
+}
+
+.formRow {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.formField {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: v.$color-text;
+  }
+
+  input {
+    padding: 0.75rem 1rem;
+    border: 2px solid v.$background-light-500;
+    border-radius: v.$border-radius;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    background: v.$color-background-accent;
+
+    &:hover:not(:disabled) {
+      border-color: v.$color-primary;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-primary;
+      box-shadow: 0 0 0 3px rgba(110, 0, 255, 0.1);
+    }
+  }
+}
+
+.formActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.categoryCard {
+  background: v.$color-background-accent;
+  border-radius: v.$border-radius;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    border-color: v.$color-primary;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .cardIcon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, v.$color-primary, rgba(v.$color-primary, 0.7));
+    border-radius: v.$border-radius;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .cardContent {
+    flex: 1;
+    min-width: 0;
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: v.$color-text;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .cardActions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .editForm {
+    flex: 1;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    input {
+      flex: 1;
+      padding: 0.5rem;
+      border: 2px solid v.$background-light-500;
+      border-radius: v.$border-radius;
+      font-size: 1rem;
+
+      &:focus {
+        outline: none;
+        border-color: v.$color-primary;
+      }
+    }
+  }
+}
+
+.emptyState {
+  background: v.$color-background-accent;
+  border-radius: v.$border-radius;
+  padding: 4rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  text-align: center;
+
+  svg {
+    font-size: 4rem;
+    color: v.$background-light-500;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: v.$color-text;
+    margin: 0 0 0.5rem 0;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #666;
+    margin: 0;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .formRow {
+    flex-direction: column;
+    align-items: stretch;
+
+    .formActions {
+      justify-content: flex-end;
+    }
+  }
+
+  .categoriesGrid {
+    grid-template-columns: 1fr;
+  }
+}

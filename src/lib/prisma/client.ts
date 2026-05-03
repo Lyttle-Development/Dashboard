@@ -1,15 +1,36 @@
-import { PrismaClient } from "../../../generated/prisma/client";
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-let prisma: PrismaClient;
+function createPrismaClient() {
+  const connectionString = process.env.DATABASE_URL ?? "";
+  // The pg adapter does not understand Prisma-specific params like sslaccept=accept_invalid_certs.
+  // In pg v8.12+ sslmode=require/prefer/verify-ca are also aliased to verify-full (see warning).
+  // Strip both params from the URL and control SSL entirely via the PoolConfig ssl option.
+  const url = new URL(connectionString);
+  const sslaccept = url.searchParams.get("sslaccept");
+  const sslmode = url.searchParams.get("sslmode");
+  url.searchParams.delete("sslaccept");
+  url.searchParams.delete("sslmode");
 
-// Only initialize Prisma with the adapter on the server side
-if (typeof window === "undefined") {
-  const { PrismaPg } = require("@prisma/adapter-pg");
-  const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
-  prisma = new PrismaClient({ adapter });
-} else {
-  // Client-side placeholder (should not be used)
-  prisma = null as any;
+  // Enable SSL (with self-signed cert support) when the original URL requested it
+  const needsSsl =
+    sslaccept === "accept_invalid_certs" ||
+    sslmode === "require" ||
+    sslmode === "prefer" ||
+    sslmode === "verify-ca" ||
+    sslmode === "verify-full";
+
+  const adapter = new PrismaPg({
+    connectionString: url.toString(),
+    ...(needsSsl && { ssl: { rejectUnauthorized: false } }),
+  });
+  return new PrismaClient({ adapter });
 }
+
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
+
+const prisma = globalForPrisma.prisma || createPrismaClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export default prisma;

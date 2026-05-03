@@ -23,9 +23,9 @@ export function Field({
   className,
   ...option
 }: FormProps) {
-  const handleOnchange = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleOnchange = (e: React.ChangeEvent<HTMLElement>) => {
     const target = e.target as HTMLInputElement;
-    const value: string = target?.value ?? e.currentTarget.value;
+    const value: string = target?.value ?? (e.currentTarget as HTMLInputElement).value;
     // if file return the binary data
     if (option.type === FormOptionType.FILE) {
       return onFile(target.files);

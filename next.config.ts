@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["@prisma/adapter-pg", "@prisma/client", "pg"],
+  sassOptions: {
+    includePaths: [path.join(process.cwd())],
+  },
   env: {
     ALLOWED_USER_IDS: process.env.ALLOWED_USER_IDS,
   },

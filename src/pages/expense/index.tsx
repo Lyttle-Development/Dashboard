@@ -3,70 +3,386 @@ import { Container } from "@/components/Container";
 import { Icon } from "@/components/Icon";
 import {
   faHandHoldingDollar,
-  faMagnifyingGlass,
+  faPlus,
+  faTrash,
+  faEye,
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import { Select } from "@/components/Select";
-import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { Loader } from "@/components/Loader";
-import { Button } from "@/components/Button";
+import { Button, ButtonStyle } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
-import { Expense } from "@/lib/prisma";
-import { SideToSide } from "@/components/SideToSide";
+import { Expense, Customer, ExpenseStatus } from "@/lib/prisma";
 import { LINKS } from "@/links";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { SkeletonLoader } from "@/components/SkeletonLoader";
+import { Modal } from "@/components/Modal";
+import { Field } from "@/components/Field";
+import { FormOptionType } from "@/components/Form";
+import { Select } from "@/components/Select";
+import { HierarchicalFilter } from "@/components/HierarchicalFilter";
+import Link from "next/link";
+import styles from "./index.module.scss";
 
 export function Page() {
   usePageTitle({ title: "Expenses" });
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  
+  const [loading, setLoading] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [statuses, setStatuses] = useState<ExpenseStatus[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [filterStatusId, setFilterStatusId] = useState<string>("");
+  const [showClosed, setShowClosed] = useState(false);
+  const [newExpense, setNewExpense] = useState<Partial<Expense>>({
+    name: "",
+    link: "",
+    unitPrice: 0,
+    quantity: 1,
+    recurring: false,
+  });
 
   const fetchExpenses = useCallback(async () => {
     setLoading(true);
-    const expensesData = await fetchApi<Expense[]>({
+    const expensesData = await fetchApi<Expense[]>({ 
       table: "expense",
-      where: {
-        statusId: {
-          not: "2dee2fe0-e126-4ac4-b451-8e75c3316c7b", // Closed
-        },
-      },
+      relations: {
+        customer: true,
+        status: true,
+      }
     });
-    setExpenses(expensesData);
+    setExpenses(expensesData ?? []);
     setLoading(false);
+  }, []);
+
+  const fetchCustomers = useCallback(async () => {
+    const customersData = await fetchApi<Customer[]>({ table: "customer" });
+    setCustomers(customersData ?? []);
+  }, []);
+
+  const fetchStatuses = useCallback(async () => {
+    const statusesData = await fetchApi<ExpenseStatus[]>({ table: "expense-status" });
+    setStatuses(statusesData ?? []);
   }, []);
 
   useEffect(() => {
     void fetchExpenses();
-  }, [fetchExpenses]);
+    void fetchCustomers();
+    void fetchStatuses();
+  }, [fetchExpenses, fetchCustomers, fetchStatuses]);
 
-  if (loading) return <Loader />;
+  const handleCreate = async () => {
+    if (!newExpense.name || !newExpense.statusId) {
+      alert("Please fill in expense name and select a status");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await fetchApi<Expense>({
+        table: "expense",
+        method: "POST",
+        body: newExpense,
+      });
+
+      if (result) {
+        setNewExpense({
+          name: "",
+          link: "",
+          unitPrice: 0,
+          quantity: 1,
+          recurring: false,
+        });
+        setIsCreateModalOpen(false);
+        await fetchExpenses();
+      } else {
+        alert("Error creating expense");
+      }
+    } catch (error) {
+      alert("Error creating expense");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this expense?")) return;
+
+    setLoading(true);
+    try {
+      const result = await fetchApi<Expense>({
+        table: "expense",
+        id,
+        method: "DELETE",
+      });
+
+      if (result) {
+        await fetchExpenses();
+      } else {
+        alert("Error deleting expense");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error deleting expense");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredExpenses = expenses.filter((expense) => {
+    // Customer filter - hierarchical (top level)
+    if (selectedCustomer && expense.customerId !== selectedCustomer.id) {
+      return false;
+    }
+    
+    // Status filter
+    const matchesStatus = !filterStatusId || expense.statusId === filterStatusId;
+    
+    // Closed filter - hide closed by default
+    const isClosed = expense.status?.status?.toLowerCase().includes('closed');
+    const matchesClosed = showClosed || !isClosed;
+    
+    return matchesStatus && matchesClosed;
+  });
+
+  // Calculate totals based on filtered expenses
+  const totalAmount = filteredExpenses.reduce((sum, exp) => sum + ((exp.unitPrice || 0) * (exp.quantity || 0)), 0);
+  const paidAmount = filteredExpenses
+    .filter((exp) => exp.status?.status?.toLowerCase().includes('closed'))
+    .reduce((sum, exp) => sum + ((exp.unitPrice || 0) * (exp.quantity || 0)), 0);
 
   return (
     <Container>
-      <h1>Expenses</h1>
+      <div className={styles.header}>
+        <div className={styles.headerTop}>
+          <div className={styles.titleSection}>
+            <Icon icon={faHandHoldingDollar} className={styles.icon} />
+            <h1>Expenses</h1>
+          </div>
+          <Button onClick={() => setIsCreateModalOpen(true)} style={ButtonStyle.Primary}>
+            <Icon icon={faPlus} /> Create Expense
+          </Button>
+        </div>
 
-      <SideToSide>
-        <Select
-          label="Select Expense"
-          icon={faMagnifyingGlass}
-          options={
-            expenses && expenses.length
-              ? expenses.map((expense) => ({
-                  label: expense.name,
-                  value: expense.id,
-                }))
-              : []
-          }
-          onValueChange={(expenseId) =>
-            router.push(LINKS.expense.detail(expenseId))
-          }
-          disabled={!(expenses && expenses.length)}
-        />
-        <Button href={LINKS.expense.create}>
-          <Icon icon={faHandHoldingDollar}>Create Expense</Icon>
-        </Button>
-      </SideToSide>
+        <div className={styles.filterPanel}>
+          <HierarchicalFilter
+            onCustomerChange={(customer) => setSelectedCustomer(customer)}
+            showProjectFilter={false}
+            placeholder={{
+              customer: "Select customer to filter expenses...",
+            }}
+          />
+
+          <div className={styles.additionalFilters}>
+            <div className={styles.filterGroup}>
+              <Select
+                label="Filter by Status"
+                value={filterStatusId || "all"}
+                onValueChange={(value) => setFilterStatusId(value === "all" ? "" : value)}
+                options={[
+                  { value: "all", label: "All Statuses" },
+                  ...statuses.map(s => ({ value: s.id, label: s.status }))
+                ]}
+                searchable
+              />
+            </div>
+            <div className={styles.filterGroup}>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={showClosed}
+                  onChange={(e) => setShowClosed(e.target.checked)}
+                />
+                <span>Show closed expenses</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.stats}>
+          <div className={styles.stat}>
+            <div className={styles.statValue}>{filteredExpenses.length}</div>
+            <div className={styles.statLabel}>Total Expenses</div>
+          </div>
+          <div className={styles.stat}>
+            <div className={styles.statValue}>€{totalAmount.toFixed(2)}</div>
+            <div className={styles.statLabel}>Total Amount</div>
+          </div>
+          <div className={styles.stat}>
+            <div className={styles.statValue}>€{paidAmount.toFixed(2)}</div>
+            <div className={styles.statLabel}>Paid/Closed</div>
+          </div>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className={styles.grid}>
+          <SkeletonLoader type="card" count={6} />
+        </div>
+      ) : filteredExpenses.length === 0 ? (
+        <div className={styles.emptyState}>
+          <Icon icon={faHandHoldingDollar} className={styles.emptyIcon} />
+          <h3>No expenses found</h3>
+          <p>
+            {selectedCustomer || filterStatusId
+              ? "No expenses match your filter criteria"
+              : "Get started by tracking your first expense"}
+          </p>
+          {!selectedCustomer && !filterStatusId && (
+            <Button onClick={() => setIsCreateModalOpen(true)} style={ButtonStyle.Primary}>
+              <Icon icon={faPlus} /> Create Expense
+            </Button>
+          )}
+        </div>
+      ) : (
+        <div className={styles.grid}>
+          {filteredExpenses.map((expense) => (
+            <div key={expense.id} className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>{expense.name}</h3>
+                <div className={styles.amount}>€{(((expense.unitPrice || 0) * (expense.quantity || 0)) || 0).toFixed(2)}</div>
+              </div>
+
+              <div className={styles.cardMeta}>
+                {expense.neededAt && (
+                  <span className={styles.badge}>
+                    {new Date(expense.neededAt).toLocaleDateString()}
+                  </span>
+                )}
+                {expense.quantity && (
+                  <span className={styles.badge}>
+                    Qty: {expense.quantity}
+                  </span>
+                )}
+              </div>
+
+              <div className={styles.cardActions}>
+                <Link href={LINKS.expense.detail(expense.id)}>
+                  <Button>
+                    <Icon icon={faEye} />
+                  </Button>
+                </Link>
+                <Button
+                  onClick={() => handleDelete(expense.id)}
+                  style={ButtonStyle.Danger}
+                >
+                  <Icon icon={faTrash} />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Create Modal */}
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={() => {
+          setIsCreateModalOpen(false);
+          setNewExpense({
+            name: "",
+            link: "",
+            unitPrice: 0,
+            quantity: 1,
+            recurring: false,
+          });
+        }}
+        title="Create New Expense"
+        size="medium"
+      >
+        <div className={styles.modalForm}>
+          <div className={styles.formGrid}>
+            <Field
+              label="Name *"
+              type={FormOptionType.TEXT}
+              value={newExpense.name}
+              onChange={(value) =>
+                setNewExpense({ ...newExpense, name: typeof value === "string" ? value : "" })
+              }
+            />
+            <Field
+              label="Link"
+              type={FormOptionType.TEXT}
+              value={newExpense.link}
+              onChange={(value) =>
+                setNewExpense({ ...newExpense, link: typeof value === "string" ? value : "" })
+              }
+            />
+            <Field
+              label="Unit Price"
+              type={FormOptionType.NUMBER}
+              value={newExpense.unitPrice?.toString() || "0"}
+              onChange={(value) =>
+                setNewExpense({ ...newExpense, unitPrice: parseFloat(typeof value === "string" ? value : "0") || 0 })
+              }
+            />
+            <Field
+              label="Quantity"
+              type={FormOptionType.NUMBER}
+              value={newExpense.quantity?.toString() || "1"}
+              onChange={(value) =>
+                setNewExpense({ ...newExpense, quantity: parseInt(typeof value === "string" ? value : "1") || 1 })
+              }
+            />
+            <div className={styles.formField}>
+              <label>Customer</label>
+              <Select
+                label="Select Customer"
+                value={newExpense.customerId || "none"}
+                onValueChange={(value) => setNewExpense({ ...newExpense, customerId: value === "none" ? null : value })}
+                options={[
+                  { value: "none", label: "No customer" },
+                  ...customers.map(c => ({ value: c.id, label: `${c.firstname} ${c.lastname}` }))
+                ]}
+                searchable
+              />
+            </div>
+            <div className={styles.formField}>
+              <label>Status *</label>
+              <Select
+                label="Select Status"
+                value={newExpense.statusId || "none"}
+                onValueChange={(value) => setNewExpense({ ...newExpense, statusId: value === "none" ? "" : value as any })}
+                options={[
+                  { value: "none", label: "Select a status..." },
+                  ...statuses.map(s => ({ value: s.id, label: s.status }))
+                ]}
+                searchable
+              />
+            </div>
+            <Field
+              label="Needed At"
+              type={FormOptionType.DATE}
+              value={newExpense.neededAt ? new Date(newExpense.neededAt).toISOString().split('T')[0] : ""}
+              onChange={(value) =>
+                setNewExpense({ ...newExpense, neededAt: value ? new Date(typeof value === "string" ? value : "") : null })
+              }
+            />
+          </div>
+          <div className={styles.formActions}>
+            <Button onClick={handleCreate} style={ButtonStyle.Primary} disabled={loading}>
+              <Icon icon={faPlus} />
+              {loading ? "Creating..." : "Create"}
+            </Button>
+            <Button
+              onClick={() => {
+                setIsCreateModalOpen(false);
+                setNewExpense({
+                  name: "",
+                  link: "",
+                  unitPrice: 0,
+                  quantity: 1,
+                  recurring: false,
+                });
+              }}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </Container>
   );
 }

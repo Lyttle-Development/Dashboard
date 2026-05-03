@@ -47,7 +47,7 @@ model Customer {
   id            String         @id @default(uuid())
   lastname      String?
   firstname     String?
-  email         String         @unique
+  email         String?
   phone         String?
   addresses     Address[]
   invoices      Invoice[]

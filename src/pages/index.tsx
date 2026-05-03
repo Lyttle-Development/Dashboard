@@ -1,24 +1,32 @@
-import { Layout } from "@/layouts";
-import { Container } from "@/components/Container";
-import { useCallback, useEffect, useState } from "react";
-import { Expense, ExpenseStatusEnum, PrintJob, Project } from "@/lib/prisma";
-import { fetchApi } from "@/lib/fetchApi";
-import { Loader } from "@/components/Loader";
+import {Layout} from '@/layouts';
+import {Container} from '@/components/Container';
+import {useCallback, useEffect, useState} from 'react';
+import {Expense, ExpenseStatusEnum, PrintJob, Project} from '@/lib/prisma';
+import {fetchApi} from '@/lib/fetchApi';
+import {Loader} from '@/components/Loader';
 
-import styles from "./index.module.scss";
-import { useApp } from "@/contexts/App.context";
-import Link from "next/link";
-import { getProjectFullName } from "@/lib/project";
-import { findNewestTimeLog } from "@/lib/project/find-newest-time-log";
-import { useMobile } from "@/hooks/useMobile";
-import { router } from "next/client";
-import { groupArrayBy, sortGroupedListBy } from "@/lib/array";
-import { capitalizeWords } from "@/lib/format/string";
-import { Icon } from "@/components/Icon";
-import { faRotateLeft } from "@fortawesome/free-solid-svg-icons";
-import { ActiveTimeLogs } from "@/components/ActiveTimeLogs";
-import { LINKS } from "@/links";
-import { usePageTitle } from "@/hooks/usePageTitle";
+import styles from './index.module.scss';
+import {useApp} from '@/contexts/App.context';
+import Link from 'next/link';
+import {getProjectFullName} from '@/lib/project';
+import {findNewestTimeLog} from '@/lib/project/find-newest-time-log';
+import {useMobile} from '@/hooks/useMobile';
+import {router} from 'next/client';
+import {groupArrayBy, sortGroupedListBy} from '@/lib/array';
+import {capitalizeWords} from '@/lib/format/string';
+import {Icon} from '@/components/Icon';
+import {
+    faClock,
+    faDiagramProject,
+    faFileInvoice,
+    faMoneyBill,
+    faPrint,
+    faRotateLeft,
+} from '@fortawesome/free-solid-svg-icons';
+import {ActiveTimeLogs} from '@/components/ActiveTimeLogs';
+import {LINKS} from '@/links';
+import {usePageTitle} from '@/hooks/usePageTitle';
+import {Button, ButtonStyle} from '@/components/Button';
 
 function Page() {
   usePageTitle({ title: "Home" });
@@ -203,146 +211,270 @@ function Page() {
 
   return (
     <Container className={styles.container}>
-      <h1>Activity:</h1>
+      <div className={styles.header}>
+        <h1>Dashboard Overview</h1>
+        <p className={styles.subtitle}>
+          Welcome back! Here&apos;s what needs your attention.
+        </p>
+      </div>
 
-      {app.isManager &&
-        (invoicesToCreateProjects?.length > 0 ||
-          invoicesToCreatePrintJobs?.length > 0) && (
-          <section>
-            <h2>Invoices to create:</h2>
-            <p>Projects inactive for 30 days should be closed and invoiced.</p>
-            <ul className={styles.invoices}>
-              {invoicesToCreateProjects?.length > 0 &&
-                invoicesToCreateProjects.map((project) => (
-                  <li key={project.id} className={styles.invoice}>
-                    <Link href={LINKS.invoice.create.project(project.id)}>
-                      <h6>
-                        <strong>Name: </strong>
-                        {getProjectFullName(project, projects)}
-                      </h6>
-                      <p>
-                        <strong>Last active: </strong>
-                        {new Date(
-                          findNewestTimeLog(project.timeLogs).startTime,
-                        ).toLocaleDateString()}
-                      </p>
-                    </Link>
-                  </li>
-                ))}
-              {invoicesToCreatePrintJobs?.length > 0 &&
-                invoicesToCreatePrintJobs?.map((printJob) => (
-                  <li key={printJob.id} className={styles.invoice}>
-                    <Link href={LINKS.invoice.create.print(printJob.id)}>
-                      <h6>
-                        <strong>Name: </strong>
-                        {printJob.name}
-                      </h6>
-                      <p>
-                        <strong>Last active: </strong>
-                        {new Date(
-                          findNewestTimeLog(printJob.timeLogs).startTime,
-                        ).toLocaleDateString()}
-                      </p>
-                    </Link>
-                  </li>
-                ))}
-            </ul>
-          </section>
+      {/* Statistics Cards */}
+      <div className={styles.statsGrid}>
+        {app.isManager && (
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <Icon icon={faFileInvoice} />
+            </div>
+            <div className={styles.statContent}>
+              <div className={styles.statValue}>
+                {invoicesToCreateProjects.length + invoicesToCreatePrintJobs.length}
+              </div>
+              <div className={styles.statLabel}>Invoices to Create</div>
+            </div>
+          </div>
         )}
+
+        {!app.isOperationsManager && (
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <Icon icon={faDiagramProject} />
+            </div>
+            <div className={styles.statContent}>
+              <div className={styles.statValue}>{openProjects.length}</div>
+              <div className={styles.statLabel}>Open Projects</div>
+            </div>
+          </div>
+        )}
+
+        {app.isAdmin && (
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <Icon icon={faPrint} />
+            </div>
+            <div className={styles.statContent}>
+              <div className={styles.statValue}>{openPrintJobs.length}</div>
+              <div className={styles.statLabel}>Open Print Jobs</div>
+            </div>
+          </div>
+        )}
+
+        {(app.isOperationsManager || app.isManager) && (
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <Icon icon={faMoneyBill} />
+            </div>
+            <div className={styles.statContent}>
+              <div className={styles.statValue}>{expenses.length}</div>
+              <div className={styles.statLabel}>Open Expenses</div>
+            </div>
+          </div>
+        )}
+      </div>
 
       <ActiveTimeLogs projectIds={openProjects.map((p) => p.id)} />
 
+      {/* Invoices to Create Section */}
+      {app.isManager &&
+        (invoicesToCreateProjects?.length > 0 ||
+          invoicesToCreatePrintJobs?.length > 0) && (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <h2>
+                  <Icon icon={faFileInvoice} /> Invoices to Create
+                </h2>
+                <p className={styles.sectionDescription}>
+                  Projects and print jobs inactive for 30+ days that need
+                  invoicing
+                </p>
+              </div>
+            </div>
+            <div className={styles.cardGrid}>
+              {invoicesToCreateProjects?.map((project) => (
+                <div key={project.id} className={styles.card}>
+                  <div className={styles.cardIcon}>
+                    <Icon icon={faDiagramProject} />
+                  </div>
+                  <div className={styles.cardContent}>
+                    <h3 className={styles.cardTitle}>
+                      {getProjectFullName(project, projects)}
+                    </h3>
+                    <div className={styles.cardMeta}>
+                      <Icon icon={faClock} />
+                      <span>
+                        Last active:{" "}
+                        {new Date(
+                          findNewestTimeLog(project.timeLogs).startTime
+                        ).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.cardAction}>
+                    <Link href={LINKS.invoice.create.project(project.id)}>
+                      <Button style={ButtonStyle.Primary}>Create Invoice</Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+              {invoicesToCreatePrintJobs?.map((printJob) => (
+                <div key={printJob.id} className={styles.card}>
+                  <div className={styles.cardIcon}>
+                    <Icon icon={faPrint} />
+                  </div>
+                  <div className={styles.cardContent}>
+                    <h3 className={styles.cardTitle}>{printJob.name}</h3>
+                    <div className={styles.cardMeta}>
+                      <Icon icon={faClock} />
+                      <span>
+                        Last active:{" "}
+                        {new Date(
+                          findNewestTimeLog(printJob.timeLogs).startTime
+                        ).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.cardAction}>
+                    <Link href={LINKS.invoice.create.print(printJob.id)}>
+                      <Button style={ButtonStyle.Primary}>Create Invoice</Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+      {/* Open Print Jobs Section */}
       {app.isAdmin && openPrintJobs?.length > 0 && (
-        <section>
-          <h2>Open PrintJobs:</h2>
-          <p>Print Jobs not marked as completed.</p>
-          <ul className={styles.print_jobs}>
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <h2>
+                <Icon icon={faPrint} /> Open Print Jobs
+              </h2>
+              <p className={styles.sectionDescription}>
+                Print jobs not yet marked as completed
+              </p>
+            </div>
+          </div>
+          <div className={styles.cardGrid}>
             {openPrintJobs.map((printJob) => (
-              <li key={printJob.id} className={styles.print_job}>
-                <Link href={LINKS.print.detail(printJob.id)}>
-                  <h6>
-                    <strong>Title: </strong>
-                    {printJob.name}
-                  </h6>
-                  <p>
-                    <strong>Amount to print: </strong>
-                    {printJob.quantity}
-                  </p>
-                </Link>
-              </li>
+              <Link
+                key={printJob.id}
+                href={LINKS.print.detail(printJob.id)}
+                className={styles.card}
+              >
+                <div className={styles.cardIcon}>
+                  <Icon icon={faPrint} />
+                </div>
+                <div className={styles.cardContent}>
+                  <h3 className={styles.cardTitle}>{printJob.name}</h3>
+                  <div className={styles.cardMeta}>
+                    <span>Quantity: {printJob.quantity}</span>
+                  </div>
+                </div>
+              </Link>
             ))}
-            {printJobs.filter((printJob) => printJob.timeLogs.length === 0)
-              .length === 0 && <li>No open print jobs</li>}
-          </ul>
+          </div>
         </section>
       )}
 
-      {!app.isOperationsManager && openProjects && (
-        <section>
-          <h2>Open Projects:</h2>
-          <p>Projects with open tasks</p>
-          <ul className={styles.projects}>
+      {/* Open Projects Section */}
+      {!app.isOperationsManager && openProjects?.length > 0 && (
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <h2>
+                <Icon icon={faDiagramProject} /> Open Projects
+              </h2>
+              <p className={styles.sectionDescription}>
+                Projects with active tasks requiring attention
+              </p>
+            </div>
+          </div>
+          <div className={styles.cardGrid}>
             {openProjects.map((project) => (
-              <li key={project.id} className={styles.project}>
-                <Link href={LINKS.project.detail(project.id)}>
-                  <h6>
-                    <strong>Name: </strong>
+              <Link
+                key={project.id}
+                href={LINKS.project.detail(project.id)}
+                className={styles.card}
+              >
+                <div className={styles.cardIcon}>
+                  <Icon icon={faDiagramProject} />
+                </div>
+                <div className={styles.cardContent}>
+                  <h3 className={styles.cardTitle}>
                     {getProjectFullName(project, projects)}
-                  </h6>
-                  <p>
-                    <strong>Open Task(s): </strong>
-                    {project.tasks.filter((t) => !t.done).length}
-                  </p>
-                </Link>
-              </li>
+                  </h3>
+                  <div className={styles.cardMeta}>
+                    <span>
+                      {project.tasks.filter((t) => !t.done).length} open task
+                      {project.tasks.filter((t) => !t.done).length !== 1
+                        ? "s"
+                        : ""}
+                    </span>
+                  </div>
+                </div>
+              </Link>
             ))}
-            {projects.filter((project) => project.tasks.length === 0).length ===
-              0 && <li>No open projects</li>}
-          </ul>
+          </div>
         </section>
       )}
 
+      {/* Open Expenses Section */}
       {(app.isOperationsManager || app.isManager) &&
         objectGroupedExpenses?.length > 0 && (
-          <section>
-            <h2>Open Expenses:</h2>
-            <p>
-              Expenses that are not closed should be reviewed and closed if
-              necessary.
-            </p>
-            <ul className={styles.expenses_grouped}>
-              {objectGroupedExpenses?.map(
-                ([group, expenses]) =>
-                  expenses?.length > 0 &&
-                  canSeeExpenseCategory(group) && (
-                    <>
-                      <h5>{capitalizeWords(group)}:</h5>
-                      <ul className={styles.expenses_group}>
-                        {expenses?.map((expense) => (
-                          <li key={expense.id} className={styles.expense}>
-                            <Link href={LINKS.expense.detail(expense.id)}>
-                              <h6>
-                                <strong>Name: </strong>
-                                {expense.name}
-                                {expense.recurring && (
-                                  <Icon
-                                    icon={faRotateLeft}
-                                    className={styles.recurring_icon}
-                                  />
-                                )}
-                              </h6>
-                              <p>
-                                <strong>Status: </strong>
-                                {capitalizeWords(expense.status.status)}
-                              </p>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  ),
-              )}
-            </ul>
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <h2>
+                  <Icon icon={faMoneyBill} /> Open Expenses
+                </h2>
+                <p className={styles.sectionDescription}>
+                  Expenses pending review or approval
+                </p>
+              </div>
+            </div>
+            {objectGroupedExpenses.map(
+              ([group, expenses]) =>
+                expenses?.length > 0 &&
+                canSeeExpenseCategory(group) && (
+                  <div key={group} className={styles.expenseGroup}>
+                    <h3 className={styles.expenseGroupTitle}>
+                      {capitalizeWords(group)}
+                    </h3>
+                    <div className={styles.cardGrid}>
+                      {expenses.map((expense) => (
+                        <Link
+                          key={expense.id}
+                          href={LINKS.expense.detail(expense.id)}
+                          className={styles.card}
+                        >
+                          <div className={styles.cardIcon}>
+                            <Icon icon={faMoneyBill} />
+                          </div>
+                          <div className={styles.cardContent}>
+                            <h3 className={styles.cardTitle}>
+                              {expense.name}
+                              {expense.recurring && (
+                                <Icon
+                                  icon={faRotateLeft}
+                                  className={styles.recurringIcon}
+                                />
+                              )}
+                            </h3>
+                            <div className={styles.cardMeta}>
+                              <span>
+                                Status: {capitalizeWords(expense.status.status)}
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )
+            )}
           </section>
         )}
     </Container>

@@ -1,4 +1,5 @@
-import prisma, { ExpenseStatusEnum } from "@/lib/prisma/index";
+import prisma from "@/lib/prisma/client";
+import { ExpenseStatusEnum } from "@/lib/prisma/types";
 
 export async function reopenRecurringExpenses() {
   // Set all recurring expenses to open where the recurring is enabled and the orderedAt < current months first day

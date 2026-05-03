@@ -12,13 +12,16 @@ export const Markdown = ({ children, content, className }: MarkdownProps) => {
   // Get content for markdown conversion.
   const markdownContent: string = children || content || '';
 
-  // Join all props
+  // Join all props - className is not supported by ReactMarkdown, wrap in div instead
   const props = {
     components,
     remarkPlugins,
-    className: `${styles.markdown} ${className}`,
   };
 
-  // Return markdown JSX.Element
-  return <ReactMarkdown {...props}>{markdownContent}</ReactMarkdown>;
+  // Return markdown JSX.Element wrapped in a div for styling
+  return (
+    <div className={`${styles.markdown} ${className || ''}`}>
+      <ReactMarkdown {...props}>{markdownContent}</ReactMarkdown>
+    </div>
+  );
 };
