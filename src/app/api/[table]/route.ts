@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '../../../lib/prisma';
+import prisma from '../../../lib/prisma/client';
 import { requireAuthApp } from '@/lib/auth';
 import { debugBuffer } from '@/lib/debug';
 import { reopenRecurringExpenses } from '@/lib/prisma/expense';

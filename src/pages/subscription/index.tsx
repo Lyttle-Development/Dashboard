@@ -10,7 +10,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/Button";
 import { fetchApi } from "@/lib/fetchApi";
-import { Subscription } from "@/lib/prisma";
+import { Subscription, IntervalEnum } from "@/lib/prisma";
 import { LINKS } from "@/links";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
@@ -18,7 +18,7 @@ import styles from "./index.module.scss";
 
 export function Page() {
   usePageTitle({ title: "Subscriptions" });
-  
+
   const [loading, setLoading] = useState(true);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -36,23 +36,24 @@ export function Page() {
 
   const filteredSubscriptions = subscriptions.filter(
     (subscription) =>
-      subscription.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (subscription.description?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+      (subscription.name?.toLowerCase() || "").includes(searchQuery.toLowerCase())
   );
 
-  const totalAmount = subscriptions.reduce((sum, sub) => sum + (sub.price || 0), 0);
+  const totalAmount = subscriptions.reduce((sum, sub) => sum + (sub.unitPrice || 0), 0);
   const activeCount = subscriptions.filter(
     (sub) => sub.statusId !== "2dee2fe0-e126-4ac4-b451-8e75c3316c7b" // Not closed
   ).length;
 
-  const getIntervalLabel = (interval: string) => {
+  const getIntervalLabel = (interval: IntervalEnum) => {
     switch (interval) {
-      case "monthly":
+      case IntervalEnum.MONTH:
         return "Monthly";
-      case "yearly":
+      case IntervalEnum.YEAR:
         return "Yearly";
-      case "weekly":
+      case IntervalEnum.WEEK:
         return "Weekly";
+      case IntervalEnum.DAY:
+        return "Daily";
       default:
         return interval;
     }
@@ -123,22 +124,13 @@ export function Page() {
             <div key={subscription.id} className={styles.card}>
               <div className={styles.cardHeader}>
                 <h3 className={styles.cardTitle}>{subscription.name}</h3>
-                <div className={styles.price}>€{(subscription.price || 0).toFixed(2)}</div>
+                <div className={styles.price}>€{(subscription.unitPrice || 0).toFixed(2)}</div>
               </div>
-              
-              {subscription.description && (
-                <p className={styles.cardDescription}>{subscription.description}</p>
-              )}
 
               <div className={styles.cardMeta}>
                 {subscription.interval && (
                   <span className={styles.badge}>
                     {getIntervalLabel(subscription.interval)}
-                  </span>
-                )}
-                {subscription.startDate && (
-                  <span className={styles.badge}>
-                    Since {new Date(subscription.startDate).toLocaleDateString()}
                   </span>
                 )}
               </div>

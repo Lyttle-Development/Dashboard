@@ -10,6 +10,8 @@ export interface ButtonProps {
   className?: string;
   disabled?: boolean;
   style?: ButtonStyle;
+  variant?: "primary" | "secondary" | "danger" | "success";
+  size?: "small" | "medium" | "large";
   title?: string;
 }
 
@@ -17,6 +19,8 @@ export enum ButtonStyle {
   Default = "default",
   Primary = "primary",
   Danger = "danger",
+  Secondary = "secondary",
+  Success = "success",
 }
 
 export function Button({
@@ -26,12 +30,22 @@ export function Button({
   className,
   disabled,
   style = ButtonStyle.Default,
+  variant,
+  size,
   title,
 }: ButtonProps) {
+  const resolvedStyle = variant
+    ? (ButtonStyle[variant.charAt(0).toUpperCase() + variant.slice(1) as keyof typeof ButtonStyle] ?? style)
+    : style;
+
   const buttonClass = classnames(styles.Trigger, className, {
     [styles.disabled]: disabled,
-    [styles.primary]: style === ButtonStyle.Primary,
-    [styles.danger]: style === ButtonStyle.Danger,
+    [styles.primary]: resolvedStyle === ButtonStyle.Primary,
+    [styles.danger]: resolvedStyle === ButtonStyle.Danger,
+    [styles.secondary]: resolvedStyle === ButtonStyle.Secondary,
+    [styles.success]: resolvedStyle === ButtonStyle.Success,
+    [styles.small]: size === "small",
+    [styles.large]: size === "large",
   });
 
   if (href) {

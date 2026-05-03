@@ -1,6 +1,5 @@
 import { JSX, useEffect } from "react";
 import Head from "next/head";
-import { NextSeo } from "next-seo";
 import { SITE_NAME } from "@/constants";
 
 interface UsePageTitleProps {
@@ -35,9 +34,6 @@ export const usePageTitle = ({
         <title>{fullTitle}</title>
         {description && <meta name="description" content={description} />}
       </Head>
-
-      {/* ✅ Enhanced SEO metadata via next-seo */}
-      <NextSeo title={fullTitle} description={description} />
     </>
   );
 };

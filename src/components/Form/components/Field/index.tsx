@@ -6,7 +6,7 @@ import { safeParseFieldString } from "@/lib/parse";
 
 interface FormFieldProps {
   option: FormOption;
-  onChange?: (e: React.FormEvent<HTMLInputElement>) => void;
+  onChange?: React.ChangeEventHandler<HTMLElement>;
 }
 
 function GetFormField({ option }: FormFieldProps) {

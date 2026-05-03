@@ -57,7 +57,7 @@ export function Form({
 
   const handleFieldChange = (
     key: string,
-    e: React.FormEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLElement>,
   ) => {
     const target = e.target as HTMLInputElement;
     formData[key] = target.value;

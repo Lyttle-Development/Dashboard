@@ -13,7 +13,7 @@ import styles from "./index.module.scss";
 
 export function Page() {
   usePageTitle({ title: "Print Jobs" });
-  
+
   const [loading, setLoading] = useState(true);
   const [printJobs, setPrintJobs] = useState<PrintJob[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -42,9 +42,9 @@ export function Page() {
   const invoicedCount = printJobs.filter((job) => job.invoiceId !== null).length;
   const totalJobs = printJobs.length;
 
-  const getCustomerName = (customerId: number) => {
+  const getCustomerName = (customerId: string | undefined) => {
     const customer = customers.find((c) => c.id === customerId);
-    return customer ? `${customer.firstName} ${customer.lastName}` : "Unknown Customer";
+    return customer ? `${customer.firstname} ${customer.lastname}` : "Unknown Customer";
   };
 
   return (
@@ -122,7 +122,7 @@ export function Page() {
                   {getCustomerName(job.customerId)}
                 </span>
                 {job.material && (
-                  <span className={styles.badge}>{job.material}</span>
+                  <span className={styles.badge}>{job.material.type} {job.material.subType}</span>
                 )}
                 {job.weight && (
                   <span className={styles.badge}>{job.weight}g</span>
@@ -130,13 +130,13 @@ export function Page() {
               </div>
 
               <div className={styles.cardActions}>
-                <Button href={`${LINKS.print.index}/${job.id}`} variant="secondary" size="small">
+                <Button href={LINKS.print.detail(job.id)} variant="secondary" size="small">
                   View Details
                 </Button>
                 {!job.invoiceId && (
-                  <Button 
-                    href={`${LINKS.invoice.create.print}/${job.id}`} 
-                    variant="primary" 
+                  <Button
+                    href={`${LINKS.invoice.create.print}/${job.id}`}
+                    variant="primary"
                     size="small"
                   >
                     Create Invoice
